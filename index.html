@@ -1,0 +1,304 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>菜鸟塔罗抽牌系统 · Vegebird Tarot</title>
+  <meta name="description" content="菜鸟塔罗抽牌系统（Vegebird Tarot），仅限传统伟特塔罗 78 张牌，支持提问、选牌阵、洗牌、数字抽牌与结果翻牌全流程。" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Noto+Serif+SC:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="grain" aria-hidden="true"></div>
+  <canvas id="stars" aria-hidden="true"></canvas>
+
+  <main class="appShell">
+    <section class="phoneFrame">
+      <header class="appTopbar">
+        <div class="brand">
+          <div class="sigil" aria-hidden="true">
+            <span class="sigil__moon"></span>
+            <span class="sigil__eye"></span>
+            <span class="sigil__paw"></span>
+          </div>
+          <div>
+            <div class="brand__title">Vegebird Tarot</div>
+            <div class="brand__sub">菜鸟塔罗抽牌系统 · 仅限传统伟特塔罗 78 张牌</div>
+          </div>
+        </div>
+        <button class="ghost ghost--icon" id="btnSettings" type="button" aria-haspopup="dialog" aria-controls="settings">⚙</button>
+      </header>
+
+      <div class="progressBar" aria-label="流程进度">
+        <div class="progressBar__step is-active" data-step="intro"><span class="progressBar__dot"></span><span>提问</span></div>
+        <div class="progressBar__line"></div>
+        <div class="progressBar__step" data-step="spread"><span class="progressBar__dot"></span><span>牌阵</span></div>
+        <div class="progressBar__line"></div>
+        <div class="progressBar__step" data-step="shuffle"><span class="progressBar__dot"></span><span>洗牌</span></div>
+        <div class="progressBar__line"></div>
+        <div class="progressBar__step" data-step="pick"><span class="progressBar__dot"></span><span>盲选</span></div>
+        <div class="progressBar__line"></div>
+        <div class="progressBar__step" data-step="result"><span class="progressBar__dot"></span><span>结果</span></div>
+      </div>
+
+      <div class="screenStack">
+        <section class="screen is-active" data-screen="intro">
+          <div class="heroCard heroCard--intro">
+            <div class="heroCard__eyebrow">MYSTIC SESSION</div>
+            <h1 class="heroCard__title">先问问题，<br>再决定你想用哪种牌阵。</h1>
+            <p class="heroCard__text">把你的问题交给牌，再按自己的方式完成这场抽取仪式。</p>
+            <div class="heroStats">
+              <div class="heroStats__item"><span>78</span><em>张牌</em></div>
+              <div class="heroStats__item"><span>伟特</span><em>传统体系</em></div>
+              <div class="heroStats__item"><span>多种</span><em>牌阵选择</em></div>
+            </div>
+          </div>
+
+          <div class="questionCard">
+            <div class="questionCard__title">写下你此刻最想问的问题</div>
+            <textarea id="questionInput" class="questionInput" placeholder="例如：这段关系接下来会怎么发展？"></textarea>
+            <div class="questionTips">不写也可以，但写下来会更有仪式感。</div>
+          </div>
+
+          <button class="primaryAction" id="btnToSpread" type="button">
+            <span class="primaryAction__top">下一步：选择牌阵</span>
+            <span class="primaryAction__sub">默认会预选“无牌阵三张”</span>
+          </button>
+        </section>
+
+        <section class="screen" data-screen="spread">
+          <div class="sectionCard">
+            <div class="sectionCard__eyebrow">SPREAD SELECTOR</div>
+            <h2 class="sectionCard__title">先选牌阵，再进入抽牌流程</h2>
+            <p class="sectionCard__text">默认牌阵是“无牌阵三张”。你也可以选带语义的三张牌阵，或者自定义牌阵。</p>
+          </div>
+
+          <div class="spreadList" id="spreadList">
+            <button class="spreadOption is-active" data-spread="blank3" type="button">
+              <span class="spreadOption__title">无牌阵三张</span>
+              <span class="spreadOption__sub">默认 · 三张无固定解释位置</span>
+            </button>
+            <button class="spreadOption" data-spread="past-present-future" type="button">
+              <span class="spreadOption__title">过去 / 现在 / 未来</span>
+              <span class="spreadOption__sub">经典三张时间线牌阵</span>
+            </button>
+            <button class="spreadOption" data-spread="time-flow" type="button">
+              <span class="spreadOption__title">时间流：现在 / 未来 / 更远的未来</span>
+              <span class="spreadOption__sub">更强调后续发展</span>
+            </button>
+            <button class="spreadOption" data-spread="cause-process-result" type="button">
+              <span class="spreadOption__title">起因 / 过程 / 结果</span>
+              <span class="spreadOption__sub">适合看事件发展</span>
+            </button>
+            <button class="spreadOption" data-spread="choice2" type="button">
+              <span class="spreadOption__title">二选一牌阵</span>
+              <span class="spreadOption__sub">选项A / 选项B / 建议</span>
+            </button>
+            <button class="spreadOption" data-spread="custom" type="button">
+              <span class="spreadOption__title">自定义牌阵</span>
+              <span class="spreadOption__sub">自己命名、定义张数和每张牌含义</span>
+            </button>
+          </div>
+
+          <div class="customPanel" id="customPanel" hidden>
+            <div class="customPanel__title">自定义牌阵设置</div>
+            <label class="pickSlot">
+              <span class="pickSlot__label">牌阵名称</span>
+              <input id="customSpreadName" class="pickSlot__input" type="text" placeholder="例如：关系修复牌阵" />
+            </label>
+            <label class="pickSlot">
+              <span class="pickSlot__label">牌数</span>
+              <input id="customSpreadCount" class="pickSlot__input" type="number" min="1" max="10" placeholder="1-10" />
+            </label>
+            <div class="customMeaningList" id="customMeaningList"></div>
+          </div>
+
+          <div class="hintCard" id="spreadHint">当前默认牌阵：无牌阵三张。</div>
+
+          <div class="bottomActions">
+            <button class="secondaryAction" id="btnBackIntro" type="button">返回提问</button>
+            <button class="primaryAction" id="btnToShuffle" type="button">
+              <span class="primaryAction__top">确认牌阵，进入洗牌</span>
+              <span class="primaryAction__sub">下一步开始仪式洗牌</span>
+            </button>
+          </div>
+        </section>
+
+        <section class="screen" data-screen="shuffle">
+          <div class="ritualCard">
+            <div class="ritualCard__eyebrow">RITUAL SHUFFLE</div>
+            <div class="ritualOrbWrap">
+              <div class="ritualOrb" id="ritualOrb">
+                <div class="ritualOrb__ring ritualOrb__ring--a"></div>
+                <div class="ritualOrb__ring ritualOrb__ring--b"></div>
+                <div class="ritualOrb__core"></div>
+              </div>
+            </div>
+            <h2 class="ritualCard__title">让牌在你看不见的地方重排</h2>
+            <p class="ritualCard__text" id="shuffleText">点击下方按钮，系统会在后台随机打乱 156 种唯一编码牌面。</p>
+            <div class="blindNote">打乱后的顺序不会展示给用户，你只能在下一步盲选数字。</div>
+          </div>
+
+          <div class="bottomActions">
+            <button class="secondaryAction" id="btnBackSpread" type="button">返回牌阵</button>
+            <button class="primaryAction" id="btnShuffle" type="button">
+              <span class="primaryAction__top">开始随机打乱</span>
+              <span class="primaryAction__sub">后台生成新的临时牌序</span>
+            </button>
+            <button class="secondaryAction" id="btnToPick" type="button">去盲选数字</button>
+          </div>
+        </section>
+
+        <section class="screen" data-screen="pick">
+          <div class="sectionCard">
+            <div class="sectionCard__eyebrow">BLIND PICK</div>
+            <h2 class="sectionCard__title" id="pickTitle">请为每个牌位输入 1-156 的随机数字</h2>
+            <p class="sectionCard__text" id="pickDesc">你看不到打乱顺序，只能根据直觉盲选数字。</p>
+          </div>
+
+          <div class="pickPanel" id="pickPanel"></div>
+
+          <div class="pillActions">
+            <button class="ghost ghost--small" id="btnLucky" type="button">帮我随机填满</button>
+            <button class="ghost ghost--small" id="btnReShuffle" type="button">重新打乱</button>
+          </div>
+
+          <div class="hintCard" id="hint">提示：先完成洗牌，再为每一个牌位输入 1-156 的随机数字。</div>
+
+          <div class="bottomActions">
+            <button class="secondaryAction" id="btnBackShuffle" type="button">返回洗牌</button>
+            <button class="primaryAction" id="btnMatch" type="button">
+              <span class="primaryAction__top">匹配结果</span>
+              <span class="primaryAction__sub">用你填写的数字生成牌面</span>
+            </button>
+          </div>
+        </section>
+
+        <section class="screen" data-screen="result">
+          <div class="resultHeader">
+            <div>
+              <div class="resultHeader__eyebrow">READING RESULT</div>
+              <div class="resultHeader__title">你的牌已经出现</div>
+            </div>
+            <div class="resultHeader__meta" id="panelMeta">尚未匹配结果</div>
+          </div>
+
+          <div class="questionEcho" id="questionEcho">你的问题：未填写</div>
+          <div class="spreadEcho" id="spreadEcho">当前牌阵：无牌阵三张</div>
+
+          <div class="altar mobileAltar">
+            <div class="altar__glow" aria-hidden="true"></div>
+            <div class="altar__grid" id="cardGrid"></div>
+          </div>
+
+          <div class="pillActions">
+            <button class="ghost ghost--small" id="btnRevealAll" type="button">一键翻开</button>
+            <button class="ghost ghost--small" id="btnCopy" type="button">复制结果</button>
+          </div>
+
+          <section class="readingPanel">
+            <div class="readingPanel__head">
+              <span>解读</span>
+              <span id="sequenceMeta">尚未洗牌</span>
+            </div>
+            <div class="readingPanel__body" id="reading">
+              <p class="muted">这里会展示：牌位 → 用户选择数字 → 映射编码 → 牌名 → 正逆位 → 简短解读。</p>
+            </div>
+          </section>
+
+          <div class="bottomActions">
+            <button class="secondaryAction" id="btnBackPick" type="button">返回盲选</button>
+            <button class="primaryAction" id="btnReset" type="button">
+              <span class="primaryAction__top">重新开始</span>
+              <span class="primaryAction__sub">清空问题、牌阵与本次抽牌结果</span>
+            </button>
+          </div>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <dialog class="modal" id="settings" aria-label="设置">
+    <form method="dialog" class="modal__card">
+      <div class="modal__head">
+        <div>
+          <div class="modal__title">设置</div>
+          <div class="modal__sub">保留动效与音效控制；打乱顺序不会展示给用户</div>
+        </div>
+        <button class="x" value="cancel" aria-label="关闭">×</button>
+      </div>
+      <div class="modal__body">
+        <label class="field">
+          <span class="field__label">动效强度</span>
+          <div class="field__row">
+            <input id="motion" type="range" min="0" max="100" value="70" />
+            <span class="pill"><span id="motionVal">70</span>%</span>
+          </div>
+          <span class="field__help">如果你容易晕动或手机卡顿，把它调低。</span>
+        </label>
+        <label class="field field--check">
+          <input id="sound" type="checkbox" />
+          <span>启用轻微音效（浏览器允许时）</span>
+        </label>
+      </div>
+      <div class="modal__foot">
+        <button class="btn" value="cancel">取消</button>
+        <button class="btn btn--primary" id="btnSave" value="default">保存</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog class="modal modal--detail" id="cardDetail" aria-label="单牌详情">
+    <div class="modal__card detailCard">
+      <div class="modal__head">
+        <div>
+          <div class="modal__title">单牌详情</div>
+          <div class="modal__sub" id="detailMeta">查看更完整的牌义内容</div>
+        </div>
+        <button class="x" id="btnCloseDetail" type="button" aria-label="关闭">×</button>
+      </div>
+      <div class="modal__body detailBody">
+        <div class="detailPoster">
+          <div class="detailPoster__art">IMAGE COMING SOON</div>
+          <div class="detailPoster__note">后续这里会接入美漫画风改编牌图</div>
+        </div>
+
+        <div class="detailSection">
+          <div class="detailSection__title" id="detailName">牌名</div>
+          <div class="detailChips" id="detailChips"></div>
+        </div>
+
+        <div class="detailSection">
+          <div class="detailSection__k">关键词</div>
+          <div class="detailSection__v" id="detailKeywords">-</div>
+        </div>
+
+        <div class="detailSection">
+          <div class="detailSection__k">当前牌位解读</div>
+          <div class="detailSection__v" id="detailPositionMeaning">-</div>
+        </div>
+
+        <div class="detailGrid">
+          <div class="detailPanel">
+            <div class="detailPanel__title">正位含义</div>
+            <div class="detailPanel__body" id="detailUp">-</div>
+          </div>
+          <div class="detailPanel">
+            <div class="detailPanel__title">逆位含义</div>
+            <div class="detailPanel__body" id="detailRev">-</div>
+          </div>
+        </div>
+
+        <div class="detailSection detailSection--small">
+          <div class="detailSection__k">当前抽到</div>
+          <div class="detailSection__v" id="detailCurrent">-</div>
+        </div>
+      </div>
+    </div>
+  </dialog>
+
+  <script src="app.js"></script>
+</body>
+</html>
