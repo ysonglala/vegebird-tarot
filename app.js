@@ -79,6 +79,7 @@ const state = {
   currentScreen: 'intro',
   base78: [],
   encoded156: [],
+  shuffled78: [],
   shuffled156: [],
   picks: [],
   drawn: [],
@@ -161,6 +162,21 @@ function buildEncoded156() {
   }
 }
 
+function shuffleBase78() {
+  const arr = state.base78.map(x => ({
+    ...x,
+    ori: Math.random() < 0.5 ? 'up' : 'rev',
+  }));
+  arr.forEach(card => {
+    card.code = `${card.number}${card.ori === 'up' ? 'A' : 'B'}`;
+  });
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  state.shuffled78 = arr;
+}
+
 function shuffleEncoded() {
   const arr = state.encoded156.map(x => ({ ...x }));
   for (let i = arr.length - 1; i > 0; i--) {
@@ -169,6 +185,17 @@ function shuffleEncoded() {
   }
   state.shuffled156 = arr;
 }
+
+function mapPickToDraw(pick) {
+  const baseCard = state.shuffled78[pick - 1];
+  if (!baseCard) return null;
+  return {
+    ...baseCard,
+    pick,
+    revealed: false,
+  };
+}
+
 
 function setMotion(v) {
   state.motion = v;
@@ -248,16 +275,16 @@ function renderPickInputs() {
     labelEl.textContent = label;
     input.type = 'number';
     input.min = '1';
-    input.max = '156';
-    input.placeholder = '1-156';
+    input.max = '78';
+    input.placeholder = '1-78';
     input.dataset.pickIndex = String(idx);
     if (state.picks[idx]) input.value = state.picks[idx];
     input.addEventListener('input', () => { state.picks[idx] = Number(input.value) || ''; renderGrid(); });
     wrap.append(labelEl, input);
     panel.append(wrap);
   });
-  $('#pickTitle').textContent = `请为「${state.spread.name}」的每个牌位输入 1-156 的随机数字`;
-  $('#pickDesc').textContent = `当前共 ${state.spread.labels.length} 个牌位。你看不到打乱顺序，只能根据直觉盲选数字。`;
+  $('#pickTitle').textContent = `请为「${state.spread.name}」的每个牌位输入 1-78 的随机数字`;
+  $('#pickDesc').textContent = `当前共 ${state.spread.labels.length} 个牌位。洗牌完成后，每个数字都对应后台已经固定好的牌面与正逆位。`;
 }
 
 function renderGrid() {
@@ -293,7 +320,7 @@ function renderGrid() {
     } else {
       code.textContent = `选号：${state.picks[i] || '—'}`;
       name.textContent = '等待匹配';
-      subtitle.textContent = `${label} · 用户盲选后映射牌面`;
+      subtitle.textContent = `${label} · 用户选定后台已洗好的牌位`;
       desc.textContent = '点击卡牌翻开';
     }
     card.addEventListener('click', () => onFlip(i));
@@ -303,7 +330,7 @@ function renderGrid() {
 
 function hydrateCard(cardBtn, draw, label) {
   const front = cardBtn.querySelector('.card__front');
-  front.querySelector('.card__code').textContent = `编码 ${draw.code} · 选号 ${draw.pick}`;
+  front.querySelector('.card__code').textContent = `牌位 ${draw.pick} · ${draw.code}`;
   front.querySelector('.card__name').textContent = draw.name;
   front.querySelector('.card__subtitle').textContent = `${label} · ${draw.arcana} · ${draw.suit}`;
   front.querySelector('.badge__txt').textContent = `${label} · ${draw.ori === 'up' ? '正位' : '逆位'}`;
@@ -340,7 +367,7 @@ function openCardDetail(index) {
   $('#detailPositionMeaning').textContent = buildPositionMeaning(draw, state.spread.labels[index]);
   $('#detailUp').textContent = draw.up;
   $('#detailRev').textContent = draw.rev;
-  $('#detailCurrent').textContent = `本次抽到的是 ${draw.ori === 'up' ? '正位' : '逆位'}，对应编码 ${draw.code}，用户选择数字为 ${draw.pick}。`;
+  $('#detailCurrent').textContent = `本次抽到的是 ${draw.ori === 'up' ? '正位' : '逆位'}，对应后台洗牌后的第 ${draw.pick} 位。`;
   $('#cardDetail').showModal();
 }
 
@@ -352,7 +379,7 @@ function closeCardDetail() {
 function renderReading() {
   const box = $('#reading');
   if (!state.drawn.length) {
-    box.innerHTML = `<p class="muted">这里会展示：牌位 → 用户选择数字 → 映射编码 → 牌名 → 正逆位 → 简短解读。</p>`;
+    box.innerHTML = `<p class="muted">这里会展示：牌位 → 用户选择数字 → 对应牌名 → 正逆位 → 简短解读。</p>`;
     setMeta('尚未匹配结果');
     return;
   }
@@ -368,7 +395,7 @@ function renderReading() {
       k.textContent = `${label} · 未匹配`;
       v.textContent = '等待结果';
     } else {
-      k.textContent = `${label} · 选号 ${d.pick} · ${d.code}`;
+      k.textContent = `${label} · 选择第 ${d.pick} 位 · ${d.code}`;
       if (d.revealed) {
         v.innerHTML = `<strong>${d.name}</strong>（${d.ori === 'up' ? '正位' : '逆位'}）<br><span class="muted">${d.arcana} / ${d.suit}</span><br>${d.ori === 'up' ? d.up : d.rev}`;
       } else {
@@ -381,7 +408,7 @@ function renderReading() {
   const note = el('p');
   note.className = 'muted';
   note.style.marginTop = '12px';
-  note.textContent = '当前规则：系统先在后台乱序，用户看不到顺序，只能按牌位盲选数字。';
+  note.textContent = '当前规则：系统会在洗牌阶段同时随机固定 78 张牌的顺序与正逆位；用户之后只能从 1-78 中凭感觉选择牌位，同一牌阵内不会出现重复牌。';
   box.innerHTML = '';
   box.append(grid, note);
 }
@@ -392,7 +419,7 @@ function getPickValues() {
 
 function validatePicks(values) {
   if (values.length !== state.spread.labels.length) return '选号数量与当前牌阵不一致。';
-  if (values.some(v => !Number.isInteger(v) || v < 1 || v > 156)) return '请输入 1-156 之间的整数。';
+  if (values.some(v => !Number.isInteger(v) || v < 1 || v > 78)) return '请输入 1-78 之间的整数。';
   if ((new Set(values)).size !== values.length) return '每个牌位的数字必须互不重复。';
   return '';
 }
@@ -403,6 +430,7 @@ async function ritualShuffleAnimation() {
   orb.classList.add('is-busy');
   beep('shuffle');
   await new Promise(r => setTimeout(r, 1200));
+  shuffleBase78();
   shuffleEncoded();
   state.phase = 'shuffled';
   state.drawn = [];
@@ -411,16 +439,16 @@ async function ritualShuffleAnimation() {
   renderGrid();
   renderReading();
   orb.classList.remove('is-busy');
-  $('#shuffleText').textContent = '牌已经在后台打乱完毕。你不会看到顺序，只能去盲选数字。';
-  setSequenceMeta('已完成后台洗牌');
-  updateHint('已完成后台洗牌。现在请为每个牌位输入 1-156 的随机数字。');
+  $('#shuffleText').textContent = '牌已经在后台打乱完毕。每张牌的顺序和正逆位都已经固定，你现在只能凭感觉选择 1-78 的牌位。';
+  setSequenceMeta('已完成后台洗牌（顺序与正逆位已固定）');
+  updateHint('已完成后台洗牌。现在请为每个牌位输入 1-78 的随机数字。');
 }
 
 function onLuckyPick() {
   const nums = [];
   const used = new Set();
   while (nums.length < state.spread.labels.length) {
-    const n = Math.floor(Math.random() * 156) + 1;
+    const n = Math.floor(Math.random() * 78) + 1;
     if (used.has(n)) continue;
     used.add(n);
     nums.push(n);
@@ -432,7 +460,7 @@ function onLuckyPick() {
 }
 
 function onMatch() {
-  if (!state.shuffled156.length) {
+  if (!state.shuffled78.length) {
     updateHint('你还没洗牌。先完成洗牌仪式。');
     goToScreen('shuffle');
     return;
@@ -444,7 +472,7 @@ function onMatch() {
     return;
   }
   state.picks = picks;
-  state.drawn = picks.map((pick) => ({ ...state.shuffled156[pick - 1], pick, revealed: false }));
+  state.drawn = picks.map((pick) => mapPickToDraw(pick)).filter(Boolean);
   state.phase = 'matched';
   renderGrid();
   renderReading();
@@ -489,6 +517,7 @@ function onReset() {
   state.question = '';
   state.selectedSpreadKey = 'blank3';
   state.spread = { ...PRESET_SPREADS['blank3'] };
+  state.shuffled78 = [];
   state.shuffled156 = [];
   state.picks = [];
   state.drawn = [];
@@ -499,7 +528,7 @@ function onReset() {
   $('#customPanel').hidden = true;
   $('#customMeaningList').innerHTML = '';
   $$('.spreadOption').forEach(btn => btn.classList.toggle('is-active', btn.dataset.spread === 'blank3'));
-  $('#shuffleText').textContent = '点击下方按钮，系统会在后台随机打乱 156 种唯一编码牌面。';
+  $('#shuffleText').textContent = '点击下方按钮，系统会在后台随机打乱 78 张牌，并固定每张牌的正逆位。';
   renderQuestionEcho();
   renderSpreadEcho();
   renderPickInputs();
@@ -517,13 +546,13 @@ async function onCopy() {
     return;
   }
   const lines = [];
-  lines.push(`Mystic Cat 用户参与式塔罗结果（${new Date().toLocaleString()}）`);
+  lines.push(`Vegebird Tarot 用户参与式塔罗结果（${new Date().toLocaleString()}）`);
   lines.push(`问题：${state.question?.trim() || '未填写'}`);
   lines.push(`牌阵：${state.spread.name}`);
   state.spread.labels.forEach((label, i) => {
     const d = state.drawn[i];
     if (!d) return;
-    lines.push(`${label}：选号 ${d.pick} → ${d.code} → ${d.name}（${d.ori === 'up' ? '正位' : '逆位'}）`);
+    lines.push(`${label}：选择第 ${d.pick} 位 → ${d.name}（${d.ori === 'up' ? '正位' : '逆位'}）`);
     lines.push(`- ${d.ori === 'up' ? d.up : d.rev}`);
   });
   try {
@@ -592,7 +621,7 @@ function bindFlow() {
   });
 
   $('#btnToPick').addEventListener('click', () => {
-    if (!state.shuffled156.length) {
+    if (!state.shuffled78.length) {
       updateHint('先完成洗牌仪式。');
       return;
     }
