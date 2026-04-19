@@ -435,6 +435,7 @@ async function ritualShuffleAnimation() {
   $('#shuffleText').textContent = '洗牌完毕';
   setSequenceMeta('已完成后台洗牌');
   $('#btnShuffle .primaryAction__top').textContent = '重新洗牌';
+  $('#btnToPick').hidden = false;
   updateHint('已完成后台洗牌。现在请为每个牌位输入 1-78 的随机数字。');
 }
 
@@ -524,6 +525,7 @@ function onReset() {
   $$('.spreadOption').forEach(btn => btn.classList.toggle('is-active', btn.dataset.spread === 'blank3'));
   $('#shuffleText').textContent = '';
   $('#btnShuffle .primaryAction__top').textContent = '开始洗牌';
+  $('#btnToPick').hidden = true;
   renderQuestionEcho();
   renderSpreadEcho();
   renderPickInputs();
@@ -608,6 +610,9 @@ function bindFlow() {
     state.spread = spread;
     state.picks = new Array(state.spread.labels.length).fill('');
     state.drawn = [];
+    $('#btnToPick').hidden = true;
+    $('#btnShuffle .primaryAction__top').textContent = '开始洗牌';
+    $('#shuffleText').textContent = '';
     renderSpreadEcho();
     renderPickInputs();
     renderGrid();
