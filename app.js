@@ -301,24 +301,18 @@ function renderGrid() {
     const front = el('div', 'card__face card__front');
     const frame = el('div', 'card__frame');
     const tl = el('div', 'card__corner card__corner--tl');
-    const code = el('div', 'card__code');
     const name = el('div', 'card__name card__name--simple');
-    const subtitle = el('div', 'card__subtitle');
-    const badge = el('div', 'badge');
-    const desc = el('div', 'card__desc');
+    const subtitle = el('div', 'card__subtitle card__subtitle--simple');
     tl.textContent = label;
-    badge.innerHTML = `<span class="badge__dot"></span><span class="badge__txt">未翻开</span>`;
-    front.append(frame, tl, code, name, subtitle, badge, desc);
+    front.append(frame, tl, name, subtitle);
     card.append(back, front);
     const d = state.drawn[i];
     if (d) {
       hydrateCard(card, d, label);
       if (d.revealed) card.classList.add('is-flipped');
     } else {
-      code.textContent = label;
       name.textContent = '等待匹配';
-      subtitle.textContent = '点击后显示牌名与正逆位';
-      desc.textContent = '';
+      subtitle.textContent = '';
     }
     card.addEventListener('click', () => onFlip(i));
     grid.append(card);
@@ -327,11 +321,9 @@ function renderGrid() {
 
 function hydrateCard(cardBtn, draw, label) {
   const front = cardBtn.querySelector('.card__front');
-  front.querySelector('.card__code').textContent = label;
+  front.querySelector('.card__corner--tl').textContent = label;
   front.querySelector('.card__name').textContent = draw.name;
-  front.querySelector('.card__subtitle').textContent = `${draw.ori === 'up' ? '正位' : '逆位'}`;
-  front.querySelector('.badge__txt').textContent = `${label} · ${draw.ori === 'up' ? '正位' : '逆位'}`;
-  front.querySelector('.card__desc').textContent = '';
+  front.querySelector('.card__subtitle').textContent = draw.ori === 'up' ? '正位' : '逆位';
   front.style.transform = 'rotateY(180deg)';
 }
 
