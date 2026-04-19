@@ -110,7 +110,7 @@
             </label>
             <label class="pickSlot">
               <span class="pickSlot__label">牌数</span>
-              <input id="customSpreadCount" class="pickSlot__input" type="number" min="1" max="10" placeholder="1-10" />
+              <input id="customSpreadCount" class="pickSlot__input" type="number" min="1" max="20" placeholder="1-20" />
             </label>
             <div class="customMeaningList" id="customMeaningList"></div>
           </div>
@@ -127,7 +127,7 @@
         </section>
 
         <section class="screen" data-screen="shuffle">
-          <div class="ritualCard">
+          <div class="ritualCard ritualCard--shuffle">
             <div class="ritualCard__eyebrow">RITUAL SHUFFLE</div>
             <div class="ritualOrbWrap">
               <div class="ritualOrb" id="ritualOrb">
@@ -136,26 +136,24 @@
                 <div class="ritualOrb__core"></div>
               </div>
             </div>
-            <h2 class="ritualCard__title">让牌在你看不见的地方重排</h2>
-            <p class="ritualCard__text" id="shuffleText">点击下方按钮，系统会在后台随机打乱 156 种唯一编码牌面。</p>
-            <div class="blindNote">打乱后的顺序不会展示给用户，你只能在下一步盲选数字。</div>
+            <h2 class="ritualCard__title">洗牌模块</h2>
+            <p class="ritualCard__text" id="shuffleText">点击下方按钮，系统会在后台随机打乱 78 张牌，并固定每张牌的正逆位。</p>
           </div>
 
           <div class="bottomActions">
             <button class="secondaryAction" id="btnBackSpread" type="button">返回牌阵</button>
-            <button class="primaryAction" id="btnShuffle" type="button">
-              <span class="primaryAction__top">开始随机打乱</span>
-              <span class="primaryAction__sub">后台生成新的临时牌序</span>
+            <button class="primaryAction primaryAction--single" id="btnShuffle" type="button">
+              <span class="primaryAction__top">开始洗牌</span>
             </button>
             <button class="secondaryAction" id="btnToPick" type="button">去盲选数字</button>
           </div>
         </section>
 
         <section class="screen" data-screen="pick">
-          <div class="sectionCard">
+          <div class="sectionCard sectionCard--compact">
             <div class="sectionCard__eyebrow">BLIND PICK</div>
-            <h2 class="sectionCard__title" id="pickTitle">请为每个牌位输入 1-156 的随机数字</h2>
-            <p class="sectionCard__text" id="pickDesc">你看不到打乱顺序，只能根据直觉盲选数字。</p>
+            <h2 class="sectionCard__title" id="pickTitle">请为每个牌位输入 1-78 的随机数字</h2>
+            <p class="sectionCard__text" id="pickDesc" hidden></p>
           </div>
 
           <div class="pickPanel" id="pickPanel"></div>
@@ -204,7 +202,7 @@
               <span id="sequenceMeta">尚未洗牌</span>
             </div>
             <div class="readingPanel__body" id="reading">
-              <p class="muted">这里会展示：牌位 → 用户选择数字 → 映射编码 → 牌名 → 正逆位 → 简短解读。</p>
+              <p class="muted">这里会展示每张牌的解读内容。</p>
             </div>
           </section>
 

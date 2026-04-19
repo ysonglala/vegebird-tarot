@@ -238,7 +238,7 @@ function renderCustomMeaningInputs() {
   const count = Number($('#customSpreadCount').value);
   const box = $('#customMeaningList');
   box.innerHTML = '';
-  if (!Number.isInteger(count) || count < 1 || count > 10) return;
+  if (!Number.isInteger(count) || count < 1 || count > 20) return;
   for (let i = 0; i < count; i++) {
     const wrap = el('label', 'pickSlot');
     const label = el('span', 'pickSlot__label');
@@ -260,7 +260,7 @@ function buildSpreadFromForm() {
   const inputs = $$('#customMeaningList input');
   const labels = inputs.map(i => i.value.trim()).filter(Boolean);
   if (!name) return { error: '请先填写自定义牌阵名称。' };
-  if (!Number.isInteger(count) || count < 1 || count > 10) return { error: '自定义牌阵张数请输入 1-10。' };
+  if (!Number.isInteger(count) || count < 1 || count > 20) return { error: '自定义牌阵张数请输入 1-20。' };
   if (labels.length !== count) return { error: '请把每一张牌的含义都填完整。' };
   return { key: 'custom', name, labels, desc: `自定义牌阵 · ${count} 张` };
 }
@@ -284,7 +284,7 @@ function renderPickInputs() {
     panel.append(wrap);
   });
   $('#pickTitle').textContent = `请为「${state.spread.name}」的每个牌位输入 1-78 的随机数字`;
-  $('#pickDesc').textContent = `当前共 ${state.spread.labels.length} 个牌位。洗牌完成后，每个数字都对应后台已经固定好的牌面与正逆位。`;
+  $('#pickDesc').textContent = '';
 }
 
 function renderGrid() {
@@ -293,7 +293,7 @@ function renderGrid() {
   const columns = Math.min(3, Math.max(1, state.spread.labels.length));
   grid.style.gridTemplateColumns = `repeat(${columns}, 1fr)`;
   state.spread.labels.forEach((label, i) => {
-    const card = el('button', 'card');
+    const card = el('button', 'card card--simple');
     card.type = 'button';
     card.dataset.slot = String(i);
     card.setAttribute('aria-label', `${label} 牌位`);
@@ -301,27 +301,24 @@ function renderGrid() {
     const front = el('div', 'card__face card__front');
     const frame = el('div', 'card__frame');
     const tl = el('div', 'card__corner card__corner--tl');
-    const br = el('div', 'card__corner card__corner--br');
     const code = el('div', 'card__code');
-    const name = el('div', 'card__name');
+    const name = el('div', 'card__name card__name--simple');
     const subtitle = el('div', 'card__subtitle');
-    const glyph = el('div', 'card__glyph');
     const badge = el('div', 'badge');
     const desc = el('div', 'card__desc');
     tl.textContent = label;
-    br.textContent = label;
     badge.innerHTML = `<span class="badge__dot"></span><span class="badge__txt">未翻开</span>`;
-    front.append(frame, tl, br, code, name, subtitle, glyph, badge, desc);
+    front.append(frame, tl, code, name, subtitle, badge, desc);
     card.append(back, front);
     const d = state.drawn[i];
     if (d) {
       hydrateCard(card, d, label);
       if (d.revealed) card.classList.add('is-flipped');
     } else {
-      code.textContent = `选号：${state.picks[i] || '—'}`;
+      code.textContent = label;
       name.textContent = '等待匹配';
-      subtitle.textContent = `${label} · 用户选定后台已洗好的牌位`;
-      desc.textContent = '点击卡牌翻开';
+      subtitle.textContent = '点击后显示牌名与正逆位';
+      desc.textContent = '';
     }
     card.addEventListener('click', () => onFlip(i));
     grid.append(card);
@@ -330,12 +327,12 @@ function renderGrid() {
 
 function hydrateCard(cardBtn, draw, label) {
   const front = cardBtn.querySelector('.card__front');
-  front.querySelector('.card__code').textContent = `牌位 ${draw.pick} · ${draw.code}`;
+  front.querySelector('.card__code').textContent = label;
   front.querySelector('.card__name').textContent = draw.name;
-  front.querySelector('.card__subtitle').textContent = `${label} · ${draw.arcana} · ${draw.suit}`;
+  front.querySelector('.card__subtitle').textContent = `${draw.ori === 'up' ? '正位' : '逆位'}`;
   front.querySelector('.badge__txt').textContent = `${label} · ${draw.ori === 'up' ? '正位' : '逆位'}`;
-  front.querySelector('.card__desc').textContent = draw.ori === 'up' ? draw.up : draw.rev;
-  front.style.transform = draw.ori === 'rev' ? 'rotateY(180deg) rotate(180deg)' : 'rotateY(180deg)';
+  front.querySelector('.card__desc').textContent = '';
+  front.style.transform = 'rotateY(180deg)';
 }
 
 function buildKeywords(draw) {
@@ -379,7 +376,7 @@ function closeCardDetail() {
 function renderReading() {
   const box = $('#reading');
   if (!state.drawn.length) {
-    box.innerHTML = `<p class="muted">这里会展示：牌位 → 用户选择数字 → 对应牌名 → 正逆位 → 简短解读。</p>`;
+    box.innerHTML = `<p class="muted">这里会展示每张牌的解读内容。</p>`;
     setMeta('尚未匹配结果');
     return;
   }
@@ -395,22 +392,18 @@ function renderReading() {
       k.textContent = `${label} · 未匹配`;
       v.textContent = '等待结果';
     } else {
-      k.textContent = `${label} · 选择第 ${d.pick} 位 · ${d.code}`;
+      k.textContent = `${label}`;
       if (d.revealed) {
-        v.innerHTML = `<strong>${d.name}</strong>（${d.ori === 'up' ? '正位' : '逆位'}）<br><span class="muted">${d.arcana} / ${d.suit}</span><br>${d.ori === 'up' ? d.up : d.rev}`;
+        v.innerHTML = `<strong>${d.name}</strong>（${d.ori === 'up' ? '正位' : '逆位'}）<br>${d.ori === 'up' ? d.up : d.rev}`;
       } else {
-        v.innerHTML = `<strong>${d.name}</strong><br><span class="muted">已映射完成，点击上方卡牌翻开。</span>`;
+        v.innerHTML = `<strong>${d.name}</strong><br><span class="muted">已匹配完成，点击上方卡牌翻开。</span>`;
       }
     }
     c.append(k, v);
     grid.append(c);
   });
-  const note = el('p');
-  note.className = 'muted';
-  note.style.marginTop = '12px';
-  note.textContent = '当前规则：系统会在洗牌阶段同时随机固定 78 张牌的顺序与正逆位；用户之后只能从 1-78 中凭感觉选择牌位，同一牌阵内不会出现重复牌。';
   box.innerHTML = '';
-  box.append(grid, note);
+  box.append(grid);
 }
 
 function getPickValues() {
@@ -425,7 +418,7 @@ function validatePicks(values) {
 }
 
 async function ritualShuffleAnimation() {
-  $('#shuffleText').textContent = '星光正在重新排列牌面…';
+  $('#shuffleText').textContent = '洗牌中…';
   const orb = $('#ritualOrb');
   orb.classList.add('is-busy');
   beep('shuffle');
@@ -439,8 +432,9 @@ async function ritualShuffleAnimation() {
   renderGrid();
   renderReading();
   orb.classList.remove('is-busy');
-  $('#shuffleText').textContent = '牌已经在后台打乱完毕。每张牌的顺序和正逆位都已经固定，你现在只能凭感觉选择 1-78 的牌位。';
-  setSequenceMeta('已完成后台洗牌（顺序与正逆位已固定）');
+  $('#shuffleText').textContent = '洗牌完毕';
+  setSequenceMeta('已完成后台洗牌');
+  $('#btnShuffle .primaryAction__top').textContent = '重新洗牌';
   updateHint('已完成后台洗牌。现在请为每个牌位输入 1-78 的随机数字。');
 }
 
@@ -528,7 +522,8 @@ function onReset() {
   $('#customPanel').hidden = true;
   $('#customMeaningList').innerHTML = '';
   $$('.spreadOption').forEach(btn => btn.classList.toggle('is-active', btn.dataset.spread === 'blank3'));
-  $('#shuffleText').textContent = '点击下方按钮，系统会在后台随机打乱 78 张牌，并固定每张牌的正逆位。';
+  $('#shuffleText').textContent = '';
+  $('#btnShuffle .primaryAction__top').textContent = '开始洗牌';
   renderQuestionEcho();
   renderSpreadEcho();
   renderPickInputs();
@@ -546,13 +541,13 @@ async function onCopy() {
     return;
   }
   const lines = [];
-  lines.push(`Vegebird Tarot 用户参与式塔罗结果（${new Date().toLocaleString()}）`);
+  lines.push(`VEGEBIRD TAROT 用户参与式塔罗结果（${new Date().toLocaleString()}）`);
   lines.push(`问题：${state.question?.trim() || '未填写'}`);
   lines.push(`牌阵：${state.spread.name}`);
   state.spread.labels.forEach((label, i) => {
     const d = state.drawn[i];
     if (!d) return;
-    lines.push(`${label}：选择第 ${d.pick} 位 → ${d.name}（${d.ori === 'up' ? '正位' : '逆位'}）`);
+    lines.push(`${label}：${d.name}（${d.ori === 'up' ? '正位' : '逆位'}）`);
     lines.push(`- ${d.ori === 'up' ? d.up : d.rev}`);
   });
   try {
