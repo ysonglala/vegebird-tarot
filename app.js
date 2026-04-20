@@ -281,7 +281,12 @@ function getCardSummary(draw) {
 function getReadingSummary(draw) {
   const summary = getCardSummary(draw);
   const meaning = getCardMeaning(draw, draw.ori);
-  return summarizeText(summary || meaning, 90) || '暂无摘要。';
+  return summarizeText(summary || meaning, 100) || '暂无摘要。';
+}
+
+function getPositionSummary(draw, label) {
+  const text = `在「${label}」这个牌位上，它更强调：${getCardMeaning(draw, draw.ori)}`;
+  return summarizeText(text, 100) || '暂无牌位摘要。';
 }
 
 function setDetailExpanded(expanded) {
@@ -291,7 +296,7 @@ function setDetailExpanded(expanded) {
   if (box) box.hidden = !state.detailExpanded;
   if (btn) {
     btn.setAttribute('aria-expanded', String(state.detailExpanded));
-    btn.textContent = state.detailExpanded ? '收起完整正逆位牌意' : '展开完整正逆位牌意';
+    btn.textContent = state.detailExpanded ? '收起完整长文牌意' : '展开完整长文牌意';
   }
 }
 
@@ -520,8 +525,7 @@ function buildKeywords(draw) {
 }
 
 function buildPositionMeaning(draw, label) {
-  const base = getCardMeaning(draw, draw.ori);
-  return `在「${label}」这个牌位上，它更强调：${base}`;
+  return getPositionSummary(draw, label);
 }
 
 function openCardDetail(index) {
@@ -545,7 +549,7 @@ function openCardDetail(index) {
   $('#detailPosterNote').textContent = summary ? `当前显示真实牌图 · ${draw.ori === 'up' ? '正位' : '逆位'} · ${summarizeText(summary, 72)}` : `当前显示真实牌图 · ${draw.ori === 'up' ? '正位' : '逆位'}`;
   $('#detailKeywords').textContent = getCardKeywords(draw).join(' · ') || '暂无关键词';
   $('#detailPositionMeaning').textContent = buildPositionMeaning(draw, state.spread.labels[index]);
-  $('#detailSummary').textContent = summary || '暂无基础牌意摘要。';
+  $('#detailSummary').textContent = getReadingSummary(draw);
   $('#detailUp').textContent = getCardMeaning(draw, 'up');
   $('#detailRev').textContent = getCardMeaning(draw, 'rev');
   setDetailExpanded(false);
