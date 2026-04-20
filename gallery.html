@@ -37,7 +37,7 @@
     </div>
 
     <div class="toolbar">
-      <input id="search" class="input" type="text" placeholder="搜索：愚者 / The Fool / 原文件名" />
+      <input id="search" class="input" type="text" placeholder="搜索：愚者 / The Fool" />
       <select id="group" class="select">
         <option value="">全部分组</option>
         <option value="大阿卡纳">大阿卡纳</option>
@@ -59,7 +59,7 @@
       const q = $('#search').value.trim().toLowerCase();
       const g = $('#group').value.trim();
       const list = state.cards.filter(card => {
-        const hitQ = !q || [card.label, card.chineseName, card.englishName, card.sourceName, card.file, card.group].join(' ').toLowerCase().includes(q);
+        const hitQ = !q || [card.label, card.chineseName, card.englishName, card.file, card.group].join(' ').toLowerCase().includes(q);
         const hitG = !g || card.group === g;
         return hitQ && hitG;
       });
@@ -71,7 +71,6 @@
           </a>
           <div class="body">
             <div class="title">${card.label}</div>
-            <div class="desc">原文件：${card.sourceName}</div>
             <div class="tag">${card.group || '未分组'}</div>
           </div>
         </article>
