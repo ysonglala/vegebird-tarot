@@ -168,6 +168,7 @@ const state = {
   phase: 'idle',
   activeDetailIndex: -1,
   activeLightboxIndex: -1,
+  detailExpanded: false,
   tarotDict: {},
   tarotDictLoaded: false,
   _ac: null,
@@ -277,6 +278,23 @@ function getCardSummary(draw) {
   return normalizeDictText(dict?.summary) || draw.subtitle || '';
 }
 
+function getReadingSummary(draw) {
+  const summary = getCardSummary(draw);
+  const meaning = getCardMeaning(draw, draw.ori);
+  return summarizeText(summary || meaning, 90) || '暂无摘要。';
+}
+
+function setDetailExpanded(expanded) {
+  state.detailExpanded = Boolean(expanded);
+  const box = $('#detailFullMeaning');
+  const btn = $('#btnToggleFullMeaning');
+  if (box) box.hidden = !state.detailExpanded;
+  if (btn) {
+    btn.setAttribute('aria-expanded', String(state.detailExpanded));
+    btn.textContent = state.detailExpanded ? '收起完整正逆位牌意' : '展开完整正逆位牌意';
+  }
+}
+
 async function loadTarotDict() {
   try {
     const res = await fetch('assets/tarot-dict-quickref.json', { cache: 'no-cache' });
@@ -284,6 +302,7 @@ async function loadTarotDict() {
     const data = await res.json();
     state.tarotDict = data?.cards || {};
     state.tarotDictLoaded = Object.keys(state.tarotDict).length > 0;
+    updateDictBadge();
     buildBase78();
     buildEncoded156();
     renderGrid();
@@ -295,6 +314,7 @@ async function loadTarotDict() {
     console.warn('Failed to load local tarot dict:', err);
     state.tarotDict = {};
     state.tarotDictLoaded = false;
+    updateDictBadge();
     updateHint('本地牌意库加载失败，当前使用内置简版牌意。');
   }
 }
@@ -359,6 +379,13 @@ function updateSpreadHint(text) {
 
 function setMeta(text) { $('#panelMeta').textContent = text; }
 function setSequenceMeta(text) { $('#sequenceMeta').textContent = text; }
+
+function updateDictBadge() {
+  const badge = $('#dictBadge');
+  if (!badge) return;
+  badge.hidden = !state.tarotDictLoaded;
+  badge.textContent = state.tarotDictLoaded ? `本地牌意库已接入 · ${Object.keys(state.tarotDict || {}).length} 张` : '';
+}
 
 function goToScreen(screen) {
   state.currentScreen = screen;
@@ -518,8 +545,10 @@ function openCardDetail(index) {
   $('#detailPosterNote').textContent = summary ? `当前显示真实牌图 · ${draw.ori === 'up' ? '正位' : '逆位'} · ${summarizeText(summary, 72)}` : `当前显示真实牌图 · ${draw.ori === 'up' ? '正位' : '逆位'}`;
   $('#detailKeywords').textContent = getCardKeywords(draw).join(' · ') || '暂无关键词';
   $('#detailPositionMeaning').textContent = buildPositionMeaning(draw, state.spread.labels[index]);
+  $('#detailSummary').textContent = summary || '暂无基础牌意摘要。';
   $('#detailUp').textContent = getCardMeaning(draw, 'up');
   $('#detailRev').textContent = getCardMeaning(draw, 'rev');
+  setDetailExpanded(false);
   $('#cardDetail').showModal();
 }
 
@@ -572,7 +601,8 @@ function renderReading() {
     } else {
       k.textContent = `${label}`;
       if (d.revealed) {
-        v.innerHTML = `<strong>${d.name}</strong>（${d.ori === 'up' ? '正位' : '逆位'}）<br>${getCardMeaning(d, d.ori)}`;
+        const summary = getReadingSummary(d);
+        v.innerHTML = `<strong>${d.name}</strong>（${d.ori === 'up' ? '正位' : '逆位'}）<div class="readingCard__summary">${summary}</div><span class="readingCard__more">点击牌面查看完整牌义</span>`;
       } else {
         v.innerHTML = `<strong>${d.name}</strong><br><span class="muted">已匹配完成，点击上方卡牌翻开。</span>`;
       }
@@ -818,6 +848,7 @@ function bindActions() {
   $('#btnReset').addEventListener('click', onReset);
   $('#btnCopy').addEventListener('click', onCopy);
   $('#btnCloseDetail').addEventListener('click', closeCardDetail);
+  $('#btnToggleFullMeaning').addEventListener('click', () => setDetailExpanded(!state.detailExpanded));
   $('#detailPosterImage').addEventListener('click', () => openImageLightbox(state.activeDetailIndex));
   $('#btnZoomFromDetail').addEventListener('click', () => openImageLightbox(state.activeDetailIndex));
   $('#btnOpenOriginal').addEventListener('click', () => openOriginalImage(state.activeDetailIndex));
@@ -836,6 +867,7 @@ async function init() {
   setMotion(state.motion);
   renderQuestionEcho();
   renderSpreadEcho();
+  updateDictBadge();
   renderPickInputs();
   renderGrid();
   renderReading();

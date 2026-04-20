@@ -182,7 +182,10 @@
               <div class="resultHeader__eyebrow">READING RESULT</div>
               <div class="resultHeader__title">你的牌已经出现</div>
             </div>
-            <div class="resultHeader__meta" id="panelMeta">尚未匹配结果</div>
+            <div class="resultHeader__side">
+              <div class="dictBadge" id="dictBadge" hidden>本地牌意库已接入</div>
+              <div class="resultHeader__meta" id="panelMeta">尚未匹配结果</div>
+            </div>
           </div>
 
           <div class="questionEcho" id="questionEcho">你的问题：未填写</div>
@@ -287,7 +290,16 @@
           <div class="detailSection__v" id="detailPositionMeaning">-</div>
         </div>
 
-        <div class="detailGrid">
+        <div class="detailSection detailSection--summary">
+          <div class="detailSection__k">基础牌意摘要</div>
+          <div class="detailSection__v" id="detailSummary">-</div>
+        </div>
+
+        <div class="detailExpandBar">
+          <button class="ghost ghost--small" id="btnToggleFullMeaning" type="button" aria-expanded="false">展开完整正逆位牌意</button>
+        </div>
+
+        <div class="detailGrid" id="detailFullMeaning" hidden>
           <div class="detailPanel">
             <div class="detailPanel__title">正位含义</div>
             <div class="detailPanel__body" id="detailUp">-</div>
