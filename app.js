@@ -168,6 +168,8 @@ const state = {
   phase: 'idle',
   activeDetailIndex: -1,
   activeLightboxIndex: -1,
+  tarotDict: {},
+  tarotDictLoaded: false,
   _ac: null,
 };
 
@@ -234,6 +236,67 @@ function buildBase78() {
     }
   }
   state.base78 = cards;
+}
+
+function normalizeDictText(text = '') {
+  return String(text || '')
+    .replace(/^[：:、，\s]+/, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function summarizeText(text = '', limit = 88) {
+  const clean = normalizeDictText(text).replace(/…+/g, '');
+  if (!clean) return '';
+  return clean.length > limit ? `${clean.slice(0, limit).trim()}…` : clean;
+}
+
+function getDictEntry(name) {
+  return state.tarotDict?.[name] || null;
+}
+
+function getCardKeywords(draw) {
+  const dict = getDictEntry(draw.name);
+  const fromSubtitle = buildKeywords(draw);
+  const fromSummary = dict?.summary
+    ? summarizeText(dict.summary, 40).split(/[、，,；;。]/).map(s => s.trim()).filter(Boolean).slice(0, 4)
+    : [];
+  return [...new Set([...(fromSubtitle || []), ...fromSummary])].filter(Boolean).slice(0, 6);
+}
+
+function getCardMeaning(draw, ori = draw.ori) {
+  const dict = getDictEntry(draw.name);
+  const isUp = ori === 'up';
+  const primary = normalizeDictText(isUp ? dict?.up : dict?.rev);
+  const fallback = normalizeDictText(isUp ? draw.up : draw.rev);
+  return primary || fallback || '暂无牌意。';
+}
+
+function getCardSummary(draw) {
+  const dict = getDictEntry(draw.name);
+  return normalizeDictText(dict?.summary) || draw.subtitle || '';
+}
+
+async function loadTarotDict() {
+  try {
+    const res = await fetch('assets/tarot-dict-quickref.json', { cache: 'no-cache' });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    state.tarotDict = data?.cards || {};
+    state.tarotDictLoaded = Object.keys(state.tarotDict).length > 0;
+    buildBase78();
+    buildEncoded156();
+    renderGrid();
+    renderReading();
+    if (state.tarotDictLoaded) {
+      updateHint(`已加载本地牌意库（${Object.keys(state.tarotDict).length} 张）。`);
+    }
+  } catch (err) {
+    console.warn('Failed to load local tarot dict:', err);
+    state.tarotDict = {};
+    state.tarotDictLoaded = false;
+    updateHint('本地牌意库加载失败，当前使用内置简版牌意。');
+  }
 }
 
 function buildEncoded156() {
@@ -430,7 +493,7 @@ function buildKeywords(draw) {
 }
 
 function buildPositionMeaning(draw, label) {
-  const base = draw.ori === 'up' ? draw.up : draw.rev;
+  const base = getCardMeaning(draw, draw.ori);
   return `在「${label}」这个牌位上，它更强调：${base}`;
 }
 
@@ -451,11 +514,12 @@ function openCardDetail(index) {
   poster.src = draw.image;
   poster.alt = `${draw.name} ${draw.ori === 'up' ? '正位' : '逆位'}`;
   poster.classList.toggle('is-reversed', draw.ori === 'rev');
-  $('#detailPosterNote').textContent = `当前显示真实牌图 · ${draw.ori === 'up' ? '正位' : '逆位'}`;
-  $('#detailKeywords').textContent = buildKeywords(draw).join(' · ') || '暂无关键词';
+  const summary = getCardSummary(draw);
+  $('#detailPosterNote').textContent = summary ? `当前显示真实牌图 · ${draw.ori === 'up' ? '正位' : '逆位'} · ${summarizeText(summary, 72)}` : `当前显示真实牌图 · ${draw.ori === 'up' ? '正位' : '逆位'}`;
+  $('#detailKeywords').textContent = getCardKeywords(draw).join(' · ') || '暂无关键词';
   $('#detailPositionMeaning').textContent = buildPositionMeaning(draw, state.spread.labels[index]);
-  $('#detailUp').textContent = draw.up;
-  $('#detailRev').textContent = draw.rev;
+  $('#detailUp').textContent = getCardMeaning(draw, 'up');
+  $('#detailRev').textContent = getCardMeaning(draw, 'rev');
   $('#cardDetail').showModal();
 }
 
@@ -508,7 +572,7 @@ function renderReading() {
     } else {
       k.textContent = `${label}`;
       if (d.revealed) {
-        v.innerHTML = `<strong>${d.name}</strong>（${d.ori === 'up' ? '正位' : '逆位'}）<br>${d.ori === 'up' ? d.up : d.rev}`;
+        v.innerHTML = `<strong>${d.name}</strong>（${d.ori === 'up' ? '正位' : '逆位'}）<br>${getCardMeaning(d, d.ori)}`;
       } else {
         v.innerHTML = `<strong>${d.name}</strong><br><span class="muted">已匹配完成，点击上方卡牌翻开。</span>`;
       }
@@ -664,7 +728,9 @@ async function onCopy() {
     const d = state.drawn[i];
     if (!d) return;
     lines.push(`${label}：${d.name}（${d.ori === 'up' ? '正位' : '逆位'}）`);
-    lines.push(`- ${d.ori === 'up' ? d.up : d.rev}`);
+    lines.push(`- ${getCardMeaning(d, d.ori)}`);
+    const summary = getCardSummary(d);
+    if (summary) lines.push(`- 基调：${summarizeText(summary, 120)}`);
   });
   try {
     await navigator.clipboard.writeText(lines.join('\n'));
@@ -763,7 +829,7 @@ function bindActions() {
   $('#btnLightboxOpenOriginal').addEventListener('click', () => openOriginalImage(state.activeLightboxIndex));
 }
 
-function init() {
+async function init() {
   setupStars();
   buildBase78();
   buildEncoded156();
@@ -781,6 +847,7 @@ function init() {
   updateSpreadHint('当前默认牌阵：无牌阵三张。');
   updateHint('提示：先输入问题，再选择牌阵。');
   setSequenceMeta('尚未洗牌');
+  await loadTarotDict();
 }
 
 init();
