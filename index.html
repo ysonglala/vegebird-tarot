@@ -66,6 +66,8 @@
             <span class="primaryAction__top">下一步：选择牌阵</span>
             <span class="primaryAction__sub">默认会预选“无牌阵三张”</span>
           </button>
+
+          <a class="secondaryAction" href="gallery.html" style="display:block;text-align:center;text-decoration:none;">打开本地牌图库（已导入 78 张）</a>
         </section>
 
         <section class="screen" data-screen="spread">
@@ -259,8 +261,15 @@
       </div>
       <div class="modal__body detailBody">
         <div class="detailPoster">
-          <div class="detailPoster__art">IMAGE COMING SOON</div>
-          <div class="detailPoster__note">后续这里会接入美漫画风改编牌图</div>
+          <div class="detailPoster__art detailPoster__art--imageWrap">
+            <img id="detailPosterImage" class="detailPoster__image" alt="塔罗牌详情图" />
+          </div>
+          <div class="detailPoster__note" id="detailPosterNote">当前显示真实牌图</div>
+        </div>
+
+        <div class="pillActions">
+          <button class="ghost ghost--small" id="btnZoomFromDetail" type="button">放大查看</button>
+          <button class="ghost ghost--small" id="btnOpenOriginal" type="button">打开原图</button>
         </div>
 
         <div class="detailSection">
@@ -293,6 +302,25 @@
           <div class="detailSection__k">当前抽到</div>
           <div class="detailSection__v" id="detailCurrent">-</div>
         </div>
+      </div>
+    </div>
+  </dialog>
+
+  <dialog class="modal modal--image" id="imageLightbox" aria-label="牌图预览">
+    <div class="modal__card imageLightbox">
+      <div class="modal__head">
+        <div>
+          <div class="modal__title">牌图预览</div>
+          <div class="modal__sub" id="lightboxMeta">查看更大的真实牌图</div>
+        </div>
+        <button class="x" id="btnCloseLightbox" type="button" aria-label="关闭">×</button>
+      </div>
+      <div class="modal__body imageLightbox__body">
+        <img id="lightboxImage" class="imageLightbox__image" alt="塔罗牌大图预览" />
+      </div>
+      <div class="modal__foot">
+        <button class="btn" id="btnLightboxDetail" type="button">查看牌义详情</button>
+        <button class="btn btn--primary" id="btnLightboxOpenOriginal" type="button">打开原图</button>
       </div>
     </div>
   </dialog>

@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vegebird Tarot · 本地牌图库</title>
+  <style>
+    :root{
+      --bg:#090814;--card:#141126;--line:rgba(255,255,255,.08);--text:#f6f2ff;--muted:rgba(246,242,255,.68);--gold:#f0cd7a;
+    }
+    *{box-sizing:border-box} body{margin:0;font-family:"Noto Serif SC","PingFang SC","Microsoft YaHei",serif;background:radial-gradient(circle at top, #1b1638, #090814 55%);color:var(--text)}
+    .wrap{max-width:1280px;margin:0 auto;padding:24px}
+    .hero{display:flex;justify-content:space-between;gap:16px;align-items:flex-end;flex-wrap:wrap;margin-bottom:22px}
+    h1{margin:0;font-size:28px}
+    .sub{color:var(--muted);margin-top:8px;line-height:1.7}
+    .meta{padding:10px 14px;border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.04);color:var(--muted)}
+    .toolbar{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin:18px 0 22px}
+    .input,.select{background:var(--card);color:var(--text);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:16px}
+    .item{background:rgba(20,17,38,.92);border:1px solid var(--line);border-radius:18px;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,.28)}
+    .thumb{aspect-ratio:3/4.5;background:#0f0c1f;display:block;width:100%;object-fit:cover}
+    .body{padding:12px}
+    .title{font-weight:700}
+    .desc{font-size:12px;color:var(--muted);margin-top:6px;line-height:1.6;word-break:break-all}
+    .tag{display:inline-block;margin-top:8px;padding:4px 8px;border-radius:999px;border:1px solid rgba(240,205,122,.25);color:var(--gold);font-size:12px}
+    a{color:inherit}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="hero">
+      <div>
+        <h1>Vegebird Tarot 本地牌图库</h1>
+        <div class="sub">已导入并识别本地 78 张塔罗牌图，现可按大阿卡纳 / 权杖 / 圣杯 / 宝剑 / 星币分组浏览，也可直接搜索中英文牌名。</div>
+      </div>
+      <div class="meta" id="meta">加载中…</div>
+    </div>
+
+    <div class="toolbar">
+      <input id="search" class="input" type="text" placeholder="搜索：愚者 / The Fool / 原文件名" />
+      <select id="group" class="select">
+        <option value="">全部分组</option>
+        <option value="大阿卡纳">大阿卡纳</option>
+        <option value="圣杯">圣杯</option>
+        <option value="权杖">权杖</option>
+        <option value="宝剑">宝剑</option>
+        <option value="星币">星币</option>
+      </select>
+    </div>
+
+    <div class="grid" id="grid"></div>
+  </div>
+
+  <script>
+    const state = { cards: [] };
+    const $ = s => document.querySelector(s);
+
+    function render() {
+      const q = $('#search').value.trim().toLowerCase();
+      const g = $('#group').value.trim();
+      const list = state.cards.filter(card => {
+        const hitQ = !q || [card.label, card.chineseName, card.englishName, card.sourceName, card.file, card.group].join(' ').toLowerCase().includes(q);
+        const hitG = !g || card.group === g;
+        return hitQ && hitG;
+      });
+      $('#meta').textContent = `共 ${state.cards.length} 张｜当前显示 ${list.length} 张`;
+      $('#grid').innerHTML = list.map(card => `
+        <article class="item">
+          <a href="${card.file}" target="_blank" rel="noreferrer">
+            <img class="thumb" src="${card.file}" alt="${card.label}" loading="lazy" />
+          </a>
+          <div class="body">
+            <div class="title">${card.label}</div>
+            <div class="desc">原文件：${card.sourceName}</div>
+            <div class="tag">${card.group || '未分组'}</div>
+          </div>
+        </article>
+      `).join('');
+    }
+
+    fetch('./assets/imported-deck-manifest.json')
+      .then(r => r.json())
+      .then(data => {
+        state.cards = data.cards || [];
+        render();
+      });
+
+    $('#search').addEventListener('input', render);
+    $('#group').addEventListener('change', render);
+  </script>
+</body>
+</html>

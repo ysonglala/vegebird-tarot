@@ -71,6 +71,86 @@ const PRESET_SPREADS = {
 };
 
 const STEP_ORDER = ['intro', 'spread', 'shuffle', 'pick', 'result'];
+const CARD_IMAGE_BY_NAME = {
+  '愚者': 'assets/imported-deck/card-01.png',
+  '魔术师': 'assets/imported-deck/card-02.png',
+  '女祭司': 'assets/imported-deck/card-03.png',
+  '女皇': 'assets/imported-deck/card-04.png',
+  '皇帝': 'assets/imported-deck/card-05.png',
+  '教皇': 'assets/imported-deck/card-06.png',
+  '恋人': 'assets/imported-deck/card-07.png',
+  '战车': 'assets/imported-deck/card-08.png',
+  '力量': 'assets/imported-deck/card-09.png',
+  '隐者': 'assets/imported-deck/card-10.png',
+  '命运之轮': 'assets/imported-deck/card-11.png',
+  '倒吊人': 'assets/imported-deck/card-12.png',
+  '死神': 'assets/imported-deck/card-13.png',
+  '塔': 'assets/imported-deck/card-14.png',
+  '月亮': 'assets/imported-deck/card-15.png',
+  '星星': 'assets/imported-deck/card-16.png',
+  '节制': 'assets/imported-deck/card-17.png',
+  '恶魔': 'assets/imported-deck/card-18.png',
+  '太阳': 'assets/imported-deck/card-19.png',
+  '世界': 'assets/imported-deck/card-20.png',
+  '正义': 'assets/imported-deck/card-21.png',
+  '圣杯王牌': 'assets/imported-deck/card-22.png',
+  '圣杯国王': 'assets/imported-deck/card-23.png',
+  '圣杯王后': 'assets/imported-deck/card-24.png',
+  '圣杯骑士': 'assets/imported-deck/card-25.png',
+  '圣杯侍从': 'assets/imported-deck/card-26.png',
+  '圣杯二': 'assets/imported-deck/card-27.png',
+  '圣杯三': 'assets/imported-deck/card-28.png',
+  '圣杯四': 'assets/imported-deck/card-29.png',
+  '圣杯五': 'assets/imported-deck/card-30.png',
+  '圣杯八': 'assets/imported-deck/card-31.png',
+  '圣杯十': 'assets/imported-deck/card-32.png',
+  '圣杯九': 'assets/imported-deck/card-33.png',
+  '圣杯七': 'assets/imported-deck/card-34.png',
+  '圣杯六': 'assets/imported-deck/card-35.png',
+  '权杖王牌': 'assets/imported-deck/card-36.png',
+  '权杖二': 'assets/imported-deck/card-37.png',
+  '权杖三': 'assets/imported-deck/card-38.png',
+  '权杖四': 'assets/imported-deck/card-39.png',
+  '权杖六': 'assets/imported-deck/card-40.png',
+  '权杖七': 'assets/imported-deck/card-41.png',
+  '权杖五': 'assets/imported-deck/card-42.png',
+  '权杖八': 'assets/imported-deck/card-43.png',
+  '权杖九': 'assets/imported-deck/card-44.png',
+  '权杖侍从': 'assets/imported-deck/card-45.png',
+  '权杖骑士': 'assets/imported-deck/card-46.png',
+  '权杖王后': 'assets/imported-deck/card-47.png',
+  '权杖国王': 'assets/imported-deck/card-48.png',
+  '权杖十': 'assets/imported-deck/card-49.png',
+  '星币王牌': 'assets/imported-deck/card-50.png',
+  '星币二': 'assets/imported-deck/card-51.png',
+  '星币三': 'assets/imported-deck/card-52.png',
+  '星币五': 'assets/imported-deck/card-53.png',
+  '星币四': 'assets/imported-deck/card-54.png',
+  '星币六': 'assets/imported-deck/card-55.png',
+  '星币七': 'assets/imported-deck/card-56.png',
+  '星币八': 'assets/imported-deck/card-57.png',
+  '星币十': 'assets/imported-deck/card-58.png',
+  '星币侍从': 'assets/imported-deck/card-59.png',
+  '星币骑士': 'assets/imported-deck/card-60.png',
+  '星币王后': 'assets/imported-deck/card-61.png',
+  '星币国王': 'assets/imported-deck/card-62.png',
+  '星币九': 'assets/imported-deck/card-63.png',
+  '宝剑王牌': 'assets/imported-deck/card-64.png',
+  '宝剑二': 'assets/imported-deck/card-65.png',
+  '宝剑三': 'assets/imported-deck/card-66.png',
+  '宝剑四': 'assets/imported-deck/card-67.png',
+  '宝剑五': 'assets/imported-deck/card-68.png',
+  '宝剑六': 'assets/imported-deck/card-69.png',
+  '宝剑七': 'assets/imported-deck/card-70.png',
+  '宝剑八': 'assets/imported-deck/card-71.png',
+  '宝剑九': 'assets/imported-deck/card-72.png',
+  '宝剑骑士': 'assets/imported-deck/card-73.png',
+  '宝剑侍从': 'assets/imported-deck/card-74.png',
+  '宝剑王后': 'assets/imported-deck/card-75.png',
+  '宝剑国王': 'assets/imported-deck/card-76.png',
+  '宝剑十': 'assets/imported-deck/card-77.png',
+  '审判': 'assets/imported-deck/card-78.png'
+};
 
 const state = {
   motion: 0.70,
@@ -87,6 +167,7 @@ const state = {
   spread: { ...PRESET_SPREADS['blank3'] },
   phase: 'idle',
   activeDetailIndex: -1,
+  activeLightboxIndex: -1,
   _ac: null,
 };
 
@@ -137,7 +218,7 @@ function setupStars() {
 
 function buildBase78() {
   const cards = [];
-  MAJOR.forEach((card, i) => cards.push({ number: i + 1, arcana: '大阿卡纳', suit: '大阿卡纳', rank: card.name, name: card.name, subtitle: card.subtitle, up: card.up, rev: card.rev }));
+  MAJOR.forEach((card, i) => cards.push({ number: i + 1, arcana: '大阿卡纳', suit: '大阿卡纳', rank: card.name, name: card.name, subtitle: card.subtitle, up: card.up, rev: card.rev, image: CARD_IMAGE_BY_NAME[card.name] || '' }));
   let number = 23;
   for (const suit of SUITS) {
     for (const rank of MINOR_RANKS) {
@@ -147,6 +228,7 @@ function buildBase78() {
         arcana: '小阿卡纳', suit: suit.name, rank, name, subtitle: suit.subtitle,
         up: `${name}正位：这股 ${suit.subtitle.split(' / ')[0]} 能量更适合被正面使用，主动推进会比犹豫更有结果。`,
         rev: `${name}逆位：${suit.subtitle.split(' / ')[0]} 能量出现阻塞、迟疑或失衡，先整理状态再决定下一步。`,
+        image: CARD_IMAGE_BY_NAME[name] || '',
       });
       number += 1;
     }
@@ -301,10 +383,17 @@ function renderGrid() {
     const front = el('div', 'card__face card__front');
     const frame = el('div', 'card__frame');
     const tl = el('div', 'card__corner card__corner--tl');
+    const media = el('div', 'card__media');
+    const img = el('img', 'card__image');
+    const overlay = el('div', 'card__overlay');
+    const meta = el('div', 'card__meta');
     const name = el('div', 'card__name card__name--simple');
     const subtitle = el('div', 'card__subtitle card__subtitle--simple');
     tl.textContent = label;
-    front.append(frame, tl, name, subtitle);
+    img.alt = `${label} 牌位图片`;
+    media.append(img, overlay);
+    meta.append(name, subtitle);
+    front.append(frame, tl, media, meta);
     card.append(back, front);
     const d = state.drawn[i];
     if (d) {
@@ -324,6 +413,12 @@ function hydrateCard(cardBtn, draw, label) {
   front.querySelector('.card__corner--tl').textContent = label;
   front.querySelector('.card__name').textContent = draw.name;
   front.querySelector('.card__subtitle').textContent = draw.ori === 'up' ? '正位' : '逆位';
+  const img = front.querySelector('.card__image');
+  if (img) {
+    img.src = draw.image;
+    img.alt = `${draw.name} ${draw.ori === 'up' ? '正位' : '逆位'}`;
+    img.classList.toggle('is-reversed', draw.ori === 'rev');
+  }
   front.style.transform = 'rotateY(180deg)';
 }
 
@@ -352,12 +447,40 @@ function openCardDetail(index) {
     chip.textContent = text;
     chips.append(chip);
   });
+  const poster = $('#detailPosterImage');
+  poster.src = draw.image;
+  poster.alt = `${draw.name} ${draw.ori === 'up' ? '正位' : '逆位'}`;
+  poster.classList.toggle('is-reversed', draw.ori === 'rev');
+  $('#detailPosterNote').textContent = `当前显示真实牌图 · ${draw.ori === 'up' ? '正位' : '逆位'}`;
   $('#detailKeywords').textContent = buildKeywords(draw).join(' · ') || '暂无关键词';
   $('#detailPositionMeaning').textContent = buildPositionMeaning(draw, state.spread.labels[index]);
   $('#detailUp').textContent = draw.up;
   $('#detailRev').textContent = draw.rev;
   $('#detailCurrent').textContent = `本次抽到的是 ${draw.ori === 'up' ? '正位' : '逆位'}，对应后台洗牌后的第 ${draw.pick} 位。`;
   $('#cardDetail').showModal();
+}
+
+function openImageLightbox(index) {
+  const draw = state.drawn[index];
+  if (!draw) return;
+  state.activeLightboxIndex = index;
+  const img = $('#lightboxImage');
+  img.src = draw.image;
+  img.alt = `${draw.name} ${draw.ori === 'up' ? '正位' : '逆位'}`;
+  img.classList.toggle('is-reversed', draw.ori === 'rev');
+  $('#lightboxMeta').textContent = `${draw.name} · ${draw.ori === 'up' ? '正位' : '逆位'} · 点击外部可关闭`;
+  $('#imageLightbox').showModal();
+}
+
+function closeImageLightbox() {
+  const dlg = $('#imageLightbox');
+  if (dlg.open) dlg.close();
+}
+
+function openOriginalImage(index = state.activeDetailIndex) {
+  const draw = state.drawn[index];
+  if (!draw?.image) return;
+  window.open(draw.image, '_blank', 'noopener,noreferrer');
 }
 
 function closeCardDetail() {
@@ -481,7 +604,7 @@ function onFlip(slot) {
     renderReading();
     return;
   }
-  openCardDetail(slot);
+  openImageLightbox(slot);
 }
 
 function onRevealAll() {
@@ -630,6 +753,15 @@ function bindActions() {
   $('#btnReset').addEventListener('click', onReset);
   $('#btnCopy').addEventListener('click', onCopy);
   $('#btnCloseDetail').addEventListener('click', closeCardDetail);
+  $('#detailPosterImage').addEventListener('click', () => openImageLightbox(state.activeDetailIndex));
+  $('#btnZoomFromDetail').addEventListener('click', () => openImageLightbox(state.activeDetailIndex));
+  $('#btnOpenOriginal').addEventListener('click', () => openOriginalImage(state.activeDetailIndex));
+  $('#btnCloseLightbox').addEventListener('click', closeImageLightbox);
+  $('#btnLightboxDetail').addEventListener('click', () => {
+    closeImageLightbox();
+    openCardDetail(state.activeLightboxIndex);
+  });
+  $('#btnLightboxOpenOriginal').addEventListener('click', () => openOriginalImage(state.activeLightboxIndex));
 }
 
 function init() {
