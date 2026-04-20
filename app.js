@@ -387,12 +387,7 @@ function updateSpreadHint(text) {
 function setMeta(text) { $('#panelMeta').textContent = text; }
 function setSequenceMeta(text) { $('#sequenceMeta').textContent = text; }
 
-function updateDictBadge() {
-  const badge = $('#dictBadge');
-  if (!badge) return;
-  badge.hidden = !state.tarotDictLoaded;
-  badge.textContent = state.tarotDictLoaded ? `本地牌意库已接入 · ${Object.keys(state.tarotDict || {}).length} 张` : '';
-}
+function updateDictBadge() {}
 
 function goToScreen(screen) {
   state.currentScreen = screen;
@@ -603,8 +598,8 @@ function renderReading() {
     } else {
       k.textContent = `${label}`;
       if (d.revealed) {
-        const summary = getReadingSummary(d);
-        v.innerHTML = `<strong>${d.name}</strong>（${d.ori === 'up' ? '正位' : '逆位'}）<div class="readingCard__summary">${summary}</div><span class="readingCard__more">点击牌面查看完整牌义</span>`;
+        const keywords = getCardKeywords(d).join(' · ') || '暂无关键词';
+        v.innerHTML = `<strong>${d.name}</strong>（${d.ori === 'up' ? '正位' : '逆位'}）<div class="readingCard__summary">关键词：${keywords}</div><span class="readingCard__more">点击牌面查看完整牌义</span>`;
       } else {
         v.innerHTML = `<strong>${d.name}</strong><br><span class="muted">已匹配完成，点击上方卡牌翻开。</span>`;
       }
