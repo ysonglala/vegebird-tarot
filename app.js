@@ -303,27 +303,34 @@ function setDetailExpanded(expanded) {
 }
 
 async function loadTarotDict() {
-  try {
-    const res = await fetch('assets/tarot-dict-quickref.json', { cache: 'no-cache' });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const data = await res.json();
-    state.tarotDict = data?.cards || {};
-    state.tarotDictLoaded = Object.keys(state.tarotDict).length > 0;
-    updateDictBadge();
-    buildBase78();
-    buildEncoded156();
-    renderGrid();
-    renderReading();
-    if (state.tarotDictLoaded) {
-      updateHint(`已加载本地牌意库（${Object.keys(state.tarotDict).length} 张）。`);
+  const candidates = [
+    'assets/tarot-dict-display.json',
+    'assets/tarot-dict-quickref.json',
+  ];
+  for (const url of candidates) {
+    try {
+      const res = await fetch(url, { cache: 'no-cache' });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      state.tarotDict = data?.cards || {};
+      state.tarotDictLoaded = Object.keys(state.tarotDict).length > 0;
+      updateDictBadge();
+      buildBase78();
+      buildEncoded156();
+      renderGrid();
+      renderReading();
+      if (state.tarotDictLoaded) {
+        updateHint(`已加载本地牌意库（${Object.keys(state.tarotDict).length} 张）。`);
+        return;
+      }
+    } catch (err) {
+      console.warn(`Failed to load tarot dict from ${url}:`, err);
     }
-  } catch (err) {
-    console.warn('Failed to load local tarot dict:', err);
-    state.tarotDict = {};
-    state.tarotDictLoaded = false;
-    updateDictBadge();
-    updateHint('本地牌意库加载失败，当前使用内置简版牌意。');
   }
+  state.tarotDict = {};
+  state.tarotDictLoaded = false;
+  updateDictBadge();
+  updateHint('本地牌意库加载失败，当前使用内置简版牌意。');
 }
 
 function buildEncoded156() {
