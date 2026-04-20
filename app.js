@@ -259,12 +259,12 @@ function getDictEntry(name) {
 function getCardKeywords(draw) {
   const dict = getDictEntry(draw.name);
   const fromSite = normalizeDictText(dict?.keywords);
-  if (fromSite) return fromSite.split(/[、，,；;。]/).map(s => s.trim()).filter(Boolean).slice(0, 6);
+  if (fromSite) return fromSite.split(/[、，,；;。]/).map(s => s.trim()).filter(Boolean);
   const fromSubtitle = buildKeywords(draw);
   const fromSummary = dict?.summary
-    ? summarizeText(dict.summary, 40).split(/[、，,；;。]/).map(s => s.trim()).filter(Boolean).slice(0, 4)
+    ? summarizeText(dict.summary, 80).split(/[、，,；;。]/).map(s => s.trim()).filter(Boolean)
     : [];
-  return [...new Set([...(fromSubtitle || []), ...fromSummary])].filter(Boolean).slice(0, 6);
+  return [...new Set([...(fromSubtitle || []), ...fromSummary])].filter(Boolean);
 }
 
 function getCardMeaning(draw, ori = draw.ori) {
@@ -273,6 +273,14 @@ function getCardMeaning(draw, ori = draw.ori) {
   const primary = normalizeDictText(isUp ? (dict?.up || dict?.upright) : (dict?.rev || dict?.reversed));
   const fallback = normalizeDictText(isUp ? draw.up : draw.rev);
   return primary || fallback || '暂无牌意。';
+}
+
+function getCardMeaningKeywords(draw, ori = draw.ori) {
+  const dict = getDictEntry(draw.name);
+  const isUp = ori === 'up';
+  const raw = normalizeDictText(isUp ? (dict?.up_keywords || dict?.upright_keywords) : (dict?.rev_keywords || dict?.reversed_keywords));
+  if (raw) return raw;
+  return getCardKeywords(draw).join(' · ') || '暂无关键词';
 }
 
 function getCardSummary(draw) {
@@ -551,7 +559,9 @@ function openCardDetail(index) {
   poster.classList.toggle('is-reversed', draw.ori === 'rev');
   $('#detailPosterNote').textContent = `当前显示真实牌图 · ${draw.ori === 'up' ? '正位' : '逆位'}`;
   $('#detailKeywords').textContent = getCardKeywords(draw).join(' · ') || '暂无关键词';
+  $('#detailUpKeywords').textContent = getCardMeaningKeywords(draw, 'up');
   $('#detailUp').textContent = getCardMeaning(draw, 'up');
+  $('#detailRevKeywords').textContent = getCardMeaningKeywords(draw, 'rev');
   $('#detailRev').textContent = getCardMeaning(draw, 'rev');
   $('#cardDetail').showModal();
 }
