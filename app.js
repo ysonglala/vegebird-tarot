@@ -456,7 +456,6 @@ function openCardDetail(index) {
   $('#detailPositionMeaning').textContent = buildPositionMeaning(draw, state.spread.labels[index]);
   $('#detailUp').textContent = draw.up;
   $('#detailRev').textContent = draw.rev;
-  $('#detailCurrent').textContent = `本次抽到的是 ${draw.ori === 'up' ? '正位' : '逆位'}，对应后台洗牌后的第 ${draw.pick} 位。`;
   $('#cardDetail').showModal();
 }
 
