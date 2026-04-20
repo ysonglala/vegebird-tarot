@@ -258,6 +258,8 @@ function getDictEntry(name) {
 
 function getCardKeywords(draw) {
   const dict = getDictEntry(draw.name);
+  const fromSite = normalizeDictText(dict?.keywords);
+  if (fromSite) return fromSite.split(/[、，,；;。]/).map(s => s.trim()).filter(Boolean).slice(0, 6);
   const fromSubtitle = buildKeywords(draw);
   const fromSummary = dict?.summary
     ? summarizeText(dict.summary, 40).split(/[、，,；;。]/).map(s => s.trim()).filter(Boolean).slice(0, 4)
@@ -268,7 +270,7 @@ function getCardKeywords(draw) {
 function getCardMeaning(draw, ori = draw.ori) {
   const dict = getDictEntry(draw.name);
   const isUp = ori === 'up';
-  const primary = normalizeDictText(isUp ? dict?.up : dict?.rev);
+  const primary = normalizeDictText(isUp ? (dict?.up || dict?.upright) : (dict?.rev || dict?.reversed));
   const fallback = normalizeDictText(isUp ? draw.up : draw.rev);
   return primary || fallback || '暂无牌意。';
 }
@@ -545,14 +547,10 @@ function openCardDetail(index) {
   poster.src = draw.image;
   poster.alt = `${draw.name} ${draw.ori === 'up' ? '正位' : '逆位'}`;
   poster.classList.toggle('is-reversed', draw.ori === 'rev');
-  const summary = getCardSummary(draw);
-  $('#detailPosterNote').textContent = summary ? `当前显示真实牌图 · ${draw.ori === 'up' ? '正位' : '逆位'} · ${summarizeText(summary, 72)}` : `当前显示真实牌图 · ${draw.ori === 'up' ? '正位' : '逆位'}`;
+  $('#detailPosterNote').textContent = `当前显示真实牌图 · ${draw.ori === 'up' ? '正位' : '逆位'}`;
   $('#detailKeywords').textContent = getCardKeywords(draw).join(' · ') || '暂无关键词';
-  $('#detailPositionMeaning').textContent = buildPositionMeaning(draw, state.spread.labels[index]);
-  $('#detailSummary').textContent = getReadingSummary(draw);
   $('#detailUp').textContent = getCardMeaning(draw, 'up');
   $('#detailRev').textContent = getCardMeaning(draw, 'rev');
-  setDetailExpanded(false);
   $('#cardDetail').showModal();
 }
 
@@ -852,7 +850,6 @@ function bindActions() {
   $('#btnReset').addEventListener('click', onReset);
   $('#btnCopy').addEventListener('click', onCopy);
   $('#btnCloseDetail').addEventListener('click', closeCardDetail);
-  $('#btnToggleFullMeaning').addEventListener('click', () => setDetailExpanded(!state.detailExpanded));
   $('#detailPosterImage').addEventListener('click', () => openImageLightbox(state.activeDetailIndex));
   $('#btnZoomFromDetail').addEventListener('click', () => openImageLightbox(state.activeDetailIndex));
   $('#btnOpenOriginal').addEventListener('click', () => openOriginalImage(state.activeDetailIndex));
