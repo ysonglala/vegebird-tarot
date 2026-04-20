@@ -252,79 +252,26 @@ function summarizeText(text = '', limit = 88) {
   return clean.length > limit ? `${clean.slice(0, limit).trim()}…` : clean;
 }
 
-function splitKeywordText(text = '') {
-  return normalizeDictText(text)
-    .split(/[、，,；;。\n/]/)
-    .map(s => s.trim())
-    .filter(Boolean);
-}
-
-function dedupeKeywords(items = []) {
-  const seen = new Set();
-  return items.filter(item => {
-    const k = item.trim();
-    if (!k || seen.has(k)) return false;
-    seen.add(k);
-    return true;
-  });
-}
-
-function autoKeywordsFromMeaning(text = '', limit = 5) {
-  const raw = normalizeDictText(text)
-    .replace(/[：:]/g, '，')
-    .split(/[、，,；;。\n/]/)
-    .map(s => s.trim())
-    .filter(Boolean)
-    .map(s => s.replace(/^(表示|代表|意味著?|意味着|说明|显示|通常|可能|也可|也代表)/, '').trim())
-    .filter(Boolean);
-  return dedupeKeywords(raw).slice(0, limit);
-}
-
-function summarizeMeaningText(text = '', limit = 200) {
-  const clean = normalizeDictText(text)
-    .replace(/^[：:，,；;]+/, '')
-    .replace(/(网页资料|笔记|总基调)[：:].*$/g, '')
-    .trim();
-  if (!clean) return '';
-  const sentences = clean
-    .split(/(?<=[。！？!?；;])/)
-    .map(s => s.trim())
-    .filter(Boolean);
-  let out = '';
-  for (const s of sentences) {
-    const next = out ? `${out}${s}` : s;
-    if (next.length > limit) break;
-    out = next;
-    if (out.length >= Math.min(90, limit)) break;
-  }
-  if (!out) out = clean.slice(0, limit).trim();
-  return out.length > limit ? `${out.slice(0, limit).trim()}…` : out;
-}
-
 function getDictEntry(name) {
   return state.tarotDict?.[name] || null;
 }
 
 function getCardKeywords(draw) {
   const dict = getDictEntry(draw.name);
-  const fromSite = splitKeywordText(dict?.keywords);
-  if (fromSite.length) return dedupeKeywords(fromSite).slice(0, 5);
-  const fromSummary = splitKeywordText(dict?.summary);
-  const fromMeaning = autoKeywordsFromMeaning(dict?.up || dict?.rev || '');
+  const fromSite = normalizeDictText(dict?.keywords);
+  if (fromSite) return fromSite.split(/[、，,；;。]/).map(s => s.trim()).filter(Boolean).slice(0, 6);
   const fromSubtitle = buildKeywords(draw);
-  return dedupeKeywords([
-    ...fromSite,
-    ...fromMeaning,
-    ...fromSummary,
-    ...(fromSubtitle || []),
-  ]).slice(0, 5);
+  const fromSummary = dict?.summary
+    ? summarizeText(dict.summary, 40).split(/[、，,；;。]/).map(s => s.trim()).filter(Boolean).slice(0, 4)
+    : [];
+  return [...new Set([...(fromSubtitle || []), ...fromSummary])].filter(Boolean).slice(0, 6);
 }
 
 function getCardMeaning(draw, ori = draw.ori) {
   const dict = getDictEntry(draw.name);
   const isUp = ori === 'up';
-  const primary = summarizeMeaningText(isUp ? (dict?.up || dict?.upright) : (dict?.rev || dict?.reversed), 200);
-  const fallback = summarizeMeaningText(isUp ? draw.up : draw.rev, 200);
+  const primary = normalizeDictText(isUp ? (dict?.up || dict?.upright) : (dict?.rev || dict?.reversed));
+  const fallback = normalizeDictText(isUp ? draw.up : draw.rev);
   return primary || fallback || '暂无牌意。';
 }
 
