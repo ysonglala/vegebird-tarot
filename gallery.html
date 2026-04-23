@@ -8,7 +8,8 @@
     :root{
       --bg:#090814;--card:#141126;--line:rgba(255,255,255,.08);--text:#f6f2ff;--muted:rgba(246,242,255,.68);--gold:#f0cd7a;
     }
-    *{box-sizing:border-box} body{margin:0;font-family:"Noto Serif SC","PingFang SC","Microsoft YaHei",serif;background:radial-gradient(circle at top, #1b1638, #090814 55%);color:var(--text)}
+    *{box-sizing:border-box}
+    body{margin:0;font-family:"Noto Serif SC","PingFang SC","Microsoft YaHei",serif;background:radial-gradient(circle at top, #1b1638, #090814 55%);color:var(--text)}
     .wrap{max-width:1280px;margin:0 auto;padding:24px}
     .hero{display:flex;justify-content:space-between;gap:16px;align-items:flex-end;flex-wrap:wrap;margin-bottom:22px}
     h1{margin:0;font-size:28px}
@@ -17,13 +18,32 @@
     .toolbar{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin:18px 0 22px}
     .input,.select{background:var(--card);color:var(--text);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
     .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:16px}
-    .item{background:rgba(20,17,38,.92);border:1px solid var(--line);border-radius:18px;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,.28)}
+    .item{background:rgba(20,17,38,.92);border:1px solid var(--line);border-radius:18px;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,.28);cursor:pointer}
+    .item:hover{transform:translateY(-2px);transition:transform .16s ease}
     .thumb{aspect-ratio:3/4.5;background:#0f0c1f;display:block;width:100%;object-fit:cover}
     .body{padding:12px}
     .title{font-weight:700}
-    .desc{font-size:12px;color:var(--muted);margin-top:6px;line-height:1.6;word-break:break-all}
-    .tag{display:inline-block;margin-top:8px;padding:4px 8px;border-radius:999px;border:1px solid rgba(240,205,122,.25);color:var(--gold);font-size:12px}
-    a{color:inherit}
+    .summary{font-size:12px;color:var(--muted);margin-top:8px;line-height:1.65;min-height:3.3em}
+    .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+    .tag{display:inline-block;padding:4px 8px;border-radius:999px;border:1px solid rgba(240,205,122,.25);color:var(--gold);font-size:12px}
+    .modal::backdrop{background:rgba(0,0,0,.72);backdrop-filter:blur(6px)}
+    .modal{border:0;padding:0;background:transparent;max-width:980px;width:calc(100% - 24px);color:var(--text)}
+    .modalCard{border-radius:20px;overflow:hidden;border:1px solid rgba(255,255,255,.12);background:linear-gradient(180deg, rgba(21,17,58,.95), rgba(13,11,34,.96));box-shadow:0 24px 70px rgba(0,0,0,.45)}
+    .modalHead{display:flex;justify-content:space-between;gap:12px;padding:14px 16px;border-bottom:1px solid rgba(255,255,255,.10)}
+    .modalTitle{font-size:14px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold)}
+    .modalSub{font-size:12px;color:var(--muted);margin-top:4px}
+    .closeBtn{border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.04);color:var(--text);width:36px;height:36px;border-radius:12px;cursor:pointer}
+    .modalBody{display:grid;grid-template-columns:minmax(260px,320px) minmax(0,1fr);gap:18px;padding:18px}
+    .posterWrap{border-radius:18px;overflow:hidden;border:1px solid rgba(240,205,122,.14);background:#0f0c1f}
+    .poster{display:block;width:100%;height:auto}
+    .posterNote{font-size:12px;color:var(--muted);text-align:center;margin-top:10px}
+    .section{margin-bottom:14px}
+    .sectionK{font-size:12px;color:var(--muted);letter-spacing:.08em;margin-bottom:8px}
+    .sectionV{line-height:1.8}
+    .panelGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .panel{border-radius:16px;padding:14px;background:rgba(255,255,255,.03);border:1px solid rgba(240,205,122,.12)}
+    .panelTitle{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:8px}
+    @media (max-width:760px){.modalBody{grid-template-columns:1fr}.panelGrid{grid-template-columns:1fr}}
   </style>
 </head>
 <body>
@@ -31,7 +51,7 @@
     <div class="hero">
       <div>
         <h1>Vegebird Tarot图库</h1>
-        <div class="sub">可按大阿卡纳 / 权杖 / 圣杯 / 宝剑 / 星币分组浏览，也可直接搜索中英文牌名。</div>
+        <div class="sub">可按大阿卡纳 / 权杖 / 圣杯 / 宝剑 / 星币分组浏览，也可直接搜索中英文牌名。点击任意牌可直接查看牌义。</div>
       </div>
       <div class="meta" id="meta">加载中…</div>
     </div>
@@ -51,9 +71,117 @@
     <div class="grid" id="grid"></div>
   </div>
 
+  <dialog class="modal" id="cardModal">
+    <div class="modalCard">
+      <div class="modalHead">
+        <div>
+          <div class="modalTitle">牌义详情</div>
+          <div class="modalSub" id="modalMeta">-</div>
+        </div>
+        <button class="closeBtn" id="closeModal" aria-label="关闭">✕</button>
+      </div>
+      <div class="modalBody">
+        <div>
+          <div class="posterWrap"><img id="modalImage" class="poster" alt="塔罗牌图片" /></div>
+          <div class="posterNote">当前显示真实牌图</div>
+        </div>
+        <div>
+          <div class="section">
+            <div class="sectionK" id="modalName">-</div>
+            <div class="chips" id="modalChips"></div>
+          </div>
+          <div class="section">
+            <div class="sectionK">摘要</div>
+            <div class="sectionV" id="modalSummary">-</div>
+          </div>
+          <div class="section">
+            <div class="sectionK">关键词</div>
+            <div class="sectionV" id="modalKeywords">-</div>
+          </div>
+          <div class="panelGrid">
+            <div class="panel">
+              <div class="panelTitle">正位</div>
+              <div class="sectionK">关键词</div>
+              <div class="sectionV" id="modalUpKeywords">-</div>
+              <div class="sectionK" style="margin-top:10px">牌义</div>
+              <div class="sectionV" id="modalUp">-</div>
+            </div>
+            <div class="panel">
+              <div class="panelTitle">逆位</div>
+              <div class="sectionK">关键词</div>
+              <div class="sectionV" id="modalRevKeywords">-</div>
+              <div class="sectionK" style="margin-top:10px">牌义</div>
+              <div class="sectionV" id="modalRev">-</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </dialog>
+
   <script>
-    const state = { cards: [] };
+    const state = { cards: [], tarotDict: {} };
     const $ = s => document.querySelector(s);
+
+    function normalizeDictText(text = '') {
+      return String(text || '').replace(/^[：:、，\s]+/, '').replace(/\s+/g, ' ').trim();
+    }
+
+    function getCardElement(card) {
+      const majorElements = {
+        '愚者': '风','魔术师': '水银 / 风','女祭司': '水','女皇': '土','皇帝': '火','教皇': '土','恋人': '风','战车': '水','力量': '火','隐者': '土','命运之轮': '火','正义': '风','倒吊人': '水','死神': '水','节制': '火','恶魔': '土','塔': '火','高塔': '火','星星': '风','月亮': '水','太阳': '火','审判': '火','世界': '土'
+      };
+      const suitElements = { '权杖': '火', '圣杯': '水', '宝剑': '风', '星币': '土' };
+      return majorElements[card.label] || suitElements[card.group] || '';
+    }
+
+    function getCardNumerology(card) {
+      const majorNumbers = {
+        '愚者': '0','魔术师': '1','女祭司': '2','女皇': '3','皇帝': '4','教皇': '5','恋人': '6','战车': '7','力量': '8','隐者': '9','命运之轮': '10','正义': '11','倒吊人': '12','死神': '13','节制': '14','恶魔': '15','塔': '16','高塔': '16','星星': '17','月亮': '18','太阳': '19','审判': '20','世界': '21'
+      };
+      if (card.group === '大阿卡纳') return majorNumbers[card.label] || '';
+      const rankMatch = card.label.replace(card.group, '');
+      const map = { '王牌': '1', '二': '2', '三': '3', '四': '4', '五': '5', '六': '6', '七': '7', '八': '8', '九': '9', '十': '10' };
+      return map[rankMatch] || '';
+    }
+
+    function getDictEntry(name) { return state.tarotDict?.[name] || null; }
+    function getCardSummary(name) { return normalizeDictText(getDictEntry(name)?.summary) || ''; }
+    function getCardMeaning(name, side) {
+      const dict = getDictEntry(name);
+      return normalizeDictText(side === 'up' ? (dict?.upright || dict?.up || dict?.upright_text) : (dict?.reversed || dict?.rev || dict?.reversed_text)) || '暂无牌义。';
+    }
+    function getCardMeaningKeywords(name, side) {
+      const dict = getDictEntry(name);
+      return normalizeDictText(side === 'up' ? (dict?.upright_keywords || dict?.up_keywords || dict?.keywords) : (dict?.reversed_keywords || dict?.rev_keywords || dict?.keywords)) || '暂无关键词';
+    }
+    function getCardKeywords(name) {
+      const dict = getDictEntry(name);
+      const raw = normalizeDictText(dict?.upright_keywords || dict?.up_keywords || dict?.keywords);
+      return raw || '暂无关键词';
+    }
+
+    function openModal(card) {
+      $('#modalMeta').textContent = `${card.group === '大阿卡纳' ? '大阿卡纳' : card.group} · ${card.englishName || ''}`;
+      $('#modalName').textContent = card.label;
+      $('#modalImage').src = card.file;
+      $('#modalImage').alt = card.label;
+      $('#modalSummary').textContent = getCardSummary(card.label) || '暂无摘要';
+      $('#modalKeywords').textContent = getCardKeywords(card.label);
+      $('#modalUpKeywords').textContent = getCardMeaningKeywords(card.label, 'up');
+      $('#modalUp').textContent = getCardMeaning(card.label, 'up');
+      $('#modalRevKeywords').textContent = getCardMeaningKeywords(card.label, 'rev');
+      $('#modalRev').textContent = getCardMeaning(card.label, 'rev');
+      const chips = $('#modalChips');
+      chips.innerHTML = '';
+      [card.group === '大阿卡纳' ? '大阿卡纳' : card.group, getCardElement(card), getCardNumerology(card) ? `灵数 ${getCardNumerology(card)}` : ''].filter(Boolean).forEach(text => {
+        const span = document.createElement('span');
+        span.className = 'tag';
+        span.textContent = text;
+        chips.appendChild(span);
+      });
+      $('#cardModal').showModal();
+    }
 
     function render() {
       const q = $('#search').value.trim().toLowerCase();
@@ -64,28 +192,40 @@
         return hitQ && hitG;
       });
       $('#meta').textContent = `共 ${state.cards.length} 张｜当前显示 ${list.length} 张`;
-      $('#grid').innerHTML = list.map(card => `
-        <article class="item">
-          <a href="${card.file}" target="_blank" rel="noreferrer">
-            <img class="thumb" src="${card.file}" alt="${card.label}" loading="lazy" />
-          </a>
+      const grid = $('#grid');
+      grid.innerHTML = '';
+      list.forEach(card => {
+        const article = document.createElement('article');
+        article.className = 'item';
+        article.innerHTML = `
+          <img class="thumb" src="${card.file}" alt="${card.label}" loading="lazy" />
           <div class="body">
             <div class="title">${card.label}</div>
-            <div class="tag">${card.group || '未分组'}</div>
-          </div>
-        </article>
-      `).join('');
+            <div class="summary">${getCardSummary(card.label) || '点击查看这张牌的完整牌义。'}</div>
+            <div class="chips">
+              <span class="tag">${card.group === '大阿卡纳' ? '大阿卡纳' : card.group}</span>
+              ${getCardElement(card) ? `<span class="tag">${getCardElement(card)}</span>` : ''}
+              ${getCardNumerology(card) ? `<span class="tag">灵数 ${getCardNumerology(card)}</span>` : ''}
+            </div>
+          </div>`;
+        article.addEventListener('click', () => openModal(card));
+        grid.appendChild(article);
+      });
     }
 
-    fetch('./assets/imported-deck-manifest.json')
-      .then(r => r.json())
-      .then(data => {
-        state.cards = data.cards || [];
-        render();
-      });
+    Promise.all([
+      fetch('./assets/imported-deck-manifest.json').then(r => r.json()),
+      fetch('./assets/tarot-dict-display-normalized.json').then(r => r.json()).catch(() => ({ cards: {} }))
+    ]).then(([manifest, dict]) => {
+      state.cards = manifest.cards || [];
+      state.tarotDict = dict.cards || {};
+      render();
+    });
 
     $('#search').addEventListener('input', render);
     $('#group').addEventListener('change', render);
+    $('#closeModal').addEventListener('click', () => $('#cardModal').close());
+    $('#cardModal').addEventListener('click', (e) => { if (e.target === $('#cardModal')) $('#cardModal').close(); });
   </script>
 </body>
 </html>

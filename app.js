@@ -294,6 +294,77 @@ function getCardSummary(draw) {
   return normalizeDictText(dict?.summary) || draw.subtitle || '';
 }
 
+function getCardArcanaLabel(draw) {
+  return draw.arcana === '大阿卡纳' ? '大阿卡纳' : (draw.suit || '小阿卡纳');
+}
+
+function getCardElement(draw) {
+  const majorElements = {
+    '愚者': '风',
+    '魔术师': '水银 / 风',
+    '女祭司': '水',
+    '女皇': '土',
+    '皇帝': '火',
+    '教皇': '土',
+    '恋人': '风',
+    '战车': '水',
+    '力量': '火',
+    '隐者': '土',
+    '命运之轮': '火',
+    '正义': '风',
+    '倒吊人': '水',
+    '死神': '水',
+    '节制': '火',
+    '恶魔': '土',
+    '塔': '火',
+    '高塔': '火',
+    '星星': '风',
+    '月亮': '水',
+    '太阳': '火',
+    '审判': '火',
+    '世界': '土'
+  };
+  const suitElements = {
+    '权杖': '火',
+    '圣杯': '水',
+    '宝剑': '风',
+    '星币': '土'
+  };
+  return majorElements[draw.name] || suitElements[draw.suit] || '';
+}
+
+function getCardNumerology(draw) {
+  const majorNumbers = {
+    '愚者': '0', '魔术师': '1', '女祭司': '2', '女皇': '3', '皇帝': '4', '教皇': '5', '恋人': '6', '战车': '7',
+    '力量': '8', '隐者': '9', '命运之轮': '10', '正义': '11', '倒吊人': '12', '死神': '13', '节制': '14', '恶魔': '15',
+    '塔': '16', '高塔': '16', '星星': '17', '月亮': '18', '太阳': '19', '审判': '20', '世界': '21'
+  };
+  const minorNumbers = {
+    '王牌': '1', '二': '2', '三': '3', '四': '4', '五': '5', '六': '6', '七': '7', '八': '8', '九': '9', '十': '10'
+  };
+  if (draw.arcana === '大阿卡纳') return majorNumbers[draw.name] || '';
+  return minorNumbers[draw.rank] || '';
+}
+
+function getCardDetailChips(draw, positionLabel = '') {
+  const chips = [getCardArcanaLabel(draw), getCardElement(draw)];
+  const numerology = getCardNumerology(draw);
+  if (numerology) chips.push(`灵数 ${numerology}`);
+  if (positionLabel) chips.push(positionLabel);
+  return chips.filter(Boolean);
+}
+
+function getGalleryCardByName(name) {
+  if (!state.base78?.length) return null;
+  return state.base78.find(card => card.name === name) || null;
+}
+
+function getGalleryCardDetailData(name) {
+  const base = getGalleryCardByName(name);
+  if (!base) return null;
+  return { ...base, ori: 'up', revealed: true };
+}
+
 function getReadingSummary(draw) {
   const summary = getCardSummary(draw);
   const meaning = getCardMeaning(draw, draw.ori);
@@ -556,7 +627,7 @@ function openCardDetail(index) {
   $('#detailName').textContent = draw.name;
   const chips = $('#detailChips');
   chips.innerHTML = '';
-  [draw.arcana, draw.suit, state.spread.labels[index]].forEach(text => {
+  getCardDetailChips(draw, state.spread.labels[index]).forEach(text => {
     const chip = el('span', 'detailChip');
     chip.textContent = text;
     chips.append(chip);
