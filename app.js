@@ -258,8 +258,10 @@ function getDictEntry(name) {
 
 function getCardKeywords(draw) {
   const dict = getDictEntry(draw.name);
-  const fromSite = normalizeDictText(dict?.keywords);
-  if (fromSite) return fromSite.split(/[、，,；;。]/).map(s => s.trim()).filter(Boolean);
+  const source = draw.ori === 'up'
+    ? normalizeDictText(dict?.upright_keywords || dict?.up_keywords || dict?.keywords)
+    : normalizeDictText(dict?.reversed_keywords || dict?.rev_keywords || dict?.keywords);
+  if (source) return source.split(/[、，,；;。]/).map(s => s.trim()).filter(Boolean);
   const fromSubtitle = buildKeywords(draw);
   const fromSummary = dict?.summary
     ? summarizeText(dict.summary, 80).split(/[、，,；;。]/).map(s => s.trim()).filter(Boolean)
@@ -270,7 +272,9 @@ function getCardKeywords(draw) {
 function getCardMeaning(draw, ori = draw.ori) {
   const dict = getDictEntry(draw.name);
   const isUp = ori === 'up';
-  const primary = normalizeDictText(isUp ? (dict?.up || dict?.upright) : (dict?.rev || dict?.reversed));
+  const primary = normalizeDictText(isUp
+    ? (dict?.upright || dict?.up || dict?.upright_text)
+    : (dict?.reversed || dict?.rev || dict?.reversed_text));
   const fallback = normalizeDictText(isUp ? draw.up : draw.rev);
   return primary || fallback || '暂无牌意。';
 }
@@ -278,9 +282,11 @@ function getCardMeaning(draw, ori = draw.ori) {
 function getCardMeaningKeywords(draw, ori = draw.ori) {
   const dict = getDictEntry(draw.name);
   const isUp = ori === 'up';
-  const raw = normalizeDictText(isUp ? (dict?.up_keywords || dict?.upright_keywords) : (dict?.rev_keywords || dict?.reversed_keywords));
+  const raw = normalizeDictText(isUp
+    ? (dict?.upright_keywords || dict?.up_keywords || dict?.keywords)
+    : (dict?.reversed_keywords || dict?.rev_keywords || dict?.keywords));
   if (raw) return raw;
-  return getCardKeywords(draw).join(' · ') || '暂无关键词';
+  return getCardKeywords({ ...draw, ori }).join(' · ') || '暂无关键词';
 }
 
 function getCardSummary(draw) {
@@ -328,7 +334,9 @@ async function loadTarotDict() {
       renderGrid();
       renderReading();
       if (state.tarotDictLoaded) {
-        updateHint(`已加载本地牌意库（${Object.keys(state.tarotDict).length} 张）。`);
+        const cardCount = Object.keys(state.tarotDict).length;
+        console.info(`[tarot] loaded dict from ${url} with ${cardCount} cards`);
+        updateHint(`已加载本地牌意库（${cardCount} 张）。`);
         return;
       }
     } catch (err) {
