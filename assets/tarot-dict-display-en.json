@@ -445,15 +445,23 @@
     },
     "权杖一": {
       "name": "Ace of Wands",
-      "keywords": [],
+      "keywords": [
+        "spark",
+        "initiative",
+        "desire",
+        "activation",
+        "bold beginning"
+      ],
       "summary": "A sudden ignition of will, desire, and initiative. Ace of Wands is about acting first, beginning fast, and testing what can happen when energy is allowed to move instead of being over-managed.",
       "up": "Upright, Ace of Wands marks a fresh surge of action, inspiration, momentum, and creative drive. A new plan, trip, project, or desire is ready to begin. The potential is strong, and the best results come from bold movement rather than hesitation.",
       "rev": "Reversed, Ace of Wands shows blocked initiative, weak follow-through, rejected advances, or pressure that makes action hard to sustain. The spark exists, but the energy may scatter, burn out quickly, or fail to land in a stable form.",
-      "upright_keywords": "",
-      "reversed_keywords": "",
+      "upright_keywords": "spark, initiative, desire, activation, bold beginning",
+      "reversed_keywords": "blocked drive, weak follow-through, burnout, frustration, misfire",
       "source_zh_summary": "权杖一：不要想那么多，直接冲； 感情不能长期发展类。 象征执念，尤其和宝剑骑士组合象征斗志强，通过自己的意志换取实际成果。 意志坚定和原则性问题。 很现实，支配作用。 一个新的计划旅行落地实现。 逆位后劲不足，不能持久战。 逆位可能是在某件事情中有人在拒绝，因压力大而无法掌控，所以拒绝。 出其不意地开始比较好、偷偷开始、自己觉得成就成，反之依然。 不被注意的…",
       "source_zh_up": "：能源的源頭。 開始。 強而有力。 精神。 事業。 發明。 冒險的開始。 天啟，啟發，新機遇，新機會，發育，生長，增加，增長，經濟增長，經濟發展，潛力，潛質。 新行动、创造、机会、灵感、成长。 无论大牌小牌，所有的一都代表一个新开始，而权杖首牌通常代表一个计划或行动的开端。 权杖充满创意与热忱，充满源源不绝的能量，可以激发人们的潜能。 权杖首牌就像一个火种，可以燃烧整个草原，也可以就此熄灭，但不管它的未来如何，潜力总是存在。 在某些情况下，权杖首牌甚至可以表示新生命的到来。 如果最近有新计划、新念头、新行动、新方向…",
-      "source_zh_rev": "：新的想法，沒有發展方向，分散主意力，分心，拖延，延遲，延期，推遲，遲到。 深造、阻碍、延迟、暂缓、犹疑。 逆位的权杖王牌，就是权杖向下生长的意象，代表力量运用到错误的方向，造成白费力气，能量减损。 但向下生长也意味着变成根系，是扎根学习深造的好机会，另一方面的作用同样有价值。 它和正位的首牌在意义上有些许的差异，依然暗示这是个着手新方案的时机，然后过程会较正立的首牌稍微缓些。 这张牌逆位置的时候，画面中呈现出拇指往下指去，这代表不被肯定。 也因为画面上还有山丘上的城堡不再牢固，是既定目标的减损和犹疑。 而河流在逆…"
+      "source_zh_rev": "：新的想法，沒有發展方向，分散主意力，分心，拖延，延遲，延期，推遲，遲到。 深造、阻碍、延迟、暂缓、犹疑。 逆位的权杖王牌，就是权杖向下生长的意象，代表力量运用到错误的方向，造成白费力气，能量减损。 但向下生长也意味着变成根系，是扎根学习深造的好机会，另一方面的作用同样有价值。 它和正位的首牌在意义上有些许的差异，依然暗示这是个着手新方案的时机，然后过程会较正立的首牌稍微缓些。 这张牌逆位置的时候，画面中呈现出拇指往下指去，这代表不被肯定。 也因为画面上还有山丘上的城堡不再牢固，是既定目标的减损和犹疑。 而河流在逆…",
+      "upright_keywords_en": "spark, initiative, desire, activation, bold beginning",
+      "reversed_keywords_en": "blocked drive, weak follow-through, burnout, frustration, misfire"
     },
     "权杖二": {
       "name": "Two of Wands",
@@ -620,86 +628,102 @@
     "权杖侍从": {
       "name": "Page of Wands",
       "keywords": [
+        "enthusiasm",
         "curiosity",
         "message",
-        "learning",
-        "openness",
-        "potential"
+        "attraction",
+        "experimentation"
       ],
       "summary": "Page of Wands represents youthful emergence, curiosity, learning, and the first personal handling of this suit’s energy. In the realm of action, will, desire, momentum, and outward force, this court card shows how a person embodies and expresses the suit directly.",
       "up": "Upright, Page of Wands shows a beginning attitude: open, exploratory, and emotionally or mentally impressionable, but alive with possibility. In matters of action, will, desire, momentum, and outward force, when directed well, this energy brings decisive movement and visible progress.",
       "rev": "Reversed, Page of Wands becomes immaturity, inconsistency, naivety, or scattered effort when the energy lacks grounding. In matters of action, will, desire, momentum, and outward force, when strained, this energy becomes haste, conflict, burnout, or wasted effort.",
-      "upright_keywords": "curiosity, message, learning, openness, potential",
-      "reversed_keywords": "curiosity, message, learning, openness, potential",
+      "upright_keywords": "enthusiasm, curiosity, message, attraction, experimentation",
+      "reversed_keywords": "immaturity, mixed signals, impulsiveness, inconsistency, scattered passion",
       "source_zh_summary": "权杖侍从：权杖宫廷牌需要见面，一见面就很好，不见面火很容易烧人。 阶段性上头且只上头一个，主动追，趁火灭之前赶紧追。 有贼心没贼胆，几乎可以忽略的行动与想法。 本身资源有限，如果问事业发展就是获得资源少但自己目标高。 短暂性的效率极高，契机可能是灵机一动。 需要高能量消耗。 小狼狗。 有天赋灵机一动有能力，单纯比速度。 逆位，没追到要找个下头的点。 找个台阶…",
       "source_zh_up": "：热心、活跃、信使、新消息、小顽童。 冒險、興奮、新鮮的想法、快樂、精力充沛、無所畏懼、外向。 新的挑战，新的消息，跃跃欲试的梦想。 靈感，啟發，想法，構思，主意，印象，概念，意見，看法，信念，發現，發覺，潛力，自由。 权杖侍从象征一项新方案或挑战的消息或开始。 意味着一个盏新的人生局面或新方案的开始。 它通常是由身体上的行动来开始做某事的。 塔罗牌的侍从可形容孩子或任何二十二岁以下的人。 这个类型的人通常是喜欢往外跑，好运动，热情，坦率及容易相处的。 他/她喜欢运动，追求体能极限和户外运动。 权杖侍从类型的人在家…",
-      "source_zh_rev": "：善变、顽劣、散漫、迟疑、优柔寡断。 倉促、不耐煩、缺乏想法、發脾氣、懶惰、無聊、不可靠、分心。 新思想學派，新流派，重建格局，引導資源，自我約定，精神境界提升。 倒立的侍卫相比于正位时的热忱果断，先做后想，倒是会变得更喜欢想，喜欢想所有的细节，容易优柔寡断，行动不足。 这时与其犹豫不决，损失自己的信心，不如远离让你惶恐不安的复杂环境会更好，当一切发展成熟再来应对，更省时省力。 就像是被宠坏的小孩一样，他好奇的特性会让他贪多嚼不烂，凡事都只保持三分钟热度。 只是还年轻，心性还不定。 权杖侍从的逆位，表示侍从本身的问…"
+      "source_zh_rev": "：善变、顽劣、散漫、迟疑、优柔寡断。 倉促、不耐煩、缺乏想法、發脾氣、懶惰、無聊、不可靠、分心。 新思想學派，新流派，重建格局，引導資源，自我約定，精神境界提升。 倒立的侍卫相比于正位时的热忱果断，先做后想，倒是会变得更喜欢想，喜欢想所有的细节，容易优柔寡断，行动不足。 这时与其犹豫不决，损失自己的信心，不如远离让你惶恐不安的复杂环境会更好，当一切发展成熟再来应对，更省时省力。 就像是被宠坏的小孩一样，他好奇的特性会让他贪多嚼不烂，凡事都只保持三分钟热度。 只是还年轻，心性还不定。 权杖侍从的逆位，表示侍从本身的问…",
+      "upright_keywords_en": "enthusiasm, curiosity, message, attraction, experimentation",
+      "reversed_keywords_en": "immaturity, mixed signals, impulsiveness, inconsistency, scattered passion"
     },
     "权杖骑士": {
       "name": "Knight of Wands",
       "keywords": [
-        "movement",
+        "speed",
+        "daring",
         "pursuit",
-        "intensity",
-        "advance",
-        "drive"
+        "confidence",
+        "momentum"
       ],
       "summary": "Knight of Wands represents movement, pursuit, application, and the outward enactment of this suit’s drive. In the realm of action, will, desire, momentum, and outward force, this court card shows how a person embodies and expresses the suit directly.",
       "up": "Upright, Knight of Wands pushes energy into motion and seeks result, response, or impact through direct involvement. In matters of action, will, desire, momentum, and outward force, when directed well, this energy brings decisive movement and visible progress.",
       "rev": "Reversed, Knight of Wands turns reckless, unstable, excessive, or self-defeating when speed overtakes wisdom. In matters of action, will, desire, momentum, and outward force, when strained, this energy becomes haste, conflict, burnout, or wasted effort.",
-      "upright_keywords": "movement, pursuit, intensity, advance, drive",
-      "reversed_keywords": "movement, pursuit, intensity, advance, drive",
+      "upright_keywords": "speed, daring, pursuit, confidence, momentum",
+      "reversed_keywords": "recklessness, haste, volatility, inconsistency, overreach",
       "source_zh_summary": "权杖骑士：有行动力，完整的计谋，只有一个全局的大概计划，中途如果打断就很难连起来。 直接做就行，已经可以开始了，直接开始干吧。 在爱情中有时也指异地恋，在事业中即便获得成功也是短暂的。 又快又好，一鼓作气完成某件事，但做完会力竭。 逆位就是别干了，询问一些有经验的人，同龄人之类。 白忙活一场。 桃花关注最近活跃的人，最近交流的人。 问复合的话很大可能会再联系…",
       "source_zh_up": "：活力，精力，能量，幹勁，激情，強烈的愛，激勵，鼓勵，冒險，奇遇，衝動。 热心、活力、行动派、积极份子、阳光男孩、运动健将。 看得出来我们的骑士正在全神贯注的对向往的目标积极追求。 而成功唯一的方法就是自己亲自动手做。 火的的天性从来都是积极的、不加以遮掩的。 如果他是的朋友，那么他绝对会是最讲义气的，会为你冲锋陷阵； 如果他是你的恋人，那么你不会无聊，热情大胆的追求让你无法抵御； 如果他是你的家人，那么他会是里面最活泼，最能够家带来活力的一位； 如果他只是你遇到的陌生人，那么也会是里面最热情最乐于助人的一位。 事…",
-      "source_zh_rev": "：約會計劃，約炮計劃，急速，匆忙，倉促，精力分散，延遲，延期，推遲，遲到，懊惱，沮喪，受阻，受挫，阻止。 蛮横、暴躁、中断、阻碍、不和睦。 倒立的权杖骑士是没有经过试验的骑士，最容易被颠落下马，同样满怀热切却也脆弱易困惑。 因此在占卜中倒立的权杖骑士代表的是受阻的计划、困惑混乱、分崩离析。 一直都不断的往一个方向移动总会厌烦的，这时一些持续的冲突分出一些精力，反而更容易调整自己。 逆位的权杖骑士可以朝两个方向解释，第一是他的缺点大到造成不良影响，因冲动鲁莽而坏事，因暴躁而与人争吵打架，因没有耐心而错失良机，或是才刚…"
+      "source_zh_rev": "：約會計劃，約炮計劃，急速，匆忙，倉促，精力分散，延遲，延期，推遲，遲到，懊惱，沮喪，受阻，受挫，阻止。 蛮横、暴躁、中断、阻碍、不和睦。 倒立的权杖骑士是没有经过试验的骑士，最容易被颠落下马，同样满怀热切却也脆弱易困惑。 因此在占卜中倒立的权杖骑士代表的是受阻的计划、困惑混乱、分崩离析。 一直都不断的往一个方向移动总会厌烦的，这时一些持续的冲突分出一些精力，反而更容易调整自己。 逆位的权杖骑士可以朝两个方向解释，第一是他的缺点大到造成不良影响，因冲动鲁莽而坏事，因暴躁而与人争吵打架，因没有耐心而错失良机，或是才刚…",
+      "upright_keywords_en": "speed, daring, pursuit, confidence, momentum",
+      "reversed_keywords_en": "recklessness, haste, volatility, inconsistency, overreach"
     },
     "权杖皇后": {
       "name": "Queen of Wands",
       "keywords": [
-        "presence",
-        "maturity",
-        "expression",
-        "influence",
-        "embodiment"
+        "charisma",
+        "confidence",
+        "warmth",
+        "creative fire",
+        "presence"
       ],
       "summary": "Queen of Wands represents mature embodied command, receptive intelligence, and sustained personal mastery of this suit. In the realm of action, will, desire, momentum, and outward force, this court card shows how a person embodies and expresses the suit directly.",
       "up": "Upright, Queen of Wands expresses this suit through confidence, presence, and the ability to influence without losing center. In matters of action, will, desire, momentum, and outward force, when directed well, this energy brings decisive movement and visible progress.",
       "rev": "Reversed, Queen of Wands shows imbalance in self-expression, overcontrol, emotional distortion, or a hidden insecurity inside visible strength. In matters of action, will, desire, momentum, and outward force, when strained, this energy becomes haste, conflict, burnout, or wasted effort.",
-      "upright_keywords": "presence, maturity, expression, influence, embodiment",
-      "reversed_keywords": "presence, maturity, expression, influence, embodiment",
+      "upright_keywords": "charisma, confidence, warmth, creative fire, presence",
+      "reversed_keywords": "jealousy, performative pride, insecurity, domination, burnout",
       "source_zh_summary": "",
       "source_zh_up": "",
-      "source_zh_rev": "喜好竞争，不计后果，狠下心冲刺事业，富侵略性而且脾气坏。 假如用舞蹈来比喻，那么就应该是探戈。 假如在他的生活当中没有太多值得追寻的目标，她一旦发现这舞码颇吸引人，那么他就会以他为中心尽情去营造情境。 通常他不太知道什么时候该停止，结果可能导致身体出问题或精神耗竭。 逆位的权杖皇后乐于以自己为例来给忠告，她会指出你的缺点并建议如何改正。 但你最好不要用同样的方式来回报他。 权杖皇后可能常常会给别人建议，而这些建议其实很适用在她身上，因为她否定内心所压抑的东西，并将它投射到别人身上。 她常常在还没有搞清楚状况之前，就…"
+      "source_zh_rev": "喜好竞争，不计后果，狠下心冲刺事业，富侵略性而且脾气坏。 假如用舞蹈来比喻，那么就应该是探戈。 假如在他的生活当中没有太多值得追寻的目标，她一旦发现这舞码颇吸引人，那么他就会以他为中心尽情去营造情境。 通常他不太知道什么时候该停止，结果可能导致身体出问题或精神耗竭。 逆位的权杖皇后乐于以自己为例来给忠告，她会指出你的缺点并建议如何改正。 但你最好不要用同样的方式来回报他。 权杖皇后可能常常会给别人建议，而这些建议其实很适用在她身上，因为她否定内心所压抑的东西，并将它投射到别人身上。 她常常在还没有搞清楚状况之前，就…",
+      "upright_keywords_en": "charisma, confidence, warmth, creative fire, presence",
+      "reversed_keywords_en": "jealousy, performative pride, insecurity, domination, burnout"
     },
     "权杖国王": {
       "name": "King of Wands",
       "keywords": [
+        "leadership",
+        "vision",
+        "initiative",
         "authority",
-        "control",
-        "mastery",
-        "responsibility",
-        "command"
+        "ambition"
       ],
       "summary": "King of Wands represents authority, command, completion, and disciplined control over this suit’s field. In the realm of action, will, desire, momentum, and outward force, this court card shows how a person embodies and expresses the suit directly.",
       "up": "Upright, King of Wands governs this suit with maturity, strategic awareness, and the ability to direct outcomes responsibly. In matters of action, will, desire, momentum, and outward force, when directed well, this energy brings decisive movement and visible progress.",
       "rev": "Reversed, King of Wands becomes domination, rigidity, emotional distance, or misuse of power when mastery loses humility. In matters of action, will, desire, momentum, and outward force, when strained, this energy becomes haste, conflict, burnout, or wasted effort.",
-      "upright_keywords": "authority, control, mastery, responsibility, command",
-      "reversed_keywords": "authority, control, mastery, responsibility, command",
+      "upright_keywords": "leadership, vision, initiative, authority, ambition",
+      "reversed_keywords": "arrogance, impatience, domination, ego, forcefulness",
       "source_zh_summary": "权杖国王：可以直接嫁直接上了，他会直接来找你你接就行了。 有能力/大方/大格局/热情/纯粹/不油腻/有被讨厌的勇气/想得开/有勇有谋/生生不息的火焰。 但这人一般有对象了。 强势中的强势，一骑绝尘的优秀。 权杖国王的爱情是自由有激情且不受约束的，由于并不清楚自己内心真正想要的所以感情来得快去得也快。 完美统筹各种事情，有能力独自开公司。 要相信自己内心的声音…",
       "source_zh_up": "：天才領導，視野，想像，幻象，夢幻，神示，異象，高瞻遠矚，創業，企業家，尊敬，尊重，崇敬，榮幸，光榮，正義感，道義，節操。 自律、权力、开国君主、威权、创造力。 塔羅牌權杖國王代表透過自律和耐心而成功。 自律可以讓你超越自己，因此逆就會有充分的時間和體力來掌握更好的機會，讓你完成已著手之事。 這張牌形容一個堅強，而有時獨斷的人，通常他的言行都很坦率，適合從事銷售或任何以目標為趨向的工作。 塔羅牌權杖國王是一個開國者與建國者，他的坐姿彷彿隨時準備著站立起來，代表他有極強德行動力。 金黃色大耄象徵她的統治力量。 綠色的…",
-      "source_zh_rev": "：領導能力差，目標激進，個人方向，衝動，急速，匆忙，倉促，殘酷無情，高期望值，高要求。 苛求、独断、严厉、固执、傲慢。 权杖国王正立是最具冲劲，那么倒立时就是能力变低的时期，需要充分的休息或者一些娱乐休闲来重新平衡自己。 这是限制，但也可以是解放，会从旧的导向中解放，新的导向也会开始。 权杖国王通常对当事人会造成不良影响，可以分为两个面向来解析。 国王的逆位暗示一个人的心理比他的实际年龄还要年轻。 对他而言，承诺始终是个问题。 他宁愿转而接受一个新挑战，也不愿面对一个急需解决的棘手决定。 他可能比正位的权杖更具宽容… ## 圣杯（14）"
+      "source_zh_rev": "：領導能力差，目標激進，個人方向，衝動，急速，匆忙，倉促，殘酷無情，高期望值，高要求。 苛求、独断、严厉、固执、傲慢。 权杖国王正立是最具冲劲，那么倒立时就是能力变低的时期，需要充分的休息或者一些娱乐休闲来重新平衡自己。 这是限制，但也可以是解放，会从旧的导向中解放，新的导向也会开始。 权杖国王通常对当事人会造成不良影响，可以分为两个面向来解析。 国王的逆位暗示一个人的心理比他的实际年龄还要年轻。 对他而言，承诺始终是个问题。 他宁愿转而接受一个新挑战，也不愿面对一个急需解决的棘手决定。 他可能比正位的权杖更具宽容… ## 圣杯（14）",
+      "upright_keywords_en": "leadership, vision, initiative, authority, ambition",
+      "reversed_keywords_en": "arrogance, impatience, domination, ego, forcefulness"
     },
     "圣杯一": {
       "name": "Ace of Cups",
-      "keywords": [],
+      "keywords": [
+        "love",
+        "emotional opening",
+        "tenderness",
+        "receptivity",
+        "blessing"
+      ],
       "summary": "An opening of the heart, emotional blessing, tenderness, and receptivity. Ace of Cups often appears when affection, care, and emotional flow begin to return in a direct and meaningful way.",
       "up": "Upright, Ace of Cups represents love, emotional renewal, softening, joy, and the beginning of a nourishing bond. It can signal a new relationship, renewed feeling, compassion, spiritual receptivity, or a phase in which emotional life starts flowing again.",
       "rev": "Reversed, Ace of Cups suggests emotional blockage, disappointment, imbalance in giving and receiving, or a feeling that love and care are not landing where they should. The heart is not closed forever, but it is not yet flowing freely.",
-      "upright_keywords": "",
-      "reversed_keywords": "",
+      "upright_keywords": "love, emotional opening, tenderness, receptivity, blessing",
+      "reversed_keywords": "emotional blockage, disappointment, numbness, imbalance, withheld feeling",
       "source_zh_summary": "圣杯一：用爱浇灌。 用心学习用心对待就不会被伤害。 爱/钱/资源流向不缺的人。 源源不断的水/灵感。 有硬币、许愿池，祈祷可以许愿，有一定信念感。 不经意间感情开始，也可能意味着遇到爱情，但不一定发生在此时此地。 对方可能性格温柔，容易流泪。 异地。 逆位，膈应，一瞬间的心动但得不到环境的支持。 亲手给你打翻。 舔狗不得好死，明显的抵触就不要不识好歹了。 付…",
       "source_zh_up": "：新感情、爱、喜悦、感觉、直觉。 圣杯首牌正位是人际关系最好的开始，经常代表新感情的开端，对于人际关系是非常好的征兆，并且你能够让人从心底感到喜悦与满足。 无论是新恋情、新友谊，或是任何一种人际关系。 圣杯一也可能代表一段快乐满足的时光，当事人能敞开胸怀，拥抱喜悦，尽情付出爱与关怀。 在情感刚开始的时候，爱、喜悦与关怀总是满溢，手捧着圣杯，从云中伸出，好像把爱送给对方。 圣杯一请你保持慷慨，了解施与受的福气。 在某些情况下，圣杯一可能表示直觉的开启，对神秘事物开始产生兴趣或是开窍，感受性敏锐。 此时勿忽视心里的声音…",
-      "source_zh_rev": "：失落、失望、不满足、空虚、饥渴。 冷漠，空虛，情感喪失，創造力受阻，感覺不被愛，陰鬱。 當王牌逆位時，最清晰的形象就是——水從杯子裡倒出來，杯子變空了，水的禮物被浪費了。 在讀牌中看到聖杯王牌逆位，意味你已經忍受一段時間的情緒不穩或痛苦。 這裡表明了一種損失，也許是那些對你來說意義重大的東西，無法再給你所曾經擁有的快樂。 由於聖杯也掌管創造力，你可能還會遇到各種創意阻礙。 靈感之水曾經流過的地方，現在已經乾涸。 这张牌可能意味你与生活以及心灵之路脱节，所以你才会无法辨识生活所提供给你的各种机会。 花些时间深思你真…"
+      "source_zh_rev": "：失落、失望、不满足、空虚、饥渴。 冷漠，空虛，情感喪失，創造力受阻，感覺不被愛，陰鬱。 當王牌逆位時，最清晰的形象就是——水從杯子裡倒出來，杯子變空了，水的禮物被浪費了。 在讀牌中看到聖杯王牌逆位，意味你已經忍受一段時間的情緒不穩或痛苦。 這裡表明了一種損失，也許是那些對你來說意義重大的東西，無法再給你所曾經擁有的快樂。 由於聖杯也掌管創造力，你可能還會遇到各種創意阻礙。 靈感之水曾經流過的地方，現在已經乾涸。 这张牌可能意味你与生活以及心灵之路脱节，所以你才会无法辨识生活所提供给你的各种机会。 花些时间深思你真…",
+      "upright_keywords_en": "love, emotional opening, tenderness, receptivity, blessing",
+      "reversed_keywords_en": "emotional blockage, disappointment, numbness, imbalance, withheld feeling"
     },
     "圣杯二": {
       "name": "Two of Cups",
@@ -866,86 +890,102 @@
     "圣杯侍从": {
       "name": "Page of Cups",
       "keywords": [
-        "curiosity",
-        "message",
-        "learning",
+        "sweetness",
         "openness",
-        "potential"
+        "sensitivity",
+        "imagination",
+        "tender feeling"
       ],
       "summary": "Page of Cups represents youthful emergence, curiosity, learning, and the first personal handling of this suit’s energy. In the realm of emotion, intimacy, sensitivity, relationship, and inner feeling, this court card shows how a person embodies and expresses the suit directly.",
       "up": "Upright, Page of Cups shows a beginning attitude: open, exploratory, and emotionally or mentally impressionable, but alive with possibility. In matters of emotion, intimacy, sensitivity, relationship, and inner feeling, when flowing well, this energy deepens connection, receptivity, and emotional truth.",
       "rev": "Reversed, Page of Cups becomes immaturity, inconsistency, naivety, or scattered effort when the energy lacks grounding. In matters of emotion, intimacy, sensitivity, relationship, and inner feeling, when strained, this energy becomes hurt, fantasy, avoidance, emptiness, or emotional excess.",
-      "upright_keywords": "curiosity, message, learning, openness, potential",
-      "reversed_keywords": "curiosity, message, learning, openness, potential",
+      "upright_keywords": "sweetness, openness, sensitivity, imagination, tender feeling",
+      "reversed_keywords": "naivety, moodiness, fantasy, fragility, emotional immaturity",
       "source_zh_summary": "圣杯侍从：只剩可爱。 纯洁纯粹干净。 蛮有艺术爱好天赋，想象力，都是学习的状态，在四处收集能量。 有点浪，逃避现实，不能同时搞太多事情要专治一个。 容易偏科。 年下小奶狗，桃花很旺，但也不太见人。 小圈子。 活在自己世界里，童真爱做梦。 小女孩，生女儿。 可以穿可爱的衣服。 轻松愉快的工作。 悠闲自在。 干净纯洁可爱。 逆位打破过去的梦，感慨回不到的过去，有…",
       "source_zh_up": "：纯真、直觉、想象力、好朋友、好奇的小孩。 好奇心，求知欲，罕见而有趣之物，艺术家，创造能力，直觉敏锐，一切皆有可能。 圣杯侍卫的出现是可以得到满足的一个机会，这里可以代表一段新关系或者合伙关系的到来，并且会是你感兴趣的，觉得有创意的工作。 心灵肉体的双从发展。 在日常的占卜中，圣杯侍卫可以是你贵人，他随和细心，友善待人，能够给你很多的灵感，得到很多你无法顾忌的问题，甚至他愿意无条件的接受你，倾听你、帮助你。 圣杯侍从穿着花朵图案的衣服，用好奇的眼光，没有任何压力地看着杯中蹦出的一条鱼，鱼象征想像力，从杯中探出头来…",
-      "source_zh_rev": "：脆弱、胆怯、过度敏感、纷乱不安、迟来的消息。 新思想，新思路，创意，想法，新观点，错觉，感觉不对劲，没有灵感，情感幼稚。 可能表示当事人拒绝接受圣杯侍者提供的讯息，或是不愿对他人付出，他可能拒绝别人的善意或邀请。 另一方面，可能代表他的想法可能太过天马行空，脱离常轨，不做还好，做了可能会导致麻烦。 也许他过度敏感，容易受伤。 如果代表事件，则可能得到坏消息，或得到取消或延迟的通知。 逆位置的圣杯侍从，对于保有专属物其实很生疏，圣杯很难捧得起来，容易不经意地滑落。 代表不谙于情感之道，或者是不够用心而大意出错。 圣…"
+      "source_zh_rev": "：脆弱、胆怯、过度敏感、纷乱不安、迟来的消息。 新思想，新思路，创意，想法，新观点，错觉，感觉不对劲，没有灵感，情感幼稚。 可能表示当事人拒绝接受圣杯侍者提供的讯息，或是不愿对他人付出，他可能拒绝别人的善意或邀请。 另一方面，可能代表他的想法可能太过天马行空，脱离常轨，不做还好，做了可能会导致麻烦。 也许他过度敏感，容易受伤。 如果代表事件，则可能得到坏消息，或得到取消或延迟的通知。 逆位置的圣杯侍从，对于保有专属物其实很生疏，圣杯很难捧得起来，容易不经意地滑落。 代表不谙于情感之道，或者是不够用心而大意出错。 圣…",
+      "upright_keywords_en": "sweetness, openness, sensitivity, imagination, tender feeling",
+      "reversed_keywords_en": "naivety, moodiness, fantasy, fragility, emotional immaturity"
     },
     "圣杯骑士": {
       "name": "Knight of Cups",
       "keywords": [
-        "movement",
+        "romance",
+        "offer",
+        "charm",
         "pursuit",
-        "intensity",
-        "advance",
-        "drive"
+        "emotional initiative"
       ],
       "summary": "Knight of Cups represents movement, pursuit, application, and the outward enactment of this suit’s drive. In the realm of emotion, intimacy, sensitivity, relationship, and inner feeling, this court card shows how a person embodies and expresses the suit directly.",
       "up": "Upright, Knight of Cups pushes energy into motion and seeks result, response, or impact through direct involvement. In matters of emotion, intimacy, sensitivity, relationship, and inner feeling, when flowing well, this energy deepens connection, receptivity, and emotional truth.",
       "rev": "Reversed, Knight of Cups turns reckless, unstable, excessive, or self-defeating when speed overtakes wisdom. In matters of emotion, intimacy, sensitivity, relationship, and inner feeling, when strained, this energy becomes hurt, fantasy, avoidance, emptiness, or emotional excess.",
-      "upright_keywords": "movement, pursuit, intensity, advance, drive",
-      "reversed_keywords": "movement, pursuit, intensity, advance, drive",
+      "upright_keywords": "romance, offer, charm, pursuit, emotional initiative",
+      "reversed_keywords": "evasiveness, idealization, unreliability, performance, instability",
       "source_zh_summary": "圣杯骑士：很好满足你的快乐，那么多人，只求独一份爱的感觉，或者特定的某件事能够让你开心，但是不确定，只是一种感觉，感觉什么时候结束时间不定。 温柔细致。 事业学业中，兴趣类的领域可能有突破，但不是主业。 不够稳定。 和土牌搭配更稳定踏实。 邀请与机会，可能有朋友来访，可能代表水边旅行。 锦上添花。 逆位：就是特定的爱只能一个人给的感觉。 逆位也代表动力缺失，…",
       "source_zh_up": "：浪漫，爱情关系，风流韵事，恋爱，爱情，魅力，魔力，吸引力，迷人的特征，妩媚，吉祥小饰物，美好。 优雅、浪漫、吸引力、白马王子、浪漫诗人。 这张牌也代表高度的想像力和优雅的美感，以及美好的梦想和美丽景象的呈现。 爱情：爱情中的圣杯骑士伴随着一种奉献精神，对于伴侣的选择心灵上的契合是不能缺少的。 或者是你对于可以带着你一起成熟，可以帮助到你的恋人会特别钟意。 所以圣杯骑士在爱情中的另外一半或许是比你年长的，可以带动到你的。 相信自己的感觉，巧妙的吸引他人，爱上爱情。 其实两个人都很享受这段感情，也在这个关系当中开发很…",
-      "source_zh_rev": "：倒立的圣杯骑士的你或许会更加注重物质的欲望的，而不只是精神上的想象，会更有行动力，甚至是不得不行动起来。 另一方面你会更加不愿意面对现实，把自己懒惰的性质都发挥出来，没有坚持的解决问题，半途而废的几率大大增长。 想象是无止境的，也有着无穷无尽的可能性，但没有行动的做出来，那就是空谈。 没有借口的，决定了就做吧，过多的感性只会让你的行动更难而已。 想象力过度活跃，思维跳跃，不切实际，吃醋，妒忌，妒羡，珍惜，爱惜，精心守护，情绪多变，喜怒无常，脾气坏，郁郁寡欢，感伤，抑郁，令人悲伤。 迷恋、空想、内向、做作、情绪化圣…"
+      "source_zh_rev": "：倒立的圣杯骑士的你或许会更加注重物质的欲望的，而不只是精神上的想象，会更有行动力，甚至是不得不行动起来。 另一方面你会更加不愿意面对现实，把自己懒惰的性质都发挥出来，没有坚持的解决问题，半途而废的几率大大增长。 想象是无止境的，也有着无穷无尽的可能性，但没有行动的做出来，那就是空谈。 没有借口的，决定了就做吧，过多的感性只会让你的行动更难而已。 想象力过度活跃，思维跳跃，不切实际，吃醋，妒忌，妒羡，珍惜，爱惜，精心守护，情绪多变，喜怒无常，脾气坏，郁郁寡欢，感伤，抑郁，令人悲伤。 迷恋、空想、内向、做作、情绪化圣…",
+      "upright_keywords_en": "romance, offer, charm, pursuit, emotional initiative",
+      "reversed_keywords_en": "evasiveness, idealization, unreliability, performance, instability"
     },
     "圣杯皇后": {
       "name": "Queen of Cups",
       "keywords": [
-        "presence",
-        "maturity",
-        "expression",
-        "influence",
-        "embodiment"
+        "empathy",
+        "intuition",
+        "care",
+        "receptivity",
+        "emotional wisdom"
       ],
       "summary": "Queen of Cups represents mature embodied command, receptive intelligence, and sustained personal mastery of this suit. In the realm of emotion, intimacy, sensitivity, relationship, and inner feeling, this court card shows how a person embodies and expresses the suit directly.",
       "up": "Upright, Queen of Cups expresses this suit through confidence, presence, and the ability to influence without losing center. In matters of emotion, intimacy, sensitivity, relationship, and inner feeling, when flowing well, this energy deepens connection, receptivity, and emotional truth.",
       "rev": "Reversed, Queen of Cups shows imbalance in self-expression, overcontrol, emotional distortion, or a hidden insecurity inside visible strength. In matters of emotion, intimacy, sensitivity, relationship, and inner feeling, when strained, this energy becomes hurt, fantasy, avoidance, emptiness, or emotional excess.",
-      "upright_keywords": "presence, maturity, expression, influence, embodiment",
-      "reversed_keywords": "presence, maturity, expression, influence, embodiment",
+      "upright_keywords": "empathy, intuition, care, receptivity, emotional wisdom",
+      "reversed_keywords": "overwhelm, dependency, projection, hypersensitivity, blurred boundaries",
       "source_zh_summary": "",
       "source_zh_up": "",
-      "source_zh_rev": "，一方面她会被情绪所淹没，活在幻想当中，总是以受害者的形象出现，变得忧郁、善感、自怜、情绪化、过度敏感、不切实际、依赖、沉迷上瘾、不老实、缺乏现实感。 倒立的圣杯女皇水和陆地的连接产生了断裂，那么你可能会被现实打败，沦入沮丧中，迷失在悲伤的长河中。 或者你开始变得冷酷而无情，喜欢用其他的情绪来掩饰自身的痛苦。 这时先学会原谅自己或者过往中的某一个人某一件事，让自己能够从中得到解脱，才能继续享受生活，这种情感的乐趣。 一方面她会被情绪所淹没，活在幻想中，总是以受害者的形象出现，变得忧郁、善感、自怜、情绪化、过度敏感、…"
+      "source_zh_rev": "，一方面她会被情绪所淹没，活在幻想当中，总是以受害者的形象出现，变得忧郁、善感、自怜、情绪化、过度敏感、不切实际、依赖、沉迷上瘾、不老实、缺乏现实感。 倒立的圣杯女皇水和陆地的连接产生了断裂，那么你可能会被现实打败，沦入沮丧中，迷失在悲伤的长河中。 或者你开始变得冷酷而无情，喜欢用其他的情绪来掩饰自身的痛苦。 这时先学会原谅自己或者过往中的某一个人某一件事，让自己能够从中得到解脱，才能继续享受生活，这种情感的乐趣。 一方面她会被情绪所淹没，活在幻想中，总是以受害者的形象出现，变得忧郁、善感、自怜、情绪化、过度敏感、…",
+      "upright_keywords_en": "empathy, intuition, care, receptivity, emotional wisdom",
+      "reversed_keywords_en": "overwhelm, dependency, projection, hypersensitivity, blurred boundaries"
     },
     "圣杯国王": {
       "name": "King of Cups",
       "keywords": [
-        "authority",
-        "control",
-        "mastery",
-        "responsibility",
-        "command"
+        "balance",
+        "compassion",
+        "steadiness",
+        "tact",
+        "emotional mastery"
       ],
       "summary": "King of Cups represents authority, command, completion, and disciplined control over this suit’s field. In the realm of emotion, intimacy, sensitivity, relationship, and inner feeling, this court card shows how a person embodies and expresses the suit directly.",
       "up": "Upright, King of Cups governs this suit with maturity, strategic awareness, and the ability to direct outcomes responsibly. In matters of emotion, intimacy, sensitivity, relationship, and inner feeling, when flowing well, this energy deepens connection, receptivity, and emotional truth.",
       "rev": "Reversed, King of Cups becomes domination, rigidity, emotional distance, or misuse of power when mastery loses humility. In matters of emotion, intimacy, sensitivity, relationship, and inner feeling, when strained, this energy becomes hurt, fantasy, avoidance, emptiness, or emotional excess.",
-      "upright_keywords": "authority, control, mastery, responsibility, command",
-      "reversed_keywords": "authority, control, mastery, responsibility, command",
+      "upright_keywords": "balance, compassion, steadiness, tact, emotional mastery",
+      "reversed_keywords": "manipulation, withdrawal, hidden volatility, passive control, distrust",
       "source_zh_summary": "圣杯国王：除了有点油其它没什么槽点。 人际关系真的处理得好。 碰上大事他能让所有人都信服。 给每个人都送温暖，见着有爱，像阳光一样公平。 性格温柔，爹系男友。 可能已婚（配上圣杯八或圣杯十）。 年龄不一定大单经历丰富，八面玲珑但又孤独。 海外的人。 浪漫典雅，i艺术气息。 温柔的男性长辈。 孤岛。 讨好型人格。 做慈善。 逆位挣脱熟悉的圈子，认识新朋友。 网…",
       "source_zh_up": "：情绪平稳，有同情心，怜悯，社交，有手段，变通，策略，圆滑。 慈悲、宽恕、宗教家、慈善家、艺术家。 爱情：爱情中的圣杯国王非常有影响力，你对于伴侣的情感是非常的重视并且是成熟的，有着自己长远的计划。 两个人之中如果出现这中特质的人，那么他可以是你的父亲或者朋友，对你们之间的感情影响非常深。 他人发脾气时，保持成熟，父亲般的爱，耐心与理解建立更牢固的关系现在两个人之间的感情状况非常稳定，有可能是正在计划结婚，彼此的相处像家人一样，也会受到大家的祝福。 现在有可能出现新的恋情，同时对方的态度十分认真，是以结婚为前提要和…",
-      "source_zh_rev": "：倒立的圣杯国王消极的一面就会浮现出来，从宝座上跌落到海中，情感开始失控，自身做的的很多事情都是不理智的。 内心的恐惧和不信任会让你变得暴躁易怒。 而自身的创造性，也需要更多的成熟和经验才能开发出来。 信赖你自身的本能，做出诚实的表达。 多自律的进行情感和创造性上的训练，成功近在咫尺。 当圣杯国王这张牌逆位时，圣杯国王个人能力的消极面就浮现出来了。 他可能会以不诚实的手段来支配各种人际，以及他周遭的人。 他很少透露有关他本身的讯息，但是可能会细察你的一举一动，以找出你的弱点。 他的内心充满恐惧，而且可能展现出天生对… ## 宝剑（14）"
+      "source_zh_rev": "：倒立的圣杯国王消极的一面就会浮现出来，从宝座上跌落到海中，情感开始失控，自身做的的很多事情都是不理智的。 内心的恐惧和不信任会让你变得暴躁易怒。 而自身的创造性，也需要更多的成熟和经验才能开发出来。 信赖你自身的本能，做出诚实的表达。 多自律的进行情感和创造性上的训练，成功近在咫尺。 当圣杯国王这张牌逆位时，圣杯国王个人能力的消极面就浮现出来了。 他可能会以不诚实的手段来支配各种人际，以及他周遭的人。 他很少透露有关他本身的讯息，但是可能会细察你的一举一动，以找出你的弱点。 他的内心充满恐惧，而且可能展现出天生对… ## 宝剑（14）",
+      "upright_keywords_en": "balance, compassion, steadiness, tact, emotional mastery",
+      "reversed_keywords_en": "manipulation, withdrawal, hidden volatility, passive control, distrust"
     },
     "宝剑一": {
       "name": "Ace of Swords",
-      "keywords": [],
+      "keywords": [
+        "clarity",
+        "truth",
+        "decision",
+        "precision",
+        "breakthrough"
+      ],
       "summary": "A sharp beginning in thought, language, and intention. Ace of Swords cuts in quickly: the mind has already formed a direction, and clarity now demands execution rather than endless delay.",
       "up": "Upright, Ace of Swords stands for truth, decision, intellectual clarity, precision, and a strong plan ready to be enacted. It can mark a breakthrough in thinking, a decisive conversation, or the moment an idea becomes sharp enough to act on.",
       "rev": "Reversed, Ace of Swords points to confusion, harsh words, overthinking, or an idea that is technically sharp but poorly carried out. Thought may run ahead of reality, or the truth may be used in a cold, cutting, or self-defeating way.",
-      "upright_keywords": "",
-      "reversed_keywords": "",
+      "upright_keywords": "clarity, truth, decision, precision, breakthrough",
+      "reversed_keywords": "confusion, harshness, overthinking, poor execution, mental strain",
       "source_zh_summary": "宝剑一：清晰，已经有想法的那种，可以继续实施； 但是计划是否成功需要契机； 建议做计划，但可以不太具体，会达到比较好的效果，最好有人支持。 切割，冷兵器。 有个性。 感情上对应关系的分水岭，和正义差不多。 和水牌结合说明要结婚。 如果情侣都是宝剑牌，说明有缘分但政治多。 检查。 流年抽到宝剑时慎用道具。 定义一个身份，切割分离，感情中有缘分在一起但是在一起就…",
       "source_zh_up": "：爱情：事业学业：财富人际：健康生活：…",
-      "source_zh_rev": "：爱情：事业学业：财富人际：健康生活：…"
+      "source_zh_rev": "：爱情：事业学业：财富人际：健康生活：…",
+      "upright_keywords_en": "clarity, truth, decision, precision, breakthrough",
+      "reversed_keywords_en": "confusion, harshness, overthinking, poor execution, mental strain"
     },
     "宝剑二": {
       "name": "Two of Swords",
@@ -1112,86 +1152,102 @@
     "宝剑侍从": {
       "name": "Page of Swords",
       "keywords": [
+        "alertness",
         "curiosity",
-        "message",
-        "learning",
-        "openness",
-        "potential"
+        "observation",
+        "study",
+        "mental readiness"
       ],
       "summary": "Page of Swords represents youthful emergence, curiosity, learning, and the first personal handling of this suit’s energy. In the realm of thought, truth, tension, decision, language, and mental pressure, this court card shows how a person embodies and expresses the suit directly.",
       "up": "Upright, Page of Swords shows a beginning attitude: open, exploratory, and emotionally or mentally impressionable, but alive with possibility. In matters of thought, truth, tension, decision, language, and mental pressure, when used clearly, this energy sharpens judgment and cuts a path through confusion.",
       "rev": "Reversed, Page of Swords becomes immaturity, inconsistency, naivety, or scattered effort when the energy lacks grounding. In matters of thought, truth, tension, decision, language, and mental pressure, when strained, this energy becomes conflict, anxiety, overthinking, or harsh separation.",
-      "upright_keywords": "curiosity, message, learning, openness, potential",
-      "reversed_keywords": "curiosity, message, learning, openness, potential",
+      "upright_keywords": "alertness, curiosity, observation, study, mental readiness",
+      "reversed_keywords": "anxiety, suspicion, gossip, reactivity, scattered thinking",
       "source_zh_summary": "宝剑侍从：勤勉的学习偶尔分心。 学习新的知识，接收到新的信息进入到你的生命，关于未来的信息。 探索新的可能性。 网恋，网上认识人。 小侦探小柯南，当事人是知道东西但不全，可能没有强大的理论支撑。 每天都蹦个新点子，就想要跟人交流。 在牌阵中，经常代表案主所问之事走一步看一步的心态。 与战场相关，是一张牺牲的牌。 往往有好的想法，但往往被别人实现。 可能拥有一…",
       "source_zh_up": "：警觉、刺探、间谍、狗仔队、思维敏捷。 新思想，新思路，新觀點，創意，好奇心，罕見而有趣之物，奇物，珍品，求知欲，渴望知識，新的通信方式。 企劃的人才，創意的藝術家，運用靈活思考的自己是這一張牌的暗示，也可以這樣子說，塔羅牌寶劍侍者(侍從)代表著是快速的思緒活動，自由的創意空間，不錯的計劃或規劃的開始與進行，同時的也帶里文思泉湧的時期，對證需要動腦的時期來說，這一張牌的出現有如一股很大的助力，而在另外一方面來看，寶劍侍者(侍從)也代表著自己目前正在為了某一件事情而行動，是一張動的牌，不過因為寶劍侍者(侍從)屬風的元…",
-      "source_zh_rev": "：泄密、心口不一、信口开河、纸上谈兵、人浮于事。 自我表現，表達自己，光說不做，行動魯莽，倉促行事。 漫不經心的、憤世嫉俗的、諷刺的、八卦的、侮辱性的、粗魯的、缺乏計劃的。 逆位置的宝剑侍从，对于保有专属物很生疏却强做镇定，持有宝剑并不是一件容易的事，需要有长期的训练。 这时候双手捧剑的侍从，由于不得要领，宝剑胡乱挥舞，漫无章法。 宝剑随意挥舞是一件很危险的事，而倒剑掉落也是有关於荣誉受损，自尊心的问题，除了事情本身遇挫以外，也有责任问题要承担。 这张牌的逆位置，表示侍从本身的问题，自己也站不稳脚，更使得状况百出。…"
+      "source_zh_rev": "：泄密、心口不一、信口开河、纸上谈兵、人浮于事。 自我表現，表達自己，光說不做，行動魯莽，倉促行事。 漫不經心的、憤世嫉俗的、諷刺的、八卦的、侮辱性的、粗魯的、缺乏計劃的。 逆位置的宝剑侍从，对于保有专属物很生疏却强做镇定，持有宝剑并不是一件容易的事，需要有长期的训练。 这时候双手捧剑的侍从，由于不得要领，宝剑胡乱挥舞，漫无章法。 宝剑随意挥舞是一件很危险的事，而倒剑掉落也是有关於荣誉受损，自尊心的问题，除了事情本身遇挫以外，也有责任问题要承担。 这张牌的逆位置，表示侍从本身的问题，自己也站不稳脚，更使得状况百出。…",
+      "upright_keywords_en": "alertness, curiosity, observation, study, mental readiness",
+      "reversed_keywords_en": "anxiety, suspicion, gossip, reactivity, scattered thinking"
     },
     "宝剑骑士": {
       "name": "Knight of Swords",
       "keywords": [
-        "movement",
-        "pursuit",
-        "intensity",
-        "advance",
-        "drive"
+        "decisiveness",
+        "force",
+        "urgency",
+        "intervention",
+        "sharp action"
       ],
       "summary": "Knight of Swords represents movement, pursuit, application, and the outward enactment of this suit’s drive. In the realm of thought, truth, tension, decision, language, and mental pressure, this court card shows how a person embodies and expresses the suit directly.",
       "up": "Upright, Knight of Swords pushes energy into motion and seeks result, response, or impact through direct involvement. In matters of thought, truth, tension, decision, language, and mental pressure, when used clearly, this energy sharpens judgment and cuts a path through confusion.",
       "rev": "Reversed, Knight of Swords turns reckless, unstable, excessive, or self-defeating when speed overtakes wisdom. In matters of thought, truth, tension, decision, language, and mental pressure, when strained, this energy becomes conflict, anxiety, overthinking, or harsh separation.",
-      "upright_keywords": "movement, pursuit, intensity, advance, drive",
-      "reversed_keywords": "movement, pursuit, intensity, advance, drive",
+      "upright_keywords": "decisiveness, force, urgency, intervention, sharp action",
+      "reversed_keywords": "aggression, impulsiveness, conflict, overdrive, poor judgment",
       "source_zh_summary": "宝剑骑士：速度最快，注重结果。 争分夺秒立即行动抓住机会。 与宫廷牌相对应的是固定的时间计划，按照自己的节奏前进。 强行推进导致失败。 正逆位都是在事件发展时容易脱离实际轨道轻视困难。 逆位表示不用着急完成每件事，整块地放弃。 着急地做与目的相反的事情。 网页资料：宝剑骑士和圣杯骑士同样骑着白马，但宝剑骑士这匹马在狂风中极速奔驰，与圣杯骑士平缓前进的马形成强…",
       "source_zh_up": "：战士、冲动、热血、极端份子、反叛人士。 自信、直接、急躁、知識分子、大膽、專注、完美主義者、雄心勃勃。 他勇气过人，豪气干云，好胜心强，行动迅捷，但一不小心就会流于狂野放纵。 他是热情、思虑敏捷并且充满活力的。 他是一个懂得如何“抓住这一天”的年轻人。 他的思绪里总是不断的在找新的机会、新的路线和新的想法。 他有办法把几种不相关的概念组合并形成一些新的想法。 他通常是滔滔不绝的、好奇、活跃并热衷于多了解人生。 他坚称女人是听觉的动物，要通达她的心就要透过她的耳朵。 而且他也喜欢联系某种富于想象力的措辞。 这是属于…",
-      "source_zh_rev": "：鲁莽、轻率、不耐烦、自以为是、匆忙出错。 粗魯,不圓滑,有力,惡霸,好鬥,惡毒,無情,傲慢。 宝剑骑士的逆位意味着做决定较轻率，不经分析与考量，易受情绪支配。 这张牌的逆位置，表示骑士落马失足，手中所握的宝剑失控被震落，甚至这个元素属物会折断或受损。 这表示这位骑士气急败坏，不然就是学艺不精或略逊敌手一筹，临场反应不佳或生疏，因而与敌人交锋却落败。 好似遭遇到敌手而被挑落马下，手中的宝剑落地被夺，这在战斗中是很大的失利。 代表较大的挫败，在任务中是落败或者遇到挫折。 逆位置的宝剑骑士，虽然一样自我意识强烈，想要追…"
+      "source_zh_rev": "：鲁莽、轻率、不耐烦、自以为是、匆忙出错。 粗魯,不圓滑,有力,惡霸,好鬥,惡毒,無情,傲慢。 宝剑骑士的逆位意味着做决定较轻率，不经分析与考量，易受情绪支配。 这张牌的逆位置，表示骑士落马失足，手中所握的宝剑失控被震落，甚至这个元素属物会折断或受损。 这表示这位骑士气急败坏，不然就是学艺不精或略逊敌手一筹，临场反应不佳或生疏，因而与敌人交锋却落败。 好似遭遇到敌手而被挑落马下，手中的宝剑落地被夺，这在战斗中是很大的失利。 代表较大的挫败，在任务中是落败或者遇到挫折。 逆位置的宝剑骑士，虽然一样自我意识强烈，想要追…",
+      "upright_keywords_en": "decisiveness, force, urgency, intervention, sharp action",
+      "reversed_keywords_en": "aggression, impulsiveness, conflict, overdrive, poor judgment"
     },
     "宝剑皇后": {
       "name": "Queen of Swords",
       "keywords": [
-        "presence",
-        "maturity",
-        "expression",
-        "influence",
-        "embodiment"
+        "clarity",
+        "independence",
+        "discernment",
+        "boundaries",
+        "truth"
       ],
       "summary": "Queen of Swords represents mature embodied command, receptive intelligence, and sustained personal mastery of this suit. In the realm of thought, truth, tension, decision, language, and mental pressure, this court card shows how a person embodies and expresses the suit directly.",
       "up": "Upright, Queen of Swords expresses this suit through confidence, presence, and the ability to influence without losing center. In matters of thought, truth, tension, decision, language, and mental pressure, when used clearly, this energy sharpens judgment and cuts a path through confusion.",
       "rev": "Reversed, Queen of Swords shows imbalance in self-expression, overcontrol, emotional distortion, or a hidden insecurity inside visible strength. In matters of thought, truth, tension, decision, language, and mental pressure, when strained, this energy becomes conflict, anxiety, overthinking, or harsh separation.",
-      "upright_keywords": "presence, maturity, expression, influence, embodiment",
-      "reversed_keywords": "presence, maturity, expression, influence, embodiment",
+      "upright_keywords": "clarity, independence, discernment, boundaries, truth",
+      "reversed_keywords": "coldness, sarcasm, defensiveness, severity, isolation",
       "source_zh_summary": "",
       "source_zh_up": "",
-      "source_zh_rev": ""
+      "source_zh_rev": "",
+      "upright_keywords_en": "clarity, independence, discernment, boundaries, truth",
+      "reversed_keywords_en": "coldness, sarcasm, defensiveness, severity, isolation"
     },
     "宝剑国王": {
       "name": "King of Swords",
       "keywords": [
+        "reason",
         "authority",
-        "control",
-        "mastery",
-        "responsibility",
+        "strategy",
+        "objectivity",
         "command"
       ],
       "summary": "King of Swords represents authority, command, completion, and disciplined control over this suit’s field. In the realm of thought, truth, tension, decision, language, and mental pressure, this court card shows how a person embodies and expresses the suit directly.",
       "up": "Upright, King of Swords governs this suit with maturity, strategic awareness, and the ability to direct outcomes responsibly. In matters of thought, truth, tension, decision, language, and mental pressure, when used clearly, this energy sharpens judgment and cuts a path through confusion.",
       "rev": "Reversed, King of Swords becomes domination, rigidity, emotional distance, or misuse of power when mastery loses humility. In matters of thought, truth, tension, decision, language, and mental pressure, when strained, this energy becomes conflict, anxiety, overthinking, or harsh separation.",
-      "upright_keywords": "authority, control, mastery, responsibility, command",
-      "reversed_keywords": "authority, control, mastery, responsibility, command",
+      "upright_keywords": "reason, authority, strategy, objectivity, command",
+      "reversed_keywords": "rigidity, cruelty, arrogance, detachment, manipulative logic",
       "source_zh_summary": "宝剑国王：只有在大悬案沉冤得雪的时候是好的。 适合打官司，处理法律事务。 其它都是坏的。 学东西的话这个老师可以，但太严格了。 专业人士，但请他的条件苛刻，你要是请他他下一步就想取代你，除非你是个大皇帝而且要亲自坐镇，对这种人阶段性合同是可以的。 他自己就能当主子。 空降兵，外调来的，但不适合长久在这工作的。 改革。 控制欲强的父系社会角色，情绪控制能力不佳…",
       "source_zh_up": "：爱情：事业学业：财富人际：健康生活：…",
-      "source_zh_rev": "：爱情：事业学业：财富人际：健康生活：… ## 星币（14）"
+      "source_zh_rev": "：爱情：事业学业：财富人际：健康生活：… ## 星币（14）",
+      "upright_keywords_en": "reason, authority, strategy, objectivity, command",
+      "reversed_keywords_en": "rigidity, cruelty, arrogance, detachment, manipulative logic"
     },
     "星币一": {
       "name": "Ace of Pentacles",
-      "keywords": [],
+      "keywords": [
+        "opportunity",
+        "stability",
+        "material opening",
+        "value",
+        "grounded start"
+      ],
       "summary": "A grounded new beginning in money, work, security, and visible value. Ace of Pentacles opens material opportunity and asks whether you can turn potential into something durable and real.",
       "up": "Upright, Ace of Pentacles represents a real opening in finances, work, stability, property, practical growth, or embodied wellbeing. The opportunity is concrete. What begins now can become reliable if it is handled patiently and well.",
       "rev": "Reversed, Ace of Pentacles suggests delay, waste, shaky planning, financial strain, or a chance that exists on paper but is not yet secure in practice. Value may be slipping through your hands because the foundation is not solid enough.",
-      "upright_keywords": "",
-      "reversed_keywords": "",
+      "upright_keywords": "opportunity, stability, material opening, value, grounded start",
+      "reversed_keywords": "delay, insecurity, waste, shaky planning, unstable foundation",
       "source_zh_summary": "星币一：最接近“画饼”的牌，不仅给别人画，还给自己画。 给对方具体的承诺。 同时星币ACE同其他三个元素的开端一样带有一个迷惑性，他们的共同点便是当一个新事物的产生便会联想到它的一个结果，然而只是我们的一个想法，现实不一定就是如此。 代表踏入适合个人的行业，但不一定会喜欢。 财运的良好开端，有赚钱或展示自己的机会。 如果与大牌一起出现，可能意味着机会是暂时的…",
       "source_zh_up": "：物質、地位、財富，有足夠的錢保證計劃的實施。 财富、享乐、安全、实质、金钱计划新財路，新就業機會，新的經濟模式，新的經濟來源，顯示，表明，表示，顯靈，大量，豐盛，充裕，富裕。 不易变动、积极但是速度缓慢、稳定、脚踏实地、理性、重逻辑、有包容力、可靠、温暖、温暖但重纪律、意志力强韧、有持续力无爆发力、顽固、不懂变通、反应较慢、重实际、有责任感、道德观强、社会化、重视整体、较难沟通、金融业、农业、珠宝业、看得见摸得到掌握得住、善规划、有耐心、沉得住气、沉默、古板、扎实、富有、重感官类享受。 當星幣(金幣/錢幣)一出現…",
-      "source_zh_rev": "：失去機會，錯過機會，沒有計劃，準備不周，沒有遠見。 奢侈、挥霍、浪费、失利、不足。 逆位的星币首牌，就是手中握住的金币滚落，象征着失去金钱财富。 这样的感觉是一种失落，失去拥有物的的感受。 也可以理解为手上拿着的是该丢弃的膺品、贬值的物资，是一种虚假的财富。 因此也有受骗上当、遭遇诈财，而蒙受了财务损失的意味。 图面上所画的建筑物，在逆位的时候也表示产生了问题，不动产或房地产出了状况，或者居所住处需要花费很多金钱。 地面上的这些生长物，也将枯萎倒下，代表投资方面的失利，可能会赔上不少财产。 从精神世界中伸出来的手…"
+      "source_zh_rev": "：失去機會，錯過機會，沒有計劃，準備不周，沒有遠見。 奢侈、挥霍、浪费、失利、不足。 逆位的星币首牌，就是手中握住的金币滚落，象征着失去金钱财富。 这样的感觉是一种失落，失去拥有物的的感受。 也可以理解为手上拿着的是该丢弃的膺品、贬值的物资，是一种虚假的财富。 因此也有受骗上当、遭遇诈财，而蒙受了财务损失的意味。 图面上所画的建筑物，在逆位的时候也表示产生了问题，不动产或房地产出了状况，或者居所住处需要花费很多金钱。 地面上的这些生长物，也将枯萎倒下，代表投资方面的失利，可能会赔上不少财产。 从精神世界中伸出来的手…",
+      "upright_keywords_en": "opportunity, stability, material opening, value, grounded start",
+      "reversed_keywords_en": "delay, insecurity, waste, shaky planning, unstable foundation"
     },
     "星币二": {
       "name": "Two of Pentacles",
@@ -1358,74 +1414,82 @@
     "星币侍从": {
       "name": "Page of Pentacles",
       "keywords": [
-        "curiosity",
-        "message",
+        "diligence",
         "learning",
-        "openness",
-        "potential"
+        "practical start",
+        "skill-building",
+        "opportunity"
       ],
       "summary": "Page of Pentacles represents youthful emergence, curiosity, learning, and the first personal handling of this suit’s energy. In the realm of work, money, stability, embodiment, responsibility, and tangible value, this court card shows how a person embodies and expresses the suit directly.",
       "up": "Upright, Page of Pentacles shows a beginning attitude: open, exploratory, and emotionally or mentally impressionable, but alive with possibility. In matters of work, money, stability, embodiment, responsibility, and tangible value, when grounded, this energy creates steady growth, practical results, and durable support.",
       "rev": "Reversed, Page of Pentacles becomes immaturity, inconsistency, naivety, or scattered effort when the energy lacks grounding. In matters of work, money, stability, embodiment, responsibility, and tangible value, when strained, this energy becomes stagnation, scarcity, burden, or material insecurity.",
-      "upright_keywords": "curiosity, message, learning, openness, potential",
-      "reversed_keywords": "curiosity, message, learning, openness, potential",
+      "upright_keywords": "diligence, learning, practical start, skill-building, opportunity",
+      "reversed_keywords": "distraction, laziness, shallow effort, poor planning, wasted potential",
       "source_zh_summary": "星币侍从：入门，学习，好苗子。 不成熟的能量。 很努力去学各种东西。 稳妥，劳碌。 比较能抗压，也对应到一种虚心。 是一种学习的状态，有争议的点是像是为了虚荣心去学。 低调谦逊，利他，有活力努力愿意吃苦。 适合成为合作伙伴和创业，因为自备资源能力。 懂事的孩子，主动承担责任和压力，默默付出，努力主动解决问题。 适合工作。 时间发展进度缓慢受到限制。 感情发展…",
       "source_zh_up": "：课程、学习、认真、学徒、小商人。 顯現，表現，出頭，投資機會，技能發展，技術突破。 綠色的衣杉象徵著自然科學及其旺盛的生命力。 他的頭上沒有桂冠，而是戴著厚重的紅色帽子，這也代表著他可能不是一個勝利者，更不是一個領導者。 他是一個學者，有智慧，有熱情，有創意，並且成熟穩健。 他腳下茂盛的草原象徵豐富的知識和充實未來。 爱情：爱情中的星币侍卫虽然稍稍有点不太成熟，却能够把自己的热情都发挥到对方身上，让这种关系能够获得强力的承诺。 星币待从意味对某段关系的强烈承诺。 待从在两性关系的分析当中可能象征对一段新关系，或既…",
-      "source_zh_rev": "：善变、好动、散漫、推卸责任、缺乏承诺。 缺乏進展，停滯不前，延期，拖延，汲取教訓，總結經驗。 逆位的星币待从，对于保有专属物其实很生疏，星币很难捧得起来，容易不经意地滑落。 代表不黯於理财之道，或者是不够用心而大意出错。 也有可能是过于慷慨，随意运用不节约，甚至浪费奢侈，耗散，有了一点点积蓄就很得意地想要挥霍殆尽。 星币待从的逆位，表示待从本身的问题，自己也站不稳脚，更使得状况百出。 因为经验不足和新手，他的想法过于不切实际，无法承认显而易见的事实，想法纷乱思考不合逻辑。 甚至于很叛逆，不听别人劝告。 倒立的星币…"
+      "source_zh_rev": "：善变、好动、散漫、推卸责任、缺乏承诺。 缺乏進展，停滯不前，延期，拖延，汲取教訓，總結經驗。 逆位的星币待从，对于保有专属物其实很生疏，星币很难捧得起来，容易不经意地滑落。 代表不黯於理财之道，或者是不够用心而大意出错。 也有可能是过于慷慨，随意运用不节约，甚至浪费奢侈，耗散，有了一点点积蓄就很得意地想要挥霍殆尽。 星币待从的逆位，表示待从本身的问题，自己也站不稳脚，更使得状况百出。 因为经验不足和新手，他的想法过于不切实际，无法承认显而易见的事实，想法纷乱思考不合逻辑。 甚至于很叛逆，不听别人劝告。 倒立的星币…",
+      "upright_keywords_en": "diligence, learning, practical start, skill-building, opportunity",
+      "reversed_keywords_en": "distraction, laziness, shallow effort, poor planning, wasted potential"
     },
     "星币骑士": {
       "name": "Knight of Pentacles",
       "keywords": [
-        "movement",
-        "pursuit",
-        "intensity",
-        "advance",
-        "drive"
+        "discipline",
+        "reliability",
+        "persistence",
+        "method",
+        "steady progress"
       ],
       "summary": "Knight of Pentacles represents movement, pursuit, application, and the outward enactment of this suit’s drive. In the realm of work, money, stability, embodiment, responsibility, and tangible value, this court card shows how a person embodies and expresses the suit directly.",
       "up": "Upright, Knight of Pentacles pushes energy into motion and seeks result, response, or impact through direct involvement. In matters of work, money, stability, embodiment, responsibility, and tangible value, when grounded, this energy creates steady growth, practical results, and durable support.",
       "rev": "Reversed, Knight of Pentacles turns reckless, unstable, excessive, or self-defeating when speed overtakes wisdom. In matters of work, money, stability, embodiment, responsibility, and tangible value, when strained, this energy becomes stagnation, scarcity, burden, or material insecurity.",
-      "upright_keywords": "movement, pursuit, intensity, advance, drive",
-      "reversed_keywords": "movement, pursuit, intensity, advance, drive",
+      "upright_keywords": "discipline, reliability, persistence, method, steady progress",
+      "reversed_keywords": "stagnation, inertia, boredom, rigidity, mechanical effort",
       "source_zh_summary": "星币骑士：没槽点，靠谱，事事有回应。 爱情不好说，但他是个负责稳定的人，不会辜负你，经济适用。 事业上很不错的牌，当同事是最好的。 守护自己，像禁卫军。 当他愿意为了你去改变规划工作什么的他就真的爱你。 默默地把该做的事做好做完，某种使命责任。 优秀的辅助。 耐看。 专业能力强。 倾向于默默无闻、充分考虑后才行动，执行力也很强。 旗鼓相当的优秀对象。 最好的…",
       "source_zh_up": "：爱情：事业学业：财富人际：健康生活：…",
-      "source_zh_rev": "：爱情：事业学业：财富人际：健康生活：星币女皇：自己靠谱； 家庭条件优渥，婚姻受到家庭影响较大。 具有整体观念和顾大局的家庭女性。 建议咨询老一辈人或专业人士的意见。 稳妥不易出错的角色，投资至少保本。 沉稳、考虑周全值得信赖的人。 有事情并不是自己能够完全决定，背后有家族的影响。 大家族中的女性管理人员。 花出去的钱很稳，会回本不赔。 逆位别人靠谱，类似别人还钱。 尝试新的事物，由第三方人物来完成。 网页资料：星币女皇正位：爱情：事业学业：财富人际：健康生活：星币女皇逆位：爱情：事业学业：财富人际：健康生活：…"
+      "source_zh_rev": "：爱情：事业学业：财富人际：健康生活：星币女皇：自己靠谱； 家庭条件优渥，婚姻受到家庭影响较大。 具有整体观念和顾大局的家庭女性。 建议咨询老一辈人或专业人士的意见。 稳妥不易出错的角色，投资至少保本。 沉稳、考虑周全值得信赖的人。 有事情并不是自己能够完全决定，背后有家族的影响。 大家族中的女性管理人员。 花出去的钱很稳，会回本不赔。 逆位别人靠谱，类似别人还钱。 尝试新的事物，由第三方人物来完成。 网页资料：星币女皇正位：爱情：事业学业：财富人际：健康生活：星币女皇逆位：爱情：事业学业：财富人际：健康生活：…",
+      "upright_keywords_en": "discipline, reliability, persistence, method, steady progress",
+      "reversed_keywords_en": "stagnation, inertia, boredom, rigidity, mechanical effort"
     },
     "星币皇后": {
       "name": "Queen of Pentacles",
       "keywords": [
-        "presence",
-        "maturity",
-        "expression",
-        "influence",
-        "embodiment"
+        "stability",
+        "care",
+        "abundance",
+        "competence",
+        "grounded support"
       ],
       "summary": "Queen of Pentacles represents mature embodied command, receptive intelligence, and sustained personal mastery of this suit. In the realm of work, money, stability, embodiment, responsibility, and tangible value, this court card shows how a person embodies and expresses the suit directly.",
       "up": "Upright, Queen of Pentacles expresses this suit through confidence, presence, and the ability to influence without losing center. In matters of work, money, stability, embodiment, responsibility, and tangible value, when grounded, this energy creates steady growth, practical results, and durable support.",
       "rev": "Reversed, Queen of Pentacles shows imbalance in self-expression, overcontrol, emotional distortion, or a hidden insecurity inside visible strength. In matters of work, money, stability, embodiment, responsibility, and tangible value, when strained, this energy becomes stagnation, scarcity, burden, or material insecurity.",
-      "upright_keywords": "presence, maturity, expression, influence, embodiment",
-      "reversed_keywords": "presence, maturity, expression, influence, embodiment",
+      "upright_keywords": "stability, care, abundance, competence, grounded support",
+      "reversed_keywords": "overextension, insecurity, drain, possessiveness, material stress",
       "source_zh_summary": "",
       "source_zh_up": "",
-      "source_zh_rev": ""
+      "source_zh_rev": "",
+      "upright_keywords_en": "stability, care, abundance, competence, grounded support",
+      "reversed_keywords_en": "overextension, insecurity, drain, possessiveness, material stress"
     },
     "星币国王": {
       "name": "King of Pentacles",
       "keywords": [
+        "wealth",
+        "stewardship",
         "authority",
-        "control",
-        "mastery",
-        "responsibility",
-        "command"
+        "durability",
+        "practical success"
       ],
       "summary": "King of Pentacles represents authority, command, completion, and disciplined control over this suit’s field. In the realm of work, money, stability, embodiment, responsibility, and tangible value, this court card shows how a person embodies and expresses the suit directly.",
       "up": "Upright, King of Pentacles governs this suit with maturity, strategic awareness, and the ability to direct outcomes responsibly. In matters of work, money, stability, embodiment, responsibility, and tangible value, when grounded, this energy creates steady growth, practical results, and durable support.",
       "rev": "Reversed, King of Pentacles becomes domination, rigidity, emotional distance, or misuse of power when mastery loses humility. In matters of work, money, stability, embodiment, responsibility, and tangible value, when strained, this energy becomes stagnation, scarcity, burden, or material insecurity.",
-      "upright_keywords": "authority, control, mastery, responsibility, command",
-      "reversed_keywords": "authority, control, mastery, responsibility, command",
+      "upright_keywords": "wealth, stewardship, authority, durability, practical success",
+      "reversed_keywords": "greed, control, complacency, rigidity, possessive power",
       "source_zh_summary": "星币国王：正位，事业有成，可能有超过一个伴侣，大房二房各司其职那种，有自己既定的价值观。 追债，有责任感。 成家的老男人，中年油腻男。 不一定富有，守着一点小资产，慵懒且难以改变。 在牌阵中间象征阻碍难以跨越。 感情出了考虑对方父母，还要考虑现实方面的阻碍是否是必要的。 有钱没爱，可能还抠。 仗着自己的资源来摆烂，有一定的钱就不努力。 出现在中间无法跨越的高… 理性、边界、原则感强、判断力强，能一针见血切到核心；偏“冷静但不冷漠”，更像用清醒来保护自己。 稳定、现实照顾、资源管理、生活秩序、把日子过好；温柔但有掌控欲，爱会落到“钱/吃穿住行/照料”上。",
       "source_zh_up": "：爱情：事业学业：财富人际：健康生活：… - 关键词：清醒、洞察、直言、决断、独立、专业判断、抽离情绪看事实。 - 常见指向：做决定/割舍、谈判与规则、需要说清楚边界；在关系中代表“要么好好说，要么就别耗”。 - 关键词：踏实、滋养、会过日子、可靠支持、资源整合、长期主义、务实温柔。 - 常见指向：财务与生活质量改善；适合稳步积累；在关系中代表“照顾型/家庭型”的支持与包容。",
-      "source_zh_rev": "：爱情：事业学业：财富人际：健康生活：… --- # 手工补全词条（补缺） # 宝剑皇后 / 星币皇后（手工补全词条） > 说明：在《TAROT字典.docx》抽取文本中，这两张牌主要以“被引用/伴随出现”的方式出现（例如：\"伴随女皇牌、星币皇后，其次还有宝剑的宫廷牌\"），未形成清晰的独立标题段落，因此自动切段会缺失。 > 这里先按常用解牌实践 + 现有字典风格补齐基础速查词条，后续如在原文中找到更完整描述可再覆盖更新。 ## 宝剑皇后 - 关键词：刻薄、挑刺、过度防御、冷暴力/语言伤人、以理压人、偏见。 - 风险提醒：用“正确”赢了争论、但关系输了；把对方当嫌疑犯审讯；过度怀疑导致沟通断裂。 ## 星币皇后 - 关键词：焦虑型掌控、过度物质化、付出换控制/换服从、患得患失、懒散或被生活压垮。 - 风险提醒：用付出绑架他人；用钱/照顾做道德高地；或反过来——太怕失控导致自己消耗。 --- 若你希望这两张也保持《TAROT字典》那种更“损一点+画像化”的口吻，我可以再把每张补充： - 人物画像（像什么人/相处感） - 恋爱/事业/财务三条落地 - 常见组合牌（和哪些牌一起会变形）"
+      "source_zh_rev": "：爱情：事业学业：财富人际：健康生活：… --- # 手工补全词条（补缺） # 宝剑皇后 / 星币皇后（手工补全词条） > 说明：在《TAROT字典.docx》抽取文本中，这两张牌主要以“被引用/伴随出现”的方式出现（例如：\"伴随女皇牌、星币皇后，其次还有宝剑的宫廷牌\"），未形成清晰的独立标题段落，因此自动切段会缺失。 > 这里先按常用解牌实践 + 现有字典风格补齐基础速查词条，后续如在原文中找到更完整描述可再覆盖更新。 ## 宝剑皇后 - 关键词：刻薄、挑刺、过度防御、冷暴力/语言伤人、以理压人、偏见。 - 风险提醒：用“正确”赢了争论、但关系输了；把对方当嫌疑犯审讯；过度怀疑导致沟通断裂。 ## 星币皇后 - 关键词：焦虑型掌控、过度物质化、付出换控制/换服从、患得患失、懒散或被生活压垮。 - 风险提醒：用付出绑架他人；用钱/照顾做道德高地；或反过来——太怕失控导致自己消耗。 --- 若你希望这两张也保持《TAROT字典》那种更“损一点+画像化”的口吻，我可以再把每张补充： - 人物画像（像什么人/相处感） - 恋爱/事业/财务三条落地 - 常见组合牌（和哪些牌一起会变形）",
+      "upright_keywords_en": "wealth, stewardship, authority, durability, practical success",
+      "reversed_keywords_en": "greed, control, complacency, rigidity, possessive power"
     }
   }
 }
