@@ -278,22 +278,31 @@
       return map[rankMatch] || '';
     }
 
-    function getDictEntry(name) { return state.tarotDict?.[name] || null; }
-    function getCardSummary(name) { return (state.lang === 'en' ? normalizeDictText(getDictEntry(name)?.summary_en || getDictEntry(name)?.summary) : preferVisibleEnglish(getDictEntry(name)?.summary)) || ''; }
-    function getCardMeaning(name, side) {
-      const dict = getDictEntry(name);
+    function getCanonicalCardName(cardOrName) {
+      if (!cardOrName) return '';
+      if (typeof cardOrName === 'string') return cardOrName;
+      return cardOrName.chineseName || cardOrName.label || cardOrName.name || '';
+    }
+
+    function getDictEntry(cardOrName) {
+      const key = getCanonicalCardName(cardOrName);
+      return state.tarotDict?.[key] || null;
+    }
+    function getCardSummary(cardOrName) { return (state.lang === 'en' ? normalizeDictText(getDictEntry(cardOrName)?.summary_en || getDictEntry(cardOrName)?.summary) : preferVisibleEnglish(getDictEntry(cardOrName)?.summary)) || ''; }
+    function getCardMeaning(cardOrName, side) {
+      const dict = getDictEntry(cardOrName);
       return (state.lang === 'en'
         ? normalizeDictText(side === 'up' ? (dict?.up_en || dict?.upright_en || dict?.up || dict?.upright) : (dict?.rev_en || dict?.reversed_en || dict?.rev || dict?.reversed))
         : preferVisibleEnglish(side === 'up' ? (dict?.upright || dict?.up || dict?.upright_text) : (dict?.reversed || dict?.rev || dict?.reversed_text))) || t('noMeaning');
     }
-    function getCardMeaningKeywords(name, side) {
-      const dict = getDictEntry(name);
+    function getCardMeaningKeywords(cardOrName, side) {
+      const dict = getDictEntry(cardOrName);
       return (state.lang === 'en'
         ? normalizeDictText(side === 'up' ? (dict?.upright_keywords_en || dict?.upright_keywords || dict?.keywords_en?.join(', ') || dict?.keywords?.join(', ') || dict?.keywords) : (dict?.reversed_keywords_en || dict?.reversed_keywords || dict?.keywords_en?.join(', ') || dict?.keywords?.join(', ') || dict?.keywords))
         : preferVisibleEnglish(side === 'up' ? (dict?.upright_keywords || dict?.up_keywords || dict?.keywords) : (dict?.reversed_keywords || dict?.rev_keywords || dict?.keywords))) || t('noKeywords');
     }
-    function getCardKeywords(name) {
-      const dict = getDictEntry(name);
+    function getCardKeywords(cardOrName) {
+      const dict = getDictEntry(cardOrName);
       const raw = state.lang === 'en'
         ? normalizeDictText(dict?.upright_keywords_en || dict?.upright_keywords || dict?.keywords_en?.join(', ') || dict?.keywords?.join(', ') || dict?.keywords)
         : preferVisibleEnglish(dict?.upright_keywords || dict?.up_keywords || dict?.keywords);
@@ -360,12 +369,12 @@
       $('#modalName').textContent = getDisplayCardName(card.label);
       $('#modalImage').src = card.file;
       $('#modalImage').alt = getDisplayCardName(card.label);
-      $('#modalSummary').textContent = getCardSummary(card.label) || t('noSummary');
-      $('#modalKeywords').textContent = getCardKeywords(card.label);
-      $('#modalUpKeywords').textContent = getCardMeaningKeywords(card.label, 'up');
-      $('#modalUp').textContent = getCardMeaning(card.label, 'up');
-      $('#modalRevKeywords').textContent = getCardMeaningKeywords(card.label, 'rev');
-      $('#modalRev').textContent = getCardMeaning(card.label, 'rev');
+      $('#modalSummary').textContent = getCardSummary(card) || t('noSummary');
+      $('#modalKeywords').textContent = getCardKeywords(card);
+      $('#modalUpKeywords').textContent = getCardMeaningKeywords(card, 'up');
+      $('#modalUp').textContent = getCardMeaning(card, 'up');
+      $('#modalRevKeywords').textContent = getCardMeaningKeywords(card, 'rev');
+      $('#modalRev').textContent = getCardMeaning(card, 'rev');
       const chips = $('#modalChips');
       chips.innerHTML = '';
       [getDisplayGroup(card.group), getCardElement(card), getCardNumerology(card) ? t('number', getCardNumerology(card)) : ''].filter(Boolean).forEach(text => {
