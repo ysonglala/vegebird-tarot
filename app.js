@@ -397,25 +397,29 @@ function translateSpreadDesc(desc) {
 }
 
 function translateLabel(label) {
-  if (state.lang === 'zh') return label;
   const map = {
-    '第一张': 'First card',
-    '第二张': 'Second card',
-    '第三张': 'Third card',
-    '过去': 'Past',
-    '现在': 'Present',
-    '未来': 'Future',
-    '更远的未来': 'Further future',
-    '起因': 'Cause',
-    '过程': 'Process',
-    '结果': 'Result',
-    '现况': 'Current situation',
-    '选择A的近未来': 'Choice A · near future',
-    '选择B的近未来': 'Choice B · near future',
-    '选择A的结果': 'Choice A · outcome',
-    '选择B的结果': 'Choice B · outcome',
+    slot1: { zh: '第一张', en: 'First card' },
+    slot2: { zh: '第二张', en: 'Second card' },
+    slot3: { zh: '第三张', en: 'Third card' },
+    '第一张': { zh: '第一张', en: 'First card' },
+    '第二张': { zh: '第二张', en: 'Second card' },
+    '第三张': { zh: '第三张', en: 'Third card' },
+    '过去': { zh: '过去', en: 'Past' },
+    '现在': { zh: '现在', en: 'Present' },
+    '未来': { zh: '未来', en: 'Future' },
+    '更远的未来': { zh: '更远的未来', en: 'Further future' },
+    '起因': { zh: '起因', en: 'Cause' },
+    '过程': { zh: '过程', en: 'Process' },
+    '结果': { zh: '结果', en: 'Result' },
+    '现况': { zh: '现况', en: 'Current situation' },
+    '选择A的近未来': { zh: '选择A的近未来', en: 'Choice A · near future' },
+    '选择B的近未来': { zh: '选择B的近未来', en: 'Choice B · near future' },
+    '选择A的结果': { zh: '选择A的结果', en: 'Choice A · outcome' },
+    '选择B的结果': { zh: '选择B的结果', en: 'Choice B · outcome' },
   };
-  return map[label] || label;
+  const hit = map[label];
+  if (hit) return state.lang === 'zh' ? hit.zh : hit.en;
+  return label;
 }
 
 function renderSpreadOptionTexts() {
@@ -594,7 +598,7 @@ const SUITS = [
 ];
 
 const PRESET_SPREADS = {
-  'blank3': { key: 'blank3', name: '无牌阵三张', labels: ['第一张', '第二张', '第三张'], desc: '默认 · 三张无固定解释位置' },
+  'blank3': { key: 'blank3', name: '无牌阵三张', labels: ['slot1', 'slot2', 'slot3'], desc: '默认 · 三张无固定解释位置' },
   'past-present-future': { key: 'past-present-future', name: '过去 / 现在 / 未来', labels: ['过去', '现在', '未来'], desc: '经典三张时间线牌阵' },
   'time-flow': { key: 'time-flow', name: '时间流', labels: ['现在', '未来', '更远的未来'], desc: '更强调后续发展' },
   'cause-process-result': { key: 'cause-process-result', name: '起因 / 过程 / 结果', labels: ['起因', '过程', '结果'], desc: '适合看事件发展' },
