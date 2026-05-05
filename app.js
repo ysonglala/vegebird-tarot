@@ -321,7 +321,7 @@ const EN_CARD_NAMES = {
   '命运之轮': 'Wheel of Fortune', '正义': 'Justice', '倒吊人': 'The Hanged Man', '死神': 'Death', '节制': 'Temperance', '恶魔': 'The Devil', '塔': 'The Tower', '高塔': 'The Tower', '星星': 'The Star', '月亮': 'The Moon', '太阳': 'The Sun', '审判': 'Judgement', '世界': 'The World',
 };
 const EN_SUITS = { '权杖': 'Wands', '圣杯': 'Cups', '宝剑': 'Swords', '星币': 'Pentacles', '大阿卡纳': 'Major Arcana', '小阿卡纳': 'Minor Arcana' };
-const EN_RANKS = { '王牌': 'Ace', '二': 'Two', '三': 'Three', '四': 'Four', '五': 'Five', '六': 'Six', '七': 'Seven', '八': 'Eight', '九': 'Nine', '十': 'Ten', '侍从': 'Page', '骑士': 'Knight', '王后': 'Queen', '国王': 'King' };
+const EN_RANKS = { '王牌': 'Ace', '二': 'Two', '三': 'Three', '四': 'Four', '五': 'Five', '六': 'Six', '七': 'Seven', '八': 'Eight', '九': 'Nine', '十': 'Ten', '侍从': 'Page', '骑士': 'Knight', '皇后': 'Queen', '王后': 'Queen', '国王': 'King' };
 const EN_ELEMENTS = { '风': 'Air', '水': 'Water', '火': 'Fire', '土': 'Earth', '水银 / 风': 'Mercury / Air' };
 const EN_MAJOR = {
   '愚者': { subtitle: 'Beginnings / Trust / Freedom', up: 'A new journey is calling you. Take the first step and let the answer appear on the road.', rev: 'Do not mistake impulse for courage. Understand what you are avoiding before you leap.' },
@@ -823,17 +823,26 @@ function getDictEntry(name) {
   return state.tarotDict?.[name] || null;
 }
 
+function getEnglishKeywordText(dict, ori = 'up') {
+  if (!dict) return '';
+  return normalizeDictText(
+    ori === 'up'
+      ? (dict?.upright_keywords_en || dict?.upright_keywords || dict?.keywords_en?.join(', ') || dict?.keywords?.join(', ') || dict?.keywords)
+      : (dict?.reversed_keywords_en || dict?.reversed_keywords || dict?.keywords_en?.join(', ') || dict?.keywords?.join(', ') || dict?.keywords)
+  );
+}
+
 function getCardKeywords(draw) {
   const dict = getDictEntry(draw.name);
-  const source = state.lang === 'en'
-    ? (draw.ori === 'up'
-      ? normalizeDictText(dict?.upright_keywords_en || dict?.upright_keywords || dict?.keywords_en?.join(', ') || dict?.keywords?.join(', ') || dict?.keywords)
-      : normalizeDictText(dict?.reversed_keywords_en || dict?.reversed_keywords || dict?.keywords_en?.join(', ') || dict?.keywords?.join(', ') || dict?.keywords))
-    : (draw.ori === 'up'
-      ? preferVisibleEnglish(dict?.upright_keywords || dict?.up_keywords || dict?.keywords)
-      : preferVisibleEnglish(dict?.reversed_keywords || dict?.rev_keywords || dict?.keywords));
+  if (state.lang === 'en') {
+    const source = getEnglishKeywordText(dict, draw.ori === 'rev' ? 'rev' : 'up');
+    if (!source) return [];
+    return source.split(/[、，,；;。/]/).map(s => s.trim()).filter(Boolean);
+  }
+  const source = draw.ori === 'up'
+    ? preferVisibleEnglish(dict?.upright_keywords || dict?.up_keywords || dict?.keywords)
+    : preferVisibleEnglish(dict?.reversed_keywords || dict?.rev_keywords || dict?.keywords);
   if (source) return source.split(/[、，,；;。/]/).map(s => s.trim()).filter(Boolean);
-  if (state.lang === 'en') return [];
   const fromSubtitle = buildKeywords(draw);
   const fromSummary = dict?.summary
     ? summarizeText(dict.summary, 80).split(/[、，,；;。]/).map(s => s.trim()).filter(Boolean)
@@ -863,11 +872,12 @@ function getCardMeaning(draw, ori = draw.ori) {
 function getCardMeaningKeywords(draw, ori = draw.ori) {
   const dict = getDictEntry(draw.name);
   const isUp = ori === 'up';
-  const raw = state.lang === 'en'
-    ? normalizeDictText(isUp ? (dict?.upright_keywords_en || dict?.upright_keywords || dict?.keywords_en?.join(', ') || dict?.keywords?.join(', ') || dict?.keywords) : (dict?.reversed_keywords_en || dict?.reversed_keywords || dict?.keywords_en?.join(', ') || dict?.keywords?.join(', ') || dict?.keywords))
-    : preferVisibleEnglish(isUp ? (dict?.upright_keywords || dict?.up_keywords || dict?.keywords) : (dict?.reversed_keywords || dict?.rev_keywords || dict?.keywords));
+  if (state.lang === 'en') {
+    return getEnglishKeywordText(dict, isUp ? 'up' : 'rev') || 'No keywords yet';
+  }
+  const raw = preferVisibleEnglish(isUp ? (dict?.upright_keywords || dict?.up_keywords || dict?.keywords) : (dict?.reversed_keywords || dict?.rev_keywords || dict?.keywords));
   if (raw) return raw;
-  return getCardKeywords({ ...draw, ori }).join(' · ') || (state.lang === 'zh' ? '暂无关键词' : 'No keywords yet');
+  return getCardKeywords({ ...draw, ori }).join(' · ') || '暂无关键词';
 }
 
 function getCardSummary(draw) {
