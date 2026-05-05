@@ -218,6 +218,7 @@ async function interpret(body) {
 
 const server = http.createServer(async (req, res) => {
   const url = new URL(req.url, `http://${req.headers.host}`);
+  console.log(`[request] ${req.method} ${url.pathname}`);
 
   if (req.method === 'OPTIONS') {
     res.writeHead(204, {
@@ -256,8 +257,16 @@ const server = http.createServer(async (req, res) => {
         });
       }
       const result = await interpret(body);
+      console.log('[interpret] success', {
+        lang: body.lang,
+        spreadType: body.spreadType,
+        cardCount: Array.isArray(body.cards) ? body.cards.length : 0,
+        source: result.source,
+        model: result.model || null,
+      });
       return sendJson(res, 200, result);
     } catch (err) {
+      console.error('[interpret] failed', err.message || err);
       return sendJson(res, 500, {
         ok: false,
         message: err.message || 'Internal server error',
