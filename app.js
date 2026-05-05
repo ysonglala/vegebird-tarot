@@ -827,8 +827,8 @@ function getEnglishKeywordText(dict, ori = 'up') {
   if (!dict) return '';
   return normalizeDictText(
     ori === 'up'
-      ? (dict?.upright_keywords_en || dict?.upright_keywords || dict?.keywords_en?.join(', ') || dict?.keywords?.join(', ') || dict?.keywords)
-      : (dict?.reversed_keywords_en || dict?.reversed_keywords || dict?.keywords_en?.join(', ') || dict?.keywords?.join(', ') || dict?.keywords)
+      ? (dict?.upright_keywords_en || dict?.upright_keywords || dict?.keywords_en?.join(', '))
+      : (dict?.reversed_keywords_en || dict?.reversed_keywords || dict?.keywords_en?.join(', '))
   );
 }
 

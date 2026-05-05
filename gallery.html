@@ -298,13 +298,13 @@
     function getCardMeaningKeywords(cardOrName, side) {
       const dict = getDictEntry(cardOrName);
       return (state.lang === 'en'
-        ? normalizeDictText(side === 'up' ? (dict?.upright_keywords_en || dict?.upright_keywords || dict?.keywords_en?.join(', ') || dict?.keywords?.join(', ') || dict?.keywords) : (dict?.reversed_keywords_en || dict?.reversed_keywords || dict?.keywords_en?.join(', ') || dict?.keywords?.join(', ') || dict?.keywords))
+        ? normalizeDictText(side === 'up' ? (dict?.upright_keywords_en || dict?.upright_keywords || dict?.keywords_en?.join(', ')) : (dict?.reversed_keywords_en || dict?.reversed_keywords || dict?.keywords_en?.join(', ')))
         : preferVisibleEnglish(side === 'up' ? (dict?.upright_keywords || dict?.up_keywords || dict?.keywords) : (dict?.reversed_keywords || dict?.rev_keywords || dict?.keywords))) || t('noKeywords');
     }
     function getCardKeywords(cardOrName) {
       const dict = getDictEntry(cardOrName);
       const raw = state.lang === 'en'
-        ? normalizeDictText(dict?.upright_keywords_en || dict?.upright_keywords || dict?.keywords_en?.join(', ') || dict?.keywords?.join(', ') || dict?.keywords)
+        ? normalizeDictText(dict?.upright_keywords_en || dict?.upright_keywords || dict?.keywords_en?.join(', '))
         : preferVisibleEnglish(dict?.upright_keywords || dict?.up_keywords || dict?.keywords);
       return raw || t('noKeywords');
     }
