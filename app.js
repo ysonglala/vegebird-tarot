@@ -1658,6 +1658,7 @@ async function onCopy() {
   state.spread.labels.forEach((label, i) => {
     const d = state.drawn[i];
     if (!d) return;
+    if (i > 0) lines.push('');
     lines.push(`${translateLabel(label)}: ${getDisplayCardName(d)} (${getOriLabel(d.ori)})`);
     lines.push(`- ${getCardMeaning(d, d.ori)}`);
     const theme = getDisplaySummary(d) || getCardSummary(d);
