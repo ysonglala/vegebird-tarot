@@ -288,24 +288,29 @@
       const key = getCanonicalCardName(cardOrName);
       return state.tarotDict?.[key] || null;
     }
-    function getCardSummary(cardOrName) { return (state.lang === 'en' ? normalizeDictText(getDictEntry(cardOrName)?.summary_en || getDictEntry(cardOrName)?.summary) : preferVisibleEnglish(getDictEntry(cardOrName)?.summary)) || ''; }
+    function getCardSummary(cardOrName) {
+      const dict = getDictEntry(cardOrName);
+      return state.lang === 'en'
+        ? (normalizeDictText(dict?.summary_en || dict?.summary) || '')
+        : (normalizeDictText(dict?.summary) || '');
+    }
     function getCardMeaning(cardOrName, side) {
       const dict = getDictEntry(cardOrName);
       return (state.lang === 'en'
         ? normalizeDictText(side === 'up' ? (dict?.up_en || dict?.upright_en || dict?.up || dict?.upright) : (dict?.rev_en || dict?.reversed_en || dict?.rev || dict?.reversed))
-        : preferVisibleEnglish(side === 'up' ? (dict?.upright || dict?.up || dict?.upright_text) : (dict?.reversed || dict?.rev || dict?.reversed_text))) || t('noMeaning');
+        : normalizeDictText(side === 'up' ? (dict?.upright || dict?.up || dict?.upright_text) : (dict?.reversed || dict?.rev || dict?.reversed_text))) || t('noMeaning');
     }
     function getCardMeaningKeywords(cardOrName, side) {
       const dict = getDictEntry(cardOrName);
       return (state.lang === 'en'
         ? normalizeDictText(side === 'up' ? (dict?.upright_keywords_en || dict?.upright_keywords || dict?.keywords_en?.join(', ')) : (dict?.reversed_keywords_en || dict?.reversed_keywords || dict?.keywords_en?.join(', ')))
-        : preferVisibleEnglish(side === 'up' ? (dict?.upright_keywords || dict?.up_keywords || dict?.keywords) : (dict?.reversed_keywords || dict?.rev_keywords || dict?.keywords))) || t('noKeywords');
+        : normalizeDictText(side === 'up' ? (dict?.upright_keywords || dict?.up_keywords || dict?.keywords) : (dict?.reversed_keywords || dict?.rev_keywords || dict?.keywords))) || t('noKeywords');
     }
     function getCardKeywords(cardOrName) {
       const dict = getDictEntry(cardOrName);
       const raw = state.lang === 'en'
         ? normalizeDictText(dict?.upright_keywords_en || dict?.upright_keywords || dict?.keywords_en?.join(', '))
-        : preferVisibleEnglish(dict?.upright_keywords || dict?.up_keywords || dict?.keywords);
+        : normalizeDictText(dict?.upright_keywords || dict?.up_keywords || dict?.keywords);
       return raw || t('noKeywords');
     }
 
@@ -425,7 +430,7 @@
     function getDictUrl() {
       return state.lang === 'en'
         ? './assets/tarot-dict-display-en.json'
-        : './assets/tarot-dict-display-zh.json';
+        : './assets/tarot-dict-display-normalized.json';
     }
 
     function loadDict() {
