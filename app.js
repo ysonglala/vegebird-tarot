@@ -820,7 +820,20 @@ function summarizeText(text = '', limit = 88) {
 }
 
 function getDictEntry(name) {
-  return state.tarotDict?.[name] || null;
+  const aliases = {
+    '愚者': '愚人',
+    '隐者': '隐士',
+    '塔': '高塔',
+    '圣杯王牌': '圣杯一',
+    '权杖王牌': '权杖一',
+    '宝剑王牌': '宝剑一',
+    '星币王牌': '星币一',
+    '圣杯王后': '圣杯皇后',
+    '权杖王后': '权杖皇后',
+    '宝剑王后': '宝剑皇后',
+    '星币王后': '星币皇后',
+  };
+  return state.tarotDict?.[name] || state.tarotDict?.[aliases[name]] || null;
 }
 
 function getEnglishKeywordText(dict, ori = 'up') {
