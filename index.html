@@ -209,8 +209,19 @@
             </div>
           </section>
 
+          <section class="readingPanel" id="llmPanel" hidden>
+            <div class="readingPanel__head">
+              <span id="llmPanelTitle">AI 综合解牌</span>
+              <span id="llmStatusText">未开始</span>
+            </div>
+            <div class="readingPanel__body" id="llmReading">
+              <p class="muted">这里将显示结构化 AI 解读。</p>
+            </div>
+          </section>
+
           <div class="bottomActions">
             <button class="secondaryAction" id="btnBackPick" type="button">返回盲选</button>
+            <button class="secondaryAction" id="btnInterpret" type="button">生成 AI 解读</button>
             <button class="primaryAction" id="btnReset" type="button">
               <span class="primaryAction__top">重新开始</span>
               <span class="primaryAction__sub">清空问题、牌阵与本次抽牌结果</span>

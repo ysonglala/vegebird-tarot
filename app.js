@@ -496,6 +496,8 @@ function applyTranslations() {
   set('#btnRevealAll', t('revealAll'));
   set('#btnCopy', t('copyResult'));
   set('.readingPanel__head span:first-child', t('readingTitle'));
+  set('#llmPanelTitle', t('aiTitle'));
+  set('#btnInterpret', state.lang === 'zh' ? '生成 AI 解读' : 'Generate AI reading');
   set('#btnReset .primaryAction__top', t('resetTop'));
   set('#btnReset .primaryAction__sub', t('resetSub'));
   set('#settings .modal__title', t('settingsTitle'));
@@ -528,6 +530,7 @@ function applyTranslations() {
   renderPickInputs();
   renderGrid();
   renderReading();
+  renderAiReading();
   renderDebugFingerprint();
   if (!state.shuffled78.length) {
     updateSpreadHint(t('spreadHintDefault'));
@@ -1309,14 +1312,14 @@ function closeCardDetail() {
 }
 
 function renderAiReading() {
-  const statusEl = $('#aiStatusText');
-  const bodyEl = $('#aiReading');
-  const actionsEl = $('#aiActions');
-  if (!statusEl || !bodyEl || !actionsEl) return;
+  const panelEl = $('#llmPanel');
+  const statusEl = $('#llmStatusText');
+  const bodyEl = $('#llmReading');
+  if (!panelEl || !statusEl || !bodyEl) return;
 
+  panelEl.hidden = !state.drawn.length;
   const statusMap = t('aiStatusMap');
   statusEl.textContent = statusMap[state.readingStatus] || state.readingStatus;
-  actionsEl.hidden = state.readingStatus !== 'error';
 
   if (state.readingStatus === 'idle') {
     bodyEl.innerHTML = `<p class="muted">${t('aiPlaceholder')}</p>`;
@@ -1333,18 +1336,10 @@ function renderAiReading() {
 
   const result = state.readingResult || {};
   const blocks = [];
-  if (result.summary) {
-    blocks.push(`<div class="aiPanel__block"><div class="aiPanel__label">${t('aiSummary')}</div><div>${result.summary}</div></div>`);
-  }
-  if (result.synthesis) {
-    blocks.push(`<div class="aiPanel__block"><div class="aiPanel__label">${t('aiSynthesis')}</div><div>${result.synthesis}</div></div>`);
-  }
-  if (result.advice) {
-    blocks.push(`<div class="aiPanel__block"><div class="aiPanel__label">${t('aiAdvice')}</div><div>${result.advice}</div></div>`);
-  }
-  if (result.riskNotes) {
-    blocks.push(`<div class="aiPanel__block"><div class="aiPanel__label">${t('aiRisk')}</div><div>${result.riskNotes}</div></div>`);
-  }
+  if (result.summary) blocks.push(`<div class="aiPanel__block"><div class="aiPanel__label">${t('aiSummary')}</div><div>${result.summary}</div></div>`);
+  if (result.synthesis) blocks.push(`<div class="aiPanel__block"><div class="aiPanel__label">${t('aiSynthesis')}</div><div>${result.synthesis}</div></div>`);
+  if (result.advice) blocks.push(`<div class="aiPanel__block"><div class="aiPanel__label">${t('aiAdvice')}</div><div>${result.advice}</div></div>`);
+  if (result.riskNotes) blocks.push(`<div class="aiPanel__block"><div class="aiPanel__label">${t('aiRisk')}</div><div>${result.riskNotes}</div></div>`);
   if (Array.isArray(result.followUps) && result.followUps.length) {
     blocks.push(`<div class="aiPanel__block"><div class="aiPanel__label">${t('aiFollowups')}</div><div>${result.followUps.map(x => `• ${x}`).join('<br>')}</div></div>`);
   }
@@ -1374,16 +1369,23 @@ function buildInterpretPayload() {
   return {
     sessionId: state.sessionId || '',
     drawId: state.drawId || '',
+    lang: state.lang,
     question: state.question?.trim() || '',
     spreadType: state.spread?.key || state.selectedSpreadKey || 'blank3',
-    spreadName: state.spread?.name || '',
-    cards: state.drawn.map((draw, i) => ({
-      position: state.spread.labels[i],
-      name: draw.name,
-      orientation: draw.ori === 'up' ? 'upright' : 'reversed',
-      image: draw.image,
-      pick: draw.pick,
-    })),
+    spreadName: translateSpreadName(state.spread?.name || ''),
+    cards: state.drawn.map((draw, i) => {
+      const orientation = draw.ori === 'up' ? 'upright' : 'reversed';
+      return {
+        position: translateLabel(state.spread.labels[i]),
+        name: getDisplayCardName(draw),
+        orientation,
+        summary: getCardSummary(draw),
+        keywords: getCardMeaningKeywords(draw, draw.ori),
+        meaning: getCardMeaning(draw, draw.ori),
+        image: draw.image,
+        pick: draw.pick,
+      };
+    }),
   };
 }
 
@@ -1574,6 +1576,7 @@ function onMatch() {
   state.drawId = `draw_${Date.now()}`;
   renderGrid();
   renderReading();
+  renderAiReading();
   renderQuestionEcho();
   renderSpreadEcho();
   goToScreen('result');
@@ -1646,6 +1649,7 @@ function onReset() {
   renderPickInputs();
   renderGrid();
   renderReading();
+  renderAiReading();
   goToScreen('intro');
   updateSpreadHint(t('spreadHintDefault'));
   updateHint(t('resetHint'));
@@ -1760,7 +1764,7 @@ function bindActions() {
   $('#btnRevealAll').addEventListener('click', onRevealAll);
   $('#btnReset').addEventListener('click', onReset);
   $('#btnCopy').addEventListener('click', onCopy);
-  $('#btnRetryAi').addEventListener('click', retryAiReading);
+  $('#btnInterpret').addEventListener('click', retryAiReading);
   $('#btnCloseDetail').addEventListener('click', closeCardDetail);
   $('#detailPosterImage').addEventListener('click', () => openImageLightbox(state.activeDetailIndex));
   $('#btnZoomFromDetail').addEventListener('click', () => openImageLightbox(state.activeDetailIndex));
@@ -1784,6 +1788,7 @@ async function init() {
   renderPickInputs();
   renderGrid();
   renderReading();
+  renderAiReading();
   bindSettings();
   bindSpreadSelection();
   bindFlow();
