@@ -147,7 +147,7 @@ const I18N = {
     htmlLang: 'en',
     pageTitle: 'Vegebird Tarot · Interactive Tarot Draw',
     pageDescription: 'Vegebird Tarot is an interactive Rider-Waite tarot draw experience with question input, spread selection, shuffle ritual, blind pick, and reveal flow.',
-    brandSub: 'Interactive tarot draw · Rider-Waite 78-card deck only',
+    brandSub: 'Interactive draw · Rider-Waite 78-card deck',
     progress: ['Question', 'Spread', 'Shuffle', 'Pick', 'Result'],
     heroTitle: 'Ask your question first,<br>then choose the spread you want.',
     heroText: 'Hand your question to the cards, then complete the ritual in your own way.',
