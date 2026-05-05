@@ -833,10 +833,11 @@ function getCardKeywords(draw) {
       ? preferVisibleEnglish(dict?.upright_keywords || dict?.up_keywords || dict?.keywords)
       : preferVisibleEnglish(dict?.reversed_keywords || dict?.rev_keywords || dict?.keywords));
   if (source) return source.split(/[、，,；;。/]/).map(s => s.trim()).filter(Boolean);
+  if (state.lang === 'en') return [];
   const fromSubtitle = buildKeywords(draw);
-  const fromSummary = state.lang === 'en'
-    ? []
-    : (dict?.summary ? summarizeText(dict.summary, 80).split(/[、，,；;。]/).map(s => s.trim()).filter(Boolean) : []);
+  const fromSummary = dict?.summary
+    ? summarizeText(dict.summary, 80).split(/[、，,；;。]/).map(s => s.trim()).filter(Boolean)
+    : [];
   return [...new Set([...(fromSubtitle || []), ...fromSummary])].filter(Boolean);
 }
 
