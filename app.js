@@ -496,8 +496,6 @@ function applyTranslations() {
   set('#btnRevealAll', t('revealAll'));
   set('#btnCopy', t('copyResult'));
   set('.readingPanel__head span:first-child', t('readingTitle'));
-  set('.aiPanel__head span:first-child', t('aiTitle'));
-  set('#btnRetryAi', t('retryAi'));
   set('#btnReset .primaryAction__top', t('resetTop'));
   set('#btnReset .primaryAction__sub', t('resetSub'));
   set('#settings .modal__title', t('settingsTitle'));
@@ -530,7 +528,6 @@ function applyTranslations() {
   renderPickInputs();
   renderGrid();
   renderReading();
-  renderAiReading();
   renderDebugFingerprint();
   if (!state.shuffled78.length) {
     updateSpreadHint(t('spreadHintDefault'));
@@ -1577,12 +1574,10 @@ function onMatch() {
   state.drawId = `draw_${Date.now()}`;
   renderGrid();
   renderReading();
-  renderAiReading();
   renderQuestionEcho();
   renderSpreadEcho();
   goToScreen('result');
   updateHint(t('matchedHint'));
-  requestAiReading({ allowMockFallback: true });
 }
 
 function onFlip(slot) {
@@ -1651,7 +1646,6 @@ function onReset() {
   renderPickInputs();
   renderGrid();
   renderReading();
-  renderAiReading();
   goToScreen('intro');
   updateSpreadHint(t('spreadHintDefault'));
   updateHint(t('resetHint'));
@@ -1790,7 +1784,6 @@ async function init() {
   renderPickInputs();
   renderGrid();
   renderReading();
-  renderAiReading();
   bindSettings();
   bindSpreadSelection();
   bindFlow();
