@@ -9,7 +9,7 @@ const el = (tag, cls) => {
 };
 
 const APP_VERSION = '20260505-i18n-en1';
-const DEBUG_ENABLED = true;
+const DEBUG_ENABLED = false;
 
 const I18N = {
   zh: {
@@ -1769,6 +1769,8 @@ function bindActions() {
 }
 
 async function init() {
+  const debugPanel = $('#debugPanel');
+  if (debugPanel && !DEBUG_ENABLED) debugPanel.hidden = true;
   setupStars();
   buildBase78();
   buildEncoded156();
