@@ -279,24 +279,32 @@
     }
 
     function getDictEntry(name) { return state.tarotDict?.[name] || null; }
-    function getCardSummary(name) { return preferVisibleEnglish(getDictEntry(name)?.summary) || ''; }
+    function getCardSummary(name) { return (state.lang === 'en' ? normalizeDictText(getDictEntry(name)?.summary_en || getDictEntry(name)?.summary) : preferVisibleEnglish(getDictEntry(name)?.summary)) || ''; }
     function getCardMeaning(name, side) {
       const dict = getDictEntry(name);
-      return preferVisibleEnglish(side === 'up' ? (dict?.upright || dict?.up || dict?.upright_text) : (dict?.reversed || dict?.rev || dict?.reversed_text)) || t('noMeaning');
+      return (state.lang === 'en'
+        ? normalizeDictText(side === 'up' ? (dict?.up_en || dict?.upright_en || dict?.up || dict?.upright) : (dict?.rev_en || dict?.reversed_en || dict?.rev || dict?.reversed))
+        : preferVisibleEnglish(side === 'up' ? (dict?.upright || dict?.up || dict?.upright_text) : (dict?.reversed || dict?.rev || dict?.reversed_text))) || t('noMeaning');
     }
     function getCardMeaningKeywords(name, side) {
       const dict = getDictEntry(name);
-      return preferVisibleEnglish(side === 'up' ? (dict?.upright_keywords || dict?.up_keywords || dict?.keywords) : (dict?.reversed_keywords || dict?.rev_keywords || dict?.keywords)) || t('noKeywords');
+      return (state.lang === 'en'
+        ? normalizeDictText(side === 'up' ? (dict?.upright_keywords_en || dict?.upright_keywords || dict?.keywords_en?.join(', ') || dict?.keywords?.join(', ') || dict?.keywords) : (dict?.reversed_keywords_en || dict?.reversed_keywords || dict?.keywords_en?.join(', ') || dict?.keywords?.join(', ') || dict?.keywords))
+        : preferVisibleEnglish(side === 'up' ? (dict?.upright_keywords || dict?.up_keywords || dict?.keywords) : (dict?.reversed_keywords || dict?.rev_keywords || dict?.keywords))) || t('noKeywords');
     }
     function getCardKeywords(name) {
       const dict = getDictEntry(name);
-      const raw = preferVisibleEnglish(dict?.upright_keywords || dict?.up_keywords || dict?.keywords);
+      const raw = state.lang === 'en'
+        ? normalizeDictText(dict?.upright_keywords_en || dict?.upright_keywords || dict?.keywords_en?.join(', ') || dict?.keywords?.join(', ') || dict?.keywords)
+        : preferVisibleEnglish(dict?.upright_keywords || dict?.up_keywords || dict?.keywords);
       return raw || t('noKeywords');
     }
 
-    function setLanguage(lang) {
+    async function setLanguage(lang) {
       state.lang = I18N[lang] ? lang : 'zh';
       localStorage.setItem('vege_tarot_lang', state.lang);
+      const dict = await loadDict();
+      state.tarotDict = dict.cards || {};
       applyTranslations();
       render();
       if (state.activeCard) openModal(state.activeCard);
@@ -405,9 +413,19 @@
       });
     }
 
+    function getDictUrl() {
+      return state.lang === 'en'
+        ? './assets/tarot-dict-display-en.json'
+        : './assets/tarot-dict-display.json';
+    }
+
+    function loadDict() {
+      return fetch(getDictUrl()).then(r => r.json()).catch(() => ({ cards: {} }));
+    }
+
     Promise.all([
       fetch('./assets/imported-deck-manifest.json').then(r => r.json()),
-      fetch('./assets/tarot-dict-display-normalized.json').then(r => r.json()).catch(() => ({ cards: {} }))
+      loadDict()
     ]).then(([manifest, dict]) => {
       state.cards = manifest.cards || [];
       state.tarotDict = dict.cards || {};

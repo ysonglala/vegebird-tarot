@@ -8,7 +8,7 @@ const el = (tag, cls) => {
   return n;
 };
 
-const APP_VERSION = '20260505-i18n-en1';
+const APP_VERSION = '20260505-i18n-en4';
 const DEBUG_ENABLED = false;
 
 const I18N = {
@@ -63,8 +63,6 @@ const I18N = {
     aiIdle: '未开始',
     aiPlaceholder: '这里将显示 OpenClaw 返回的整体结论、建议与推荐追问。',
     retryAi: '重试 AI 解牌',
-    debugTitle: '调试指纹',
-    debugWaiting: '等待结果…',
     backPick: '返回盲选',
     resetTop: '重新开始',
     resetSub: '清空问题、牌阵与本次抽牌结果',
@@ -196,8 +194,6 @@ const I18N = {
     aiIdle: 'Not started',
     aiPlaceholder: 'OpenClaw’s overall reading, advice, and suggested follow-up questions will appear here.',
     retryAi: 'Retry AI reading',
-    debugTitle: 'Debug fingerprint',
-    debugWaiting: 'Waiting for result…',
     backPick: 'Back to pick',
     resetTop: 'Start over',
     resetSub: 'Clear the question, spread, and this draw result',
@@ -297,7 +293,7 @@ function getCurrentLangPack() {
   return I18N[state.lang] || I18N.zh;
 }
 
-function setLanguage(lang) {
+async function setLanguage(lang) {
   state.lang = I18N[lang] ? lang : 'zh';
   localStorage.setItem('vege_tarot_lang', state.lang);
   buildBase78();
@@ -308,6 +304,7 @@ function setLanguage(lang) {
       return refreshed ? { ...refreshed, ori: draw.ori, revealed: draw.revealed, pick: draw.pick } : draw;
     });
   }
+  await loadTarotDict();
   applyTranslations();
 }
 
@@ -501,7 +498,6 @@ function applyTranslations() {
   set('.readingPanel__head span:first-child', t('readingTitle'));
   set('.aiPanel__head span:first-child', t('aiTitle'));
   set('#btnRetryAi', t('retryAi'));
-  set('.debugPanel__head span:first-child', t('debugTitle'));
   set('#btnReset .primaryAction__top', t('resetTop'));
   set('#btnReset .primaryAction__sub', t('resetSub'));
   set('#settings .modal__title', t('settingsTitle'));
@@ -829,23 +825,27 @@ function getDictEntry(name) {
 
 function getCardKeywords(draw) {
   const dict = getDictEntry(draw.name);
-  const source = draw.ori === 'up'
-    ? preferVisibleEnglish(dict?.upright_keywords || dict?.up_keywords || dict?.keywords)
-    : preferVisibleEnglish(dict?.reversed_keywords || dict?.rev_keywords || dict?.keywords);
-  if (source) return source.split(/[、，,；;。]/).map(s => s.trim()).filter(Boolean);
+  const source = state.lang === 'en'
+    ? (draw.ori === 'up'
+      ? normalizeDictText(dict?.upright_keywords_en || dict?.upright_keywords || dict?.keywords_en?.join(', ') || dict?.keywords?.join(', ') || dict?.keywords)
+      : normalizeDictText(dict?.reversed_keywords_en || dict?.reversed_keywords || dict?.keywords_en?.join(', ') || dict?.keywords?.join(', ') || dict?.keywords))
+    : (draw.ori === 'up'
+      ? preferVisibleEnglish(dict?.upright_keywords || dict?.up_keywords || dict?.keywords)
+      : preferVisibleEnglish(dict?.reversed_keywords || dict?.rev_keywords || dict?.keywords));
+  if (source) return source.split(/[、，,；;。/]/).map(s => s.trim()).filter(Boolean);
   const fromSubtitle = buildKeywords(draw);
-  const fromSummary = dict?.summary
-    ? summarizeText(dict.summary, 80).split(/[、，,；;。]/).map(s => s.trim()).filter(Boolean)
-    : [];
+  const fromSummary = state.lang === 'en'
+    ? []
+    : (dict?.summary ? summarizeText(dict.summary, 80).split(/[、，,；;。]/).map(s => s.trim()).filter(Boolean) : []);
   return [...new Set([...(fromSubtitle || []), ...fromSummary])].filter(Boolean);
 }
 
 function getCardMeaning(draw, ori = draw.ori) {
   const dict = getDictEntry(draw.name);
   const isUp = ori === 'up';
-  const primary = preferVisibleEnglish(isUp
-    ? (dict?.upright || dict?.up || dict?.upright_text)
-    : (dict?.reversed || dict?.rev || dict?.reversed_text));
+  const primary = state.lang === 'en'
+    ? normalizeDictText(isUp ? (dict?.up_en || dict?.upright_en || dict?.up || dict?.upright) : (dict?.rev_en || dict?.reversed_en || dict?.rev || dict?.reversed))
+    : preferVisibleEnglish(isUp ? (dict?.upright || dict?.up || dict?.upright_text) : (dict?.reversed || dict?.rev || dict?.reversed_text));
   const fallback = normalizeDictText(isUp ? draw.up : draw.rev);
   const result = primary || fallback || (state.lang === 'zh' ? '暂无牌意。' : 'No card meaning available.');
   if (DEBUG_ENABLED && !primary) {
@@ -862,16 +862,16 @@ function getCardMeaning(draw, ori = draw.ori) {
 function getCardMeaningKeywords(draw, ori = draw.ori) {
   const dict = getDictEntry(draw.name);
   const isUp = ori === 'up';
-  const raw = preferVisibleEnglish(isUp
-    ? (dict?.upright_keywords || dict?.up_keywords || dict?.keywords)
-    : (dict?.reversed_keywords || dict?.rev_keywords || dict?.keywords));
+  const raw = state.lang === 'en'
+    ? normalizeDictText(isUp ? (dict?.upright_keywords_en || dict?.upright_keywords || dict?.keywords_en?.join(', ') || dict?.keywords?.join(', ') || dict?.keywords) : (dict?.reversed_keywords_en || dict?.reversed_keywords || dict?.keywords_en?.join(', ') || dict?.keywords?.join(', ') || dict?.keywords))
+    : preferVisibleEnglish(isUp ? (dict?.upright_keywords || dict?.up_keywords || dict?.keywords) : (dict?.reversed_keywords || dict?.rev_keywords || dict?.keywords));
   if (raw) return raw;
   return getCardKeywords({ ...draw, ori }).join(' · ') || (state.lang === 'zh' ? '暂无关键词' : 'No keywords yet');
 }
 
 function getCardSummary(draw) {
   const dict = getDictEntry(draw.name);
-  return preferVisibleEnglish(dict?.summary) || getDisplaySummary(draw) || '';
+  return (state.lang === 'en' ? normalizeDictText(dict?.summary_en || dict?.summary) : preferVisibleEnglish(dict?.summary)) || getDisplaySummary(draw) || '';
 }
 
 function getDisplaySummary(draw) {
@@ -986,10 +986,15 @@ function setDetailExpanded(expanded) {
 }
 
 async function loadTarotDict() {
-  const candidates = [
-    `assets/tarot-dict-display-normalized.json?v=${APP_VERSION}`,
-    `assets/tarot-dict-quickref.json?v=${APP_VERSION}`,
-  ];
+  const candidates = state.lang === 'en'
+    ? [
+        `assets/tarot-dict-display-en.json?v=${APP_VERSION}`,
+      ]
+    : [
+        `assets/tarot-dict-display.json?v=${APP_VERSION}`,
+        `assets/tarot-dict-display-normalized.json?v=${APP_VERSION}`,
+        `assets/tarot-dict-quickref.json?v=${APP_VERSION}`,
+      ];
   for (const url of candidates) {
     try {
       const res = await fetch(url, { cache: 'no-cache' });
@@ -1143,7 +1148,7 @@ function renderPickInputs() {
     const wrap = el('label', 'pickSlot');
     const labelEl = el('span', 'pickSlot__label');
     const input = el('input', 'pickSlot__input');
-    labelEl.textContent = label;
+    labelEl.textContent = translateLabel(label);
     input.type = 'number';
     input.min = '1';
     input.max = '78';
@@ -1365,16 +1370,25 @@ function buildInterpretPayload() {
 function normalizeInterpretResponse(data) {
   const result = data?.result || data?.data || data || {};
   return {
-    summary: result.summary || result.overall || result.overallSummary || '',
-    synthesis: result.synthesis || result.analysis || result.linkage || '',
-    advice: result.advice || result.suggestion || result.recommendation || '',
-    riskNotes: result.riskNotes || result.risks || result.cautions || '',
+    summary: normalizeDictText(result.summary || result.overall || result.overallSummary || ''),
+    synthesis: normalizeDictText(result.synthesis || result.analysis || result.linkage || ''),
+    advice: normalizeDictText(result.advice || result.suggestion || result.recommendation || ''),
+    riskNotes: normalizeDictText(result.riskNotes || result.risks || result.cautions || ''),
     followUps: Array.isArray(result.followUps)
-      ? result.followUps
+      ? result.followUps.map(x => normalizeDictText(x)).filter(Boolean)
       : Array.isArray(result.followUpSuggestions)
-        ? result.followUpSuggestions
+        ? result.followUpSuggestions.map(x => normalizeDictText(x)).filter(Boolean)
         : [],
   };
+}
+
+function isEnglishReadingResultClean(result) {
+  if (!result) return false;
+  const texts = [result.summary, result.synthesis, result.advice, result.riskNotes, ...(result.followUps || [])]
+    .map(x => normalizeDictText(x))
+    .filter(Boolean);
+  if (!texts.length) return false;
+  return texts.every(text => !hasCJK(text));
 }
 
 async function requestAiReading({ allowMockFallback = true } = {}) {
@@ -1408,6 +1422,9 @@ async function requestAiReading({ allowMockFallback = true } = {}) {
     const normalized = normalizeInterpretResponse(response);
     const hasUsefulContent = normalized.summary || normalized.synthesis || normalized.advice || normalized.riskNotes || (normalized.followUps && normalized.followUps.length);
     if (!hasUsefulContent) throw new Error('AI 返回成功，但没有可展示内容');
+    if (state.lang === 'en' && !isEnglishReadingResultClean(normalized)) {
+      throw new Error('AI returned Chinese content while page is in English mode');
+    }
     state.readingStatus = 'success';
     state.readingResult = normalized;
     logDebug('interpret-success', normalized);
@@ -1430,35 +1447,7 @@ async function requestAiReading({ allowMockFallback = true } = {}) {
 }
 
 function renderDebugFingerprint() {
-  const versionEl = $('#debugVersion');
-  const bodyEl = $('#debugFingerprint');
-  if (versionEl) versionEl.textContent = `v${APP_VERSION}`;
-  if (!bodyEl) return;
-  if (state.lang === 'en' && !state.drawn.length) {
-    bodyEl.textContent = `version=${APP_VERSION}\ndictLoaded=${state.tarotDictLoaded}\ndictCount=${Object.keys(state.tarotDict || {}).length}\nstatus=waiting`;
-    return;
-  }
-  if (!state.drawn.length) {
-    bodyEl.textContent = `version=${APP_VERSION}\ndictLoaded=${state.tarotDictLoaded}\ndictCount=${Object.keys(state.tarotDict || {}).length}\nstatus=waiting`;
-    return;
-  }
-  const lines = [
-    `version=${APP_VERSION}`,
-    `dictLoaded=${state.tarotDictLoaded}`,
-    `dictCount=${Object.keys(state.tarotDict || {}).length}`,
-    `spread=${state.spread?.name || '-'}`,
-  ];
-  state.drawn.forEach((draw, i) => {
-    if (!draw) {
-      lines.push(`#${i + 1} empty`);
-      return;
-    }
-    const dictHit = Boolean(getDictEntry(draw.name));
-    lines.push(
-      `#${i + 1} slot=${translateLabel(state.spread.labels[i])} | name=${getDisplayCardName(draw)} | ori=${draw.ori} | pick=${draw.pick} | image=${draw.image || '-'} | dictHit=${dictHit}`
-    );
-  });
-  bodyEl.textContent = lines.join('\n');
+  return;
 }
 
 function renderReading() {
@@ -1466,7 +1455,6 @@ function renderReading() {
   if (!state.drawn.length) {
     box.innerHTML = `<p class="muted">${t('readingPlaceholder')}</p>`;
     setMeta(t('notMatched'));
-    renderDebugFingerprint();
     return;
   }
   const allRevealed = state.drawn.every(d => d && d.revealed);
@@ -1484,7 +1472,7 @@ function renderReading() {
       k.textContent = `${translateLabel(label)}`;
       if (d.revealed) {
         const keywords = getCardKeywords(d).join(' · ') || (state.lang === 'zh' ? '暂无关键词' : 'No keywords yet');
-        v.innerHTML = `<strong>${getDisplayCardName(d)}</strong>（${getOriLabel(d.ori)}）<div class="readingCard__summary">${t('keywordsLabel')}${keywords}</div><span class="readingCard__more">${t('readingMore')}</span>`;
+        v.innerHTML = `<strong>${getDisplayCardName(d)}</strong> (${getOriLabel(d.ori)})<div class="readingCard__summary">${t('keywordsLabel')}${keywords}</div><span class="readingCard__more">${t('readingMore')}</span>`;
       } else {
         v.innerHTML = `<strong>${getDisplayCardName(d)}</strong><br><span class="muted">${t('cardMatchedHint')}</span>`;
       }
@@ -1494,7 +1482,6 @@ function renderReading() {
   });
   box.innerHTML = '';
   box.append(grid);
-  renderDebugFingerprint();
 }
 
 function getPickValues() {
@@ -1769,8 +1756,6 @@ function bindActions() {
 }
 
 async function init() {
-  const debugPanel = $('#debugPanel');
-  if (debugPanel && !DEBUG_ENABLED) debugPanel.hidden = true;
   setupStars();
   buildBase78();
   buildEncoded156();
@@ -1792,7 +1777,6 @@ async function init() {
   updateHint(t('resetHint'));
   setSequenceMeta(t('sequenceIdle'));
   await loadTarotDict();
-  renderDebugFingerprint();
   logDebug('init-complete', {
     version: APP_VERSION,
     dictLoaded: state.tarotDictLoaded,

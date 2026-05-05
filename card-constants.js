@@ -1,6 +1,6 @@
 window.VEGE_TAROT_CONSTANTS = {
-  APP_VERSION: '20260424-e2',
-  DEBUG_ENABLED: true,
+  APP_VERSION: '20260505-en4',
+  DEBUG_ENABLED: false,
   CANONICAL_CARD_ORDER: {
     '愚者': 0, '魔术师': 1, '女祭司': 2, '女皇': 3, '皇帝': 4, '教皇': 5, '恋人': 6, '战车': 7, '力量': 8, '隐者': 9,
     '命运之轮': 10, '正义': 11, '倒吊人': 12, '死神': 13, '节制': 14, '恶魔': 15, '高塔': 16, '塔': 16, '星星': 17,
