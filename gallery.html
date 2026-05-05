@@ -410,7 +410,7 @@
           <div class="body">
             <div class="title">${displayName}</div>
             <div class="subtitle">${state.lang === 'zh' ? (card.englishName || '') : ''}</div>
-            <div class="summary">${getCardSummary(card.label) || t('emptySummary')}</div>
+            <div class="summary">${state.lang === 'en' ? t('emptySummary') : (getCardSummary(card) || t('emptySummary'))}</div>
             <div class="chips">
               <span class="tag">${getDisplayGroup(card.group)}</span>
               ${getCardElement(card) ? `<span class="tag">${getCardElement(card)}</span>` : ''}
