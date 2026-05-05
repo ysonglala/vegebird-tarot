@@ -8,6 +8,537 @@ const el = (tag, cls) => {
   return n;
 };
 
+const APP_VERSION = '20260505-i18n-en1';
+const DEBUG_ENABLED = true;
+
+const I18N = {
+  zh: {
+    htmlLang: 'zh-CN',
+    pageTitle: '菜鸟塔罗抽牌系统 · Vegebird Tarot',
+    pageDescription: '菜鸟塔罗抽牌系统（Vegebird Tarot），仅限传统伟特塔罗 78 张牌，支持提问、选牌阵、洗牌、数字抽牌与结果翻牌全流程。',
+    brandSub: '菜鸟塔罗抽牌系统 · 仅限传统伟特塔罗 78 张牌',
+    progress: ['提问', '牌阵', '洗牌', '盲选', '结果'],
+    heroTitle: '先问问题，<br>再决定你想用哪种牌阵。',
+    heroText: '把你的问题交给牌，再按自己的方式完成这场抽取仪式。',
+    questionTitle: '写下你此刻最想问的问题',
+    questionPlaceholder: '例如：这段关系接下来会怎么发展？',
+    questionTips: '不写也可以，但写下来会更有仪式感。',
+    nextToSpreadTop: '下一步：选择牌阵',
+    nextToSpreadSub: '默认会预选“无牌阵三张”',
+    openGallery: '打开塔罗牌图库',
+    spreadTitle: '先选牌阵，再进入抽牌流程',
+    spreadText: '默认牌阵是“无牌阵三张”。你也可以选带语义的三张牌阵，或者自定义牌阵。',
+    customPanelTitle: '自定义牌阵设置',
+    customName: '牌阵名称',
+    customNamePlaceholder: '例如：关系修复牌阵',
+    customCount: '牌数',
+    spreadHintDefault: '当前默认牌阵：无牌阵三张。',
+    backQuestion: '返回提问',
+    confirmSpreadTop: '确认牌阵，进入洗牌',
+    confirmSpreadSub: '下一步开始仪式洗牌',
+    shuffleTitle: '洗牌模块',
+    shuffleIntro: '点击下方按钮，系统会在后台随机打乱 78 张牌，并固定每张牌的正逆位。',
+    backSpread: '返回牌阵',
+    startShuffle: '开始洗牌',
+    reshuffle: '重新洗牌',
+    goPick: '去选牌',
+    pickTitlePlain: '请为每个牌位输入 1-78 的随机数字',
+    luckyFill: '帮我随机填满',
+    reshuffleSmall: '重新打乱',
+    hintDefault: '提示：先完成洗牌，再为每一个牌位输入 1-78 的随机数字。',
+    backShuffle: '返回洗牌',
+    matchTop: '匹配结果',
+    matchSub: '用你填写的数字生成牌面',
+    resultTitle: '你的牌已经出现',
+    panelMetaIdle: '尚未匹配结果',
+    questionEmpty: '未填写',
+    questionEchoPrefix: '你的问题：',
+    spreadEchoPrefix: '当前牌阵：',
+    revealAll: '一键翻开',
+    copyResult: '复制结果',
+    readingTitle: '解读',
+    sequenceIdle: '尚未洗牌',
+    readingPlaceholder: '这里会展示每张牌的解读内容。',
+    aiTitle: 'AI 综合解牌',
+    aiIdle: '未开始',
+    aiPlaceholder: '这里将显示 OpenClaw 返回的整体结论、建议与推荐追问。',
+    retryAi: '重试 AI 解牌',
+    debugTitle: '调试指纹',
+    debugWaiting: '等待结果…',
+    backPick: '返回盲选',
+    resetTop: '重新开始',
+    resetSub: '清空问题、牌阵与本次抽牌结果',
+    settingsTitle: '设置',
+    settingsSub: '保留动效与音效控制；打乱顺序不会展示给用户',
+    motionLabel: '动效强度',
+    motionHelp: '如果你容易晕动或手机卡顿，把它调低。',
+    soundLabel: '启用轻微音效（浏览器允许时）',
+    cancel: '取消',
+    save: '保存',
+    detailTitle: '单牌详情',
+    detailSub: '查看更完整的牌义内容',
+    detailPosterNote: '当前显示真实牌图',
+    zoom: '放大查看',
+    openOriginal: '打开原图',
+    detailKeywords: '关键词',
+    detailUpKeywords: '正位关键词',
+    detailUpMeaning: '正位含义',
+    detailRevKeywords: '逆位关键词',
+    detailRevMeaning: '逆位含义',
+    lightboxTitle: '牌图预览',
+    lightboxSub: '查看更大的真实牌图',
+    lightboxDetail: '查看牌义详情',
+    lightboxOpenOriginal: '打开原图',
+    customMeaningLabel: (i) => `第 ${i} 张牌代表什么`,
+    customMeaningPlaceholder: '例如：核心问题 / 对方状态 / 结果',
+    pickTitleForSpread: (name) => `请为「${name}」的每个牌位输入 1-78 的随机数字`,
+    cardWaiting: '等待匹配',
+    cardMatchedHint: '已匹配完成，点击上方卡牌翻开。',
+    readingMore: '点击牌面查看完整牌义',
+    unrevealed: '未匹配',
+    waitingResult: '等待结果',
+    upright: '正位',
+    reversed: '逆位',
+    keywordsLabel: '关键词：',
+    aiStatusMap: { idle: '未开始', loading: '生成中', success: '已生成', error: '失败' },
+    aiLoading: '正在整理牌面关系与整体结论…',
+    aiError: 'AI 解牌暂时失败了。你可以稍后重试，当前仍可先查看基础牌义。',
+    aiEmpty: 'AI 已返回，但当前没有可展示的结构化内容。',
+    aiSummary: '整体结论',
+    aiSynthesis: '联动分析',
+    aiAdvice: '行动建议',
+    aiRisk: '风险提醒',
+    aiFollowups: '推荐追问',
+    mockSummary: (names) => `你这次抽到的核心牌面是：${names.join('、')}。整体更像一个“先看清状态，再决定推进节奏”的局面。`,
+    mockSynthesis: '从当前牌阵结构看，问题并不只是单点吉凶，而是节奏、判断和情绪状态共同作用的结果。',
+    mockAdvice: '建议先把真正的问题收窄，再结合现实信息做决定，不要只凭一时情绪下结论。',
+    mockRisk: '当前最大的风险通常来自过度脑补、信息不足或节奏过急。',
+    mockFollowups: ['我现在最该看清的盲点是什么？', '如果我主动推进，短期会发生什么？'],
+    notMatched: '尚未匹配结果',
+    allRevealed: '全部牌已翻开',
+    waitingFlip: '已匹配结果，等待翻牌',
+    validateCountMismatch: '选号数量与当前牌阵不一致。',
+    validateRange: '请输入 1-78 之间的整数。',
+    validateUnique: '每个牌位的数字必须互不重复。',
+    shuffling: '洗牌中…',
+    shuffled: '洗牌完毕',
+    shuffledMeta: '已完成后台洗牌',
+    shuffledHint: '已完成后台洗牌。现在请为每个牌位输入 1-78 的随机数字。',
+    luckyDone: '已帮你随机填满所有牌位数字。',
+    notShuffled: '你还没洗牌。先完成洗牌仪式。',
+    matchedHint: '匹配完成。现在轻触卡牌翻开，查看结果。',
+    noReveal: '还没有可翻开的结果。',
+    resetHint: '提示：先输入问题，再选择牌阵。',
+    noCopy: '还没有结果可复制。',
+    copied: '已复制到剪贴板。',
+    copyFailed: '复制失败：浏览器可能禁止剪贴板。',
+    customSelectHint: '你选择了自定义牌阵。请填写牌阵名称、牌数和每张牌的含义。',
+    currentSpread: (name, desc) => `当前牌阵：${name} · ${desc}`,
+    customNeedName: '请先填写自定义牌阵名称。',
+    customNeedCount: '自定义牌阵张数请输入 1-20。',
+    customNeedLabels: '请把每一张牌的含义都填完整。',
+    needShuffleFirst: '先完成洗牌仪式。',
+    detailMeta: (spread, label, ori) => `${spread} · ${label} · ${ori}`,
+    posterNoteWithOri: (ori) => `当前显示真实牌图 · ${ori}`,
+    lightboxMeta: (name, ori) => `${name} · ${ori} · 点击外部可关闭`,
+    pickPositionSummary: (label, meaning) => `在「${label}」这个牌位上，它更强调：${meaning}`,
+    loadedDict: (count) => `已加载本地牌意库（${count} 张）。`,
+    loadDictFailed: '本地牌意库加载失败，当前使用内置简版牌意。'
+  },
+  en: {
+    htmlLang: 'en',
+    pageTitle: 'Vegebird Tarot · Interactive Tarot Draw',
+    pageDescription: 'Vegebird Tarot is an interactive Rider-Waite tarot draw experience with question input, spread selection, shuffle ritual, blind pick, and reveal flow.',
+    brandSub: 'Interactive tarot draw · Rider-Waite 78-card deck only',
+    progress: ['Question', 'Spread', 'Shuffle', 'Pick', 'Result'],
+    heroTitle: 'Ask your question first,<br>then choose the spread you want.',
+    heroText: 'Hand your question to the cards, then complete the ritual in your own way.',
+    questionTitle: 'Write down the question you want to ask most right now',
+    questionPlaceholder: 'For example: How will this relationship develop next?',
+    questionTips: 'You can leave it blank, but writing it down makes the ritual feel more real.',
+    nextToSpreadTop: 'Next: choose a spread',
+    nextToSpreadSub: '“Three cards, no spread” is preselected by default',
+    openGallery: 'Open tarot gallery',
+    spreadTitle: 'Choose the spread before entering the draw flow',
+    spreadText: 'The default is “Three cards, no spread.” You can also choose a structured three-card spread or create your own.',
+    customPanelTitle: 'Custom spread setup',
+    customName: 'Spread name',
+    customNamePlaceholder: 'For example: Relationship Repair Spread',
+    customCount: 'Card count',
+    spreadHintDefault: 'Current default spread: Three cards, no spread.',
+    backQuestion: 'Back to question',
+    confirmSpreadTop: 'Confirm spread and enter shuffle',
+    confirmSpreadSub: 'Begin the ritual shuffle next',
+    shuffleTitle: 'Shuffle ritual',
+    shuffleIntro: 'Tap the button below. The system will randomly shuffle all 78 cards in the background and lock each card upright or reversed.',
+    backSpread: 'Back to spread',
+    startShuffle: 'Start shuffle',
+    reshuffle: 'Shuffle again',
+    goPick: 'Go pick cards',
+    pickTitlePlain: 'Enter a random number from 1 to 78 for each card position',
+    luckyFill: 'Fill randomly for me',
+    reshuffleSmall: 'Shuffle again',
+    hintDefault: 'Tip: finish shuffling first, then enter a random number from 1 to 78 for each position.',
+    backShuffle: 'Back to shuffle',
+    matchTop: 'Match result',
+    matchSub: 'Generate the cards from your numbers',
+    resultTitle: 'Your cards have appeared',
+    panelMetaIdle: 'No result matched yet',
+    questionEmpty: 'Not filled in',
+    questionEchoPrefix: 'Your question: ',
+    spreadEchoPrefix: 'Current spread: ',
+    revealAll: 'Reveal all',
+    copyResult: 'Copy result',
+    readingTitle: 'Reading',
+    sequenceIdle: 'Not shuffled yet',
+    readingPlaceholder: 'The interpretation for each card will appear here.',
+    aiTitle: 'AI full reading',
+    aiIdle: 'Not started',
+    aiPlaceholder: 'OpenClaw’s overall reading, advice, and suggested follow-up questions will appear here.',
+    retryAi: 'Retry AI reading',
+    debugTitle: 'Debug fingerprint',
+    debugWaiting: 'Waiting for result…',
+    backPick: 'Back to pick',
+    resetTop: 'Start over',
+    resetSub: 'Clear the question, spread, and this draw result',
+    settingsTitle: 'Settings',
+    settingsSub: 'Keep motion and sound controls; shuffle order is never shown to the user.',
+    motionLabel: 'Motion intensity',
+    motionHelp: 'If motion makes you dizzy or your phone feels laggy, turn it down.',
+    soundLabel: 'Enable subtle sound effects (when the browser allows it)',
+    cancel: 'Cancel',
+    save: 'Save',
+    detailTitle: 'Card details',
+    detailSub: 'View the full card meaning',
+    detailPosterNote: 'Showing the real card image',
+    zoom: 'Zoom in',
+    openOriginal: 'Open original image',
+    detailKeywords: 'Keywords',
+    detailUpKeywords: 'Upright keywords',
+    detailUpMeaning: 'Upright meaning',
+    detailRevKeywords: 'Reversed keywords',
+    detailRevMeaning: 'Reversed meaning',
+    lightboxTitle: 'Card preview',
+    lightboxSub: 'View a larger version of the card image',
+    lightboxDetail: 'View card meaning',
+    lightboxOpenOriginal: 'Open original image',
+    customMeaningLabel: (i) => `What does card ${i} represent?`,
+    customMeaningPlaceholder: 'For example: core issue / their state / result',
+    pickTitleForSpread: (name) => `Enter a random number from 1 to 78 for each position in “${name}”`,
+    cardWaiting: 'Waiting to match',
+    cardMatchedHint: 'Matched successfully. Tap the card above to reveal it.',
+    readingMore: 'Tap the card to view the full meaning',
+    unrevealed: 'Not matched',
+    waitingResult: 'Waiting for result',
+    upright: 'Upright',
+    reversed: 'Reversed',
+    keywordsLabel: 'Keywords: ',
+    aiStatusMap: { idle: 'Not started', loading: 'Generating', success: 'Ready', error: 'Failed' },
+    aiLoading: 'Connecting the cards and composing the overall reading…',
+    aiError: 'AI reading failed for now. You can retry later, and the base card meanings are still available.',
+    aiEmpty: 'AI returned successfully, but there is no structured content to show yet.',
+    aiSummary: 'Overall reading',
+    aiSynthesis: 'Pattern synthesis',
+    aiAdvice: 'Advice',
+    aiRisk: 'Risk notes',
+    aiFollowups: 'Suggested follow-ups',
+    mockSummary: (names) => `The core cards in this draw are: ${names.join(', ')}. Overall, the message feels like “see the situation clearly first, then decide the pace of action.”`,
+    mockSynthesis: 'This spread suggests the issue is not just about simple good or bad luck; timing, judgment, and emotional state are all interacting together.',
+    mockAdvice: 'Narrow the real question first, then make your decision with real-world information instead of acting on temporary emotion alone.',
+    mockRisk: 'The biggest risk right now usually comes from overthinking, incomplete information, or moving too fast.',
+    mockFollowups: ['What blind spot do I most need to see right now?', 'What happens in the short term if I take initiative?'],
+    notMatched: 'No result matched yet',
+    allRevealed: 'All cards revealed',
+    waitingFlip: 'Matched successfully. Waiting for reveal',
+    validateCountMismatch: 'The number of picks does not match the current spread.',
+    validateRange: 'Please enter whole numbers between 1 and 78.',
+    validateUnique: 'Each position must use a different number.',
+    shuffling: 'Shuffling…',
+    shuffled: 'Shuffle complete',
+    shuffledMeta: 'Background shuffle completed',
+    shuffledHint: 'The shuffle is complete. Now enter a random number from 1 to 78 for each position.',
+    luckyDone: 'Filled every position with random numbers for you.',
+    notShuffled: 'You have not shuffled yet. Finish the ritual shuffle first.',
+    matchedHint: 'Matching complete. Tap the cards to reveal your result.',
+    noReveal: 'There is no result to reveal yet.',
+    resetHint: 'Tip: enter your question first, then choose a spread.',
+    noCopy: 'There is no result to copy yet.',
+    copied: 'Copied to clipboard.',
+    copyFailed: 'Copy failed: your browser may be blocking clipboard access.',
+    customSelectHint: 'You selected a custom spread. Please enter the spread name, card count, and the meaning of each position.',
+    currentSpread: (name, desc) => `Current spread: ${name} · ${desc}`,
+    customNeedName: 'Please enter a name for the custom spread first.',
+    customNeedCount: 'For a custom spread, please enter a card count from 1 to 20.',
+    customNeedLabels: 'Please fill in the meaning of every card position.',
+    needShuffleFirst: 'Finish the shuffle ritual first.',
+    detailMeta: (spread, label, ori) => `${spread} · ${label} · ${ori}`,
+    posterNoteWithOri: (ori) => `Showing the real card image · ${ori}`,
+    lightboxMeta: (name, ori) => `${name} · ${ori} · tap outside to close`,
+    pickPositionSummary: (label, meaning) => `In the position “${label}”, this card especially emphasizes: ${meaning}`,
+    loadedDict: (count) => `Local card meaning library loaded (${count} cards).`,
+    loadDictFailed: 'Failed to load the local card meaning library. Using the built-in simplified meanings instead.'
+  }
+};
+
+function logDebug(event, payload = {}) {
+  if (!DEBUG_ENABLED) return;
+  try {
+    console.info(`[vegebird-debug][${APP_VERSION}] ${event}`, payload);
+  } catch {}
+}
+
+function t(key, ...args) {
+  const dict = I18N[state.lang] || I18N.zh;
+  const value = dict[key];
+  return typeof value === 'function' ? value(...args) : (value ?? key);
+}
+
+function getCurrentLangPack() {
+  return I18N[state.lang] || I18N.zh;
+}
+
+function setLanguage(lang) {
+  state.lang = I18N[lang] ? lang : 'zh';
+  localStorage.setItem('vege_tarot_lang', state.lang);
+  buildBase78();
+  buildEncoded156();
+  if (state.drawn?.length) {
+    state.drawn = state.drawn.map(draw => {
+      const refreshed = state.base78.find(card => card.name === draw.name);
+      return refreshed ? { ...refreshed, ori: draw.ori, revealed: draw.revealed, pick: draw.pick } : draw;
+    });
+  }
+  applyTranslations();
+}
+
+function toggleLanguage() {
+  setLanguage(state.lang === 'zh' ? 'en' : 'zh');
+}
+
+function getOriLabel(ori) {
+  return ori === 'up' ? t('upright') : t('reversed');
+}
+
+const EN_CARD_NAMES = {
+  '愚者': 'The Fool', '魔术师': 'The Magician', '女祭司': 'The High Priestess', '女皇': 'The Empress', '皇帝': 'The Emperor', '教皇': 'The Hierophant', '恋人': 'The Lovers', '战车': 'The Chariot', '力量': 'Strength', '隐者': 'The Hermit',
+  '命运之轮': 'Wheel of Fortune', '正义': 'Justice', '倒吊人': 'The Hanged Man', '死神': 'Death', '节制': 'Temperance', '恶魔': 'The Devil', '塔': 'The Tower', '高塔': 'The Tower', '星星': 'The Star', '月亮': 'The Moon', '太阳': 'The Sun', '审判': 'Judgement', '世界': 'The World',
+};
+const EN_SUITS = { '权杖': 'Wands', '圣杯': 'Cups', '宝剑': 'Swords', '星币': 'Pentacles', '大阿卡纳': 'Major Arcana', '小阿卡纳': 'Minor Arcana' };
+const EN_RANKS = { '王牌': 'Ace', '二': 'Two', '三': 'Three', '四': 'Four', '五': 'Five', '六': 'Six', '七': 'Seven', '八': 'Eight', '九': 'Nine', '十': 'Ten', '侍从': 'Page', '骑士': 'Knight', '王后': 'Queen', '国王': 'King' };
+const EN_ELEMENTS = { '风': 'Air', '水': 'Water', '火': 'Fire', '土': 'Earth', '水银 / 风': 'Mercury / Air' };
+const EN_MAJOR = {
+  '愚者': { subtitle: 'Beginnings / Trust / Freedom', up: 'A new journey is calling you. Take the first step and let the answer appear on the road.', rev: 'Do not mistake impulse for courage. Understand what you are avoiding before you leap.' },
+  '魔术师': { subtitle: 'Will / Resources / Manifestation', up: 'You already have enough tools in hand. Focus your attention on one real move.', rev: 'Your energy may be scattered or self-deceiving. Pull back the promises and close one small loop first.' },
+  '女祭司': { subtitle: 'Intuition / Subconscious / Stillness', up: 'The answer is not more information. It is more quiet.', rev: 'You may be ignoring your intuition or treating guesses as prophecy. Verify first, then trust.' },
+  '女皇': { subtitle: 'Nurture / Abundance / Relationship', up: 'Care for yourself well and your magnetism and creativity will rise naturally.', rev: 'Over-giving will drain you. Put your boundaries on the table first.' },
+  '皇帝': { subtitle: 'Order / Structure / Leadership', up: 'It is your turn to set the rules: goal, deadline, standard. Power comes from clarity.', rev: 'Control may be backfiring on you. Stop trying to hold everything; hold the essentials.' },
+  '教皇': { subtitle: 'Tradition / Learning / Guidance', up: 'Move closer to a mature system: find a mentor, a standard, a method.', rev: 'You do not need someone else to stamp approval on you. Break stale rules without destroying the foundation.' },
+  '恋人': { subtitle: 'Choice / Alignment / Connection', up: 'Make the choice that aligns with your real values.', rev: 'Stop pleasing both sides. Choose one path and own its consequences.' },
+  '战车': { subtitle: 'Momentum / Victory / Speed', up: 'This is the moment for a strong push. Lower the noise and move with intent.', rev: 'An unclear direction will turn effort into friction. Recalibrate the target, then accelerate.' },
+  '力量': { subtitle: 'Gentle mastery / Courage', up: 'You do not need to roar to win.', rev: 'Admitting vulnerability is the beginning of getting your strength back.' },
+  '隐者': { subtitle: 'Solitude / Reflection / Inner guide', up: 'Ask yourself first: what do I actually want?', rev: 'Let someone trustworthy come a little closer.' },
+  '命运之轮': { subtitle: 'Cycle / Turning point / Change', up: 'The wind is shifting. Catch the window and move with it.', rev: 'Pause to cut losses or review, then wait for the next turn.' },
+  '正义': { subtitle: 'Balance / Responsibility / Cause and effect', up: 'Put the facts on the table. Fairness grows from clarity and equal rules.', rev: 'Return to evidence and boundaries.' },
+  '倒吊人': { subtitle: 'Pause / Perspective / Surrender', up: 'Do not move yet. A new angle may show that the delay is protecting you.', rev: 'Make one small move to break the stalemate.' },
+  '死神': { subtitle: 'Ending / Release / Rebirth', up: 'The old must end before the new can begin.', rev: 'The longer you drag it, the more it hurts. Let go sooner.' },
+  '节制': { subtitle: 'Balance / Recovery / Gradual progress', up: 'Go slowly, but do not stop.', rev: 'Replace all-or-nothing with something sustainable.' },
+  '恶魔': { subtitle: 'Desire / Attachment / Temptation', up: 'See what is binding you. The moment you notice it, it already starts to loosen.', rev: 'You are breaking free. Do not turn back just to check again.' },
+  '塔': { subtitle: 'Collapse / Truth / Awakening', up: 'If it must fall, let it fall. The truth will make you freer.', rev: 'A small crack left alone can become a total collapse.' },
+  '星星': { subtitle: 'Hope / Guidance / Healing', up: 'Keep the faith and keep walking.', rev: 'Refill yourself first: sleep, food, friends, sunlight.' },
+  '月亮': { subtitle: 'Fog / Emotion / Shadow', up: 'Do not rush to conclusions. Walk through the fog first.', rev: 'Use concrete action to test reality instead of feeding imagination.' },
+  '太阳': { subtitle: 'Clarity / Joy / Success', up: 'Things are becoming brighter. You deserve to be seen.', rev: 'Complete the plan. Do not rely on luck alone.' },
+  '审判': { subtitle: 'Calling / Review / Renewal', up: 'It is time for a decisive review and upgrade.', rev: 'Stop waiting for the perfect moment.' },
+  '世界': { subtitle: 'Completion / Integration / Expansion', up: 'A chapter is closing well. Finish, publish, celebrate, then move into a larger map.', rev: 'Finish the final details. Do not quit halfway.' },
+};
+
+function getDisplayCardName(drawOrName) {
+  const name = typeof drawOrName === 'string' ? drawOrName : drawOrName?.name;
+  if (!name) return '';
+  if (state.lang === 'zh') return name;
+  if (EN_CARD_NAMES[name]) return EN_CARD_NAMES[name];
+  const suit = Object.keys(EN_SUITS).find(s => name.startsWith(s) && s !== '大阿卡纳' && s !== '小阿卡纳');
+  if (!suit) return name;
+  const rank = name.slice(suit.length);
+  return `${EN_RANKS[rank] || rank} of ${EN_SUITS[suit] || suit}`;
+}
+
+function getDisplayArcana(draw) {
+  return state.lang === 'zh' ? (draw.arcana === '大阿卡纳' ? '大阿卡纳' : (draw.suit || '小阿卡纳')) : (draw.arcana === '大阿卡纳' ? 'Major Arcana' : (EN_SUITS[draw.suit] || 'Minor Arcana'));
+}
+
+function getDisplayElement(value) {
+  return state.lang === 'zh' ? value : (EN_ELEMENTS[value] || value);
+}
+
+function translateSpreadName(name) {
+  if (state.lang === 'zh') return name;
+  const map = {
+    '无牌阵三张': 'Three cards, no spread',
+    '过去 / 现在 / 未来': 'Past / Present / Future',
+    '时间流': 'Time Flow',
+    '起因 / 过程 / 结果': 'Cause / Process / Result',
+    '二选一牌阵': 'Choice Spread',
+  };
+  return map[name] || name;
+}
+
+function translateSpreadDesc(desc) {
+  if (state.lang === 'zh') return desc;
+  const map = {
+    '默认 · 三张无固定解释位置': 'Default · three cards without fixed positions',
+    '经典三张时间线牌阵': 'Classic three-card timeline spread',
+    '更强调后续发展': 'Focuses more on what comes next',
+    '适合看事件发展': 'Good for understanding how an event unfolds',
+    '用于比较两个选择的短期走向与最终结果': 'Compare the short-term path and final outcome of two choices',
+    '选项A / 选项B / 建议': 'Choice A / Choice B / Advice',
+    '自己命名、定义张数和每张牌含义': 'Name it yourself, choose the card count, and define each position',
+  };
+  return map[desc] || desc;
+}
+
+function translateLabel(label) {
+  if (state.lang === 'zh') return label;
+  const map = {
+    '第一张': 'First card',
+    '第二张': 'Second card',
+    '第三张': 'Third card',
+    '过去': 'Past',
+    '现在': 'Present',
+    '未来': 'Future',
+    '更远的未来': 'Further future',
+    '起因': 'Cause',
+    '过程': 'Process',
+    '结果': 'Result',
+    '现况': 'Current situation',
+    '选择A的近未来': 'Choice A · near future',
+    '选择B的近未来': 'Choice B · near future',
+    '选择A的结果': 'Choice A · outcome',
+    '选择B的结果': 'Choice B · outcome',
+  };
+  return map[label] || label;
+}
+
+function renderSpreadOptionTexts() {
+  $$('.spreadOption').forEach(btn => {
+    const key = btn.dataset.spread;
+    const titleEl = btn.querySelector('.spreadOption__title');
+    const subEl = btn.querySelector('.spreadOption__sub');
+    if (!titleEl || !subEl) return;
+    if (key === 'custom') {
+      titleEl.textContent = state.lang === 'zh' ? '自定义牌阵' : 'Custom spread';
+      subEl.textContent = state.lang === 'zh' ? '自己命名、定义张数和每张牌含义' : 'Name it yourself, choose the card count, and define each position';
+      return;
+    }
+    const spread = PRESET_SPREADS[key];
+    if (!spread) return;
+    titleEl.textContent = translateSpreadName(spread.name);
+    subEl.textContent = translateSpreadDesc(spread.desc);
+  });
+}
+
+function applyTranslations() {
+  const langPack = getCurrentLangPack();
+  document.documentElement.lang = langPack.htmlLang;
+  document.title = langPack.pageTitle;
+  const descMeta = document.querySelector('meta[name="description"]');
+  if (descMeta) descMeta.setAttribute('content', langPack.pageDescription);
+  const btnLang = $('#btnLang');
+  if (btnLang) {
+    const label = state.lang === 'zh' ? 'Switch to English' : '切换到中文';
+    btnLang.setAttribute('aria-label', label);
+    btnLang.setAttribute('title', label);
+  }
+
+  const set = (sel, value, html = false) => {
+    const node = $(sel);
+    if (!node) return;
+    if (html) node.innerHTML = value;
+    else node.textContent = value;
+  };
+
+  set('.brand__sub', t('brandSub'));
+  $$('.progressBar__step span:last-child').forEach((node, idx) => node.textContent = langPack.progress[idx] || node.textContent);
+  set('.heroCard__title', t('heroTitle'), true);
+  set('.heroCard__text', t('heroText'));
+  set('.questionCard__title', t('questionTitle'));
+  const questionInput = $('#questionInput');
+  if (questionInput) questionInput.placeholder = t('questionPlaceholder');
+  set('.questionTips', t('questionTips'));
+  set('#btnToSpread .primaryAction__top', t('nextToSpreadTop'));
+  set('#btnToSpread .primaryAction__sub', t('nextToSpreadSub'));
+  set('.screen--intro .secondaryAction', t('openGallery'));
+  set('[data-screen="spread"] .sectionCard__title', t('spreadTitle'));
+  set('[data-screen="spread"] .sectionCard__text', t('spreadText'));
+  renderSpreadOptionTexts();
+  set('.customPanel__title', t('customPanelTitle'));
+  set('label[for="customSpreadName"] .pickSlot__label', t('customName'));
+  const customNameLabel = $('#customSpreadName')?.closest('label')?.querySelector('.pickSlot__label');
+  if (customNameLabel) customNameLabel.textContent = t('customName');
+  const customCountLabel = $('#customSpreadCount')?.closest('label')?.querySelector('.pickSlot__label');
+  if (customCountLabel) customCountLabel.textContent = t('customCount');
+  if ($('#customSpreadName')) $('#customSpreadName').placeholder = t('customNamePlaceholder');
+  set('#btnBackIntro', t('backQuestion'));
+  set('#btnToShuffle .primaryAction__top', t('confirmSpreadTop'));
+  set('#btnToShuffle .primaryAction__sub', t('confirmSpreadSub'));
+  set('.ritualCard__title', t('shuffleTitle'));
+  if (!state.shuffled78.length) set('#shuffleText', t('shuffleIntro'));
+  set('#btnBackSpread', t('backSpread'));
+  set('#btnBackShuffle', t('backShuffle'));
+  set('#btnBackPick', t('backPick'));
+  set('#btnLucky', t('luckyFill'));
+  set('#btnReShuffle', t('reshuffleSmall'));
+  set('#btnMatch .primaryAction__top', t('matchTop'));
+  set('#btnMatch .primaryAction__sub', t('matchSub'));
+  set('.resultHeader__title', t('resultTitle'));
+  const panelMeta = $('#panelMeta');
+  if (panelMeta && !state.drawn.length) panelMeta.textContent = t('panelMetaIdle');
+  set('#btnRevealAll', t('revealAll'));
+  set('#btnCopy', t('copyResult'));
+  set('.readingPanel__head span:first-child', t('readingTitle'));
+  set('.aiPanel__head span:first-child', t('aiTitle'));
+  set('#btnRetryAi', t('retryAi'));
+  set('.debugPanel__head span:first-child', t('debugTitle'));
+  set('#btnReset .primaryAction__top', t('resetTop'));
+  set('#btnReset .primaryAction__sub', t('resetSub'));
+  set('#settings .modal__title', t('settingsTitle'));
+  set('#settings .modal__sub', t('settingsSub'));
+  set('#settings .field__label', t('motionLabel'));
+  set('#settings .field__help', t('motionHelp'));
+  const soundLabel = $('#sound')?.parentElement?.querySelector('span');
+  if (soundLabel) soundLabel.textContent = t('soundLabel');
+  set('#settings .btn[value="cancel"]', t('cancel'));
+  set('#btnSave', t('save'));
+  set('#cardDetail .modal__title', t('detailTitle'));
+  if (state.activeDetailIndex < 0) set('#detailMeta', t('detailSub'));
+  if (state.activeDetailIndex < 0) set('#detailPosterNote', t('detailPosterNote'));
+  set('#btnZoomFromDetail', t('zoom'));
+  set('#btnOpenOriginal', t('openOriginal'));
+  const detailKs = $$('#cardDetail .detailSection__k, #cardDetail .detailPanel__title');
+  if (detailKs[0]) detailKs[0].textContent = t('detailKeywords');
+  const detailTitles = $$('#detailFullMeaning .detailPanel__title');
+  if (detailTitles[0]) detailTitles[0].textContent = t('detailUpKeywords');
+  if (detailTitles[1]) detailTitles[1].textContent = t('detailUpMeaning');
+  if (detailTitles[2]) detailTitles[2].textContent = t('detailRevKeywords');
+  if (detailTitles[3]) detailTitles[3].textContent = t('detailRevMeaning');
+  set('#imageLightbox .modal__title', t('lightboxTitle'));
+  if (state.activeLightboxIndex < 0) set('#lightboxMeta', t('lightboxSub'));
+  set('#btnLightboxDetail', t('lightboxDetail'));
+  set('#btnLightboxOpenOriginal', t('lightboxOpenOriginal'));
+
+  renderQuestionEcho();
+  renderSpreadEcho();
+  renderPickInputs();
+  renderGrid();
+  renderReading();
+  renderAiReading();
+  renderDebugFingerprint();
+  if (!state.shuffled78.length) {
+    updateSpreadHint(t('spreadHintDefault'));
+    updateHint(t('hintDefault'));
+    setSequenceMeta(t('sequenceIdle'));
+  }
+}
+
 function beep(type = 'flip') {
   if (!state.sound) return;
   if (!state._ac) {
@@ -153,6 +684,7 @@ const CARD_IMAGE_BY_NAME = {
 };
 
 const state = {
+  lang: localStorage.getItem('vege_tarot_lang') || 'zh',
   motion: 0.70,
   sound: false,
   question: '',
@@ -171,6 +703,10 @@ const state = {
   detailExpanded: false,
   tarotDict: {},
   tarotDictLoaded: false,
+  readingStatus: 'idle',
+  readingResult: null,
+  sessionId: '',
+  drawId: '',
   _ac: null,
 };
 
@@ -221,16 +757,36 @@ function setupStars() {
 
 function buildBase78() {
   const cards = [];
-  MAJOR.forEach((card, i) => cards.push({ number: i + 1, arcana: '大阿卡纳', suit: '大阿卡纳', rank: card.name, name: card.name, subtitle: card.subtitle, up: card.up, rev: card.rev, image: CARD_IMAGE_BY_NAME[card.name] || '' }));
+  MAJOR.forEach((card, i) => {
+    const en = EN_MAJOR[card.name] || {};
+    cards.push({
+      number: i + 1,
+      arcana: '大阿卡纳',
+      suit: '大阿卡纳',
+      rank: card.name,
+      name: card.name,
+      subtitle: state.lang === 'zh' ? card.subtitle : (en.subtitle || card.subtitle),
+      up: state.lang === 'zh' ? card.up : (en.up || card.up),
+      rev: state.lang === 'zh' ? card.rev : (en.rev || card.rev),
+      image: CARD_IMAGE_BY_NAME[card.name] || ''
+    });
+  });
   let number = 23;
   for (const suit of SUITS) {
     for (const rank of MINOR_RANKS) {
       const name = `${suit.name}${rank}`;
+      const suitLeadZh = suit.subtitle.split(' / ')[0];
+      const suitLeadEn = (EN_SUITS[suit.name] || suit.name).slice(0);
       cards.push({
         number,
-        arcana: '小阿卡纳', suit: suit.name, rank, name, subtitle: suit.subtitle,
-        up: `${name}正位：这股 ${suit.subtitle.split(' / ')[0]} 能量更适合被正面使用，主动推进会比犹豫更有结果。`,
-        rev: `${name}逆位：${suit.subtitle.split(' / ')[0]} 能量出现阻塞、迟疑或失衡，先整理状态再决定下一步。`,
+        arcana: '小阿卡纳', suit: suit.name, rank, name,
+        subtitle: state.lang === 'zh' ? suit.subtitle : ({ '权杖': 'Action / Desire / Momentum', '圣杯': 'Emotion / Relationship / Feeling', '宝剑': 'Thought / Conflict / Decision', '星币': 'Reality / Money / Grounding' }[suit.name] || suit.subtitle),
+        up: state.lang === 'zh'
+          ? `${name}正位：这股 ${suitLeadZh} 能量更适合被正面使用，主动推进会比犹豫更有结果。`
+          : `${getDisplayCardName(name)} upright: this ${suitLeadEn.toLowerCase()} energy works best when used directly and constructively. Taking action is likely to work better than hesitating.`,
+        rev: state.lang === 'zh'
+          ? `${name}逆位：${suitLeadZh} 能量出现阻塞、迟疑或失衡，先整理状态再决定下一步。`
+          : `${getDisplayCardName(name)} reversed: this ${suitLeadEn.toLowerCase()} energy is blocked, hesitant, or out of balance. Recenter yourself before choosing the next step.`,
         image: CARD_IMAGE_BY_NAME[name] || '',
       });
       number += 1;
@@ -246,6 +802,17 @@ function normalizeDictText(text = '') {
     .trim();
 }
 
+function hasCJK(text = '') {
+  return /[\u3400-\u9FFF]/.test(String(text || ''));
+}
+
+function preferVisibleEnglish(text = '') {
+  const clean = normalizeDictText(text);
+  if (!clean) return '';
+  if (state.lang === 'en' && hasCJK(clean)) return '';
+  return clean;
+}
+
 function summarizeText(text = '', limit = 88) {
   const clean = normalizeDictText(text).replace(/…+/g, '');
   if (!clean) return '';
@@ -259,8 +826,8 @@ function getDictEntry(name) {
 function getCardKeywords(draw) {
   const dict = getDictEntry(draw.name);
   const source = draw.ori === 'up'
-    ? normalizeDictText(dict?.upright_keywords || dict?.up_keywords || dict?.keywords)
-    : normalizeDictText(dict?.reversed_keywords || dict?.rev_keywords || dict?.keywords);
+    ? preferVisibleEnglish(dict?.upright_keywords || dict?.up_keywords || dict?.keywords)
+    : preferVisibleEnglish(dict?.reversed_keywords || dict?.rev_keywords || dict?.keywords);
   if (source) return source.split(/[、，,；;。]/).map(s => s.trim()).filter(Boolean);
   const fromSubtitle = buildKeywords(draw);
   const fromSummary = dict?.summary
@@ -272,30 +839,55 @@ function getCardKeywords(draw) {
 function getCardMeaning(draw, ori = draw.ori) {
   const dict = getDictEntry(draw.name);
   const isUp = ori === 'up';
-  const primary = normalizeDictText(isUp
+  const primary = preferVisibleEnglish(isUp
     ? (dict?.upright || dict?.up || dict?.upright_text)
     : (dict?.reversed || dict?.rev || dict?.reversed_text));
   const fallback = normalizeDictText(isUp ? draw.up : draw.rev);
-  return primary || fallback || '暂无牌意。';
+  const result = primary || fallback || (state.lang === 'zh' ? '暂无牌意。' : 'No card meaning available.');
+  if (DEBUG_ENABLED && !primary) {
+    logDebug('meaning-fallback', {
+      drawName: draw.name,
+      ori,
+      dictHit: Boolean(dict),
+      usedFallback: true,
+    });
+  }
+  return result;
 }
 
 function getCardMeaningKeywords(draw, ori = draw.ori) {
   const dict = getDictEntry(draw.name);
   const isUp = ori === 'up';
-  const raw = normalizeDictText(isUp
+  const raw = preferVisibleEnglish(isUp
     ? (dict?.upright_keywords || dict?.up_keywords || dict?.keywords)
     : (dict?.reversed_keywords || dict?.rev_keywords || dict?.keywords));
   if (raw) return raw;
-  return getCardKeywords({ ...draw, ori }).join(' · ') || '暂无关键词';
+  return getCardKeywords({ ...draw, ori }).join(' · ') || (state.lang === 'zh' ? '暂无关键词' : 'No keywords yet');
 }
 
 function getCardSummary(draw) {
   const dict = getDictEntry(draw.name);
-  return normalizeDictText(dict?.summary) || draw.subtitle || '';
+  return preferVisibleEnglish(dict?.summary) || getDisplaySummary(draw) || '';
+}
+
+function getDisplaySummary(draw) {
+  if (state.lang === 'zh') return getCardSummary(draw);
+  const major = EN_MAJOR[draw.name];
+  if (major?.subtitle) return major.subtitle;
+  if (draw.suit && EN_SUITS[draw.suit]) {
+    const suitTheme = {
+      '权杖': 'Action / Desire / Momentum',
+      '圣杯': 'Emotion / Relationship / Feeling',
+      '宝剑': 'Thought / Conflict / Decision',
+      '星币': 'Reality / Money / Grounding',
+    };
+    return suitTheme[draw.suit] || draw.subtitle || '';
+  }
+  return draw.subtitle || '';
 }
 
 function getCardArcanaLabel(draw) {
-  return draw.arcana === '大阿卡纳' ? '大阿卡纳' : (draw.suit || '小阿卡纳');
+  return getDisplayArcana(draw);
 }
 
 function getCardElement(draw) {
@@ -330,7 +922,7 @@ function getCardElement(draw) {
     '宝剑': '风',
     '星币': '土'
   };
-  return majorElements[draw.name] || suitElements[draw.suit] || '';
+  return getDisplayElement(majorElements[draw.name] || suitElements[draw.suit] || '');
 }
 
 function getCardNumerology(draw) {
@@ -349,8 +941,8 @@ function getCardNumerology(draw) {
 function getCardDetailChips(draw, positionLabel = '') {
   const chips = [getCardArcanaLabel(draw), getCardElement(draw)];
   const numerology = getCardNumerology(draw);
-  if (numerology) chips.push(`灵数 ${numerology}`);
-  if (positionLabel) chips.push(positionLabel);
+  if (numerology) chips.push(state.lang === 'zh' ? `灵数 ${numerology}` : `Number ${numerology}`);
+  if (positionLabel) chips.push(translateLabel(positionLabel));
   return chips.filter(Boolean);
 }
 
@@ -368,12 +960,12 @@ function getGalleryCardDetailData(name) {
 function getReadingSummary(draw) {
   const summary = getCardSummary(draw);
   const meaning = getCardMeaning(draw, draw.ori);
-  return summarizeText(summary || meaning, 100) || '暂无摘要。';
+  return summarizeText(summary || meaning, 100) || (state.lang === 'zh' ? '暂无摘要。' : 'No summary available.');
 }
 
 function getPositionSummary(draw, label) {
-  const text = `在「${label}」这个牌位上，它更强调：${getCardMeaning(draw, draw.ori)}`;
-  return summarizeText(text, 100) || '暂无牌位摘要。';
+  const text = t('pickPositionSummary', translateLabel(label), getCardMeaning(draw, draw.ori));
+  return summarizeText(text, 100) || (state.lang === 'zh' ? '暂无牌位摘要。' : 'No position summary available.');
 }
 
 function setDetailExpanded(expanded) {
@@ -383,14 +975,16 @@ function setDetailExpanded(expanded) {
   if (box) box.hidden = !state.detailExpanded;
   if (btn) {
     btn.setAttribute('aria-expanded', String(state.detailExpanded));
-    btn.textContent = state.detailExpanded ? '收起完整长文牌意' : '展开完整长文牌意';
+    btn.textContent = state.detailExpanded
+      ? (state.lang === 'zh' ? '收起完整长文牌意' : 'Hide full card meaning')
+      : (state.lang === 'zh' ? '展开完整长文牌意' : 'Show full card meaning');
   }
 }
 
 async function loadTarotDict() {
   const candidates = [
-    'assets/tarot-dict-display-normalized.json',
-    'assets/tarot-dict-quickref.json',
+    `assets/tarot-dict-display-normalized.json?v=${APP_VERSION}`,
+    `assets/tarot-dict-quickref.json?v=${APP_VERSION}`,
   ];
   for (const url of candidates) {
     try {
@@ -401,13 +995,18 @@ async function loadTarotDict() {
       state.tarotDictLoaded = Object.keys(state.tarotDict).length > 0;
       updateDictBadge();
       buildBase78();
+      logDebug('dict-loaded', {
+        url,
+        cardCount: Object.keys(state.tarotDict).length,
+        sampleKeys: Object.keys(state.tarotDict).slice(0, 8),
+      });
       buildEncoded156();
       renderGrid();
       renderReading();
       if (state.tarotDictLoaded) {
         const cardCount = Object.keys(state.tarotDict).length;
         console.info(`[tarot] loaded dict from ${url} with ${cardCount} cards`);
-        updateHint(`已加载本地牌意库（${cardCount} 张）。`);
+        updateHint(t('loadedDict', cardCount));
         return;
       }
     } catch (err) {
@@ -417,7 +1016,7 @@ async function loadTarotDict() {
   state.tarotDict = {};
   state.tarotDictLoaded = false;
   updateDictBadge();
-  updateHint('本地牌意库加载失败，当前使用内置简版牌意。');
+  updateHint(t('loadDictFailed'));
 }
 
 function buildEncoded156() {
@@ -495,11 +1094,11 @@ function goToScreen(screen) {
 }
 
 function renderQuestionEcho() {
-  $('#questionEcho').textContent = `你的问题：${state.question?.trim() ? state.question.trim() : '未填写'}`;
+  $('#questionEcho').textContent = `${t('questionEchoPrefix')}${state.question?.trim() ? state.question.trim() : t('questionEmpty')}`;
 }
 
 function renderSpreadEcho() {
-  $('#spreadEcho').textContent = `当前牌阵：${state.spread.name}`;
+  $('#spreadEcho').textContent = `${t('spreadEchoPrefix')}${translateSpreadName(state.spread.name)}`;
 }
 
 function renderCustomMeaningInputs() {
@@ -511,9 +1110,9 @@ function renderCustomMeaningInputs() {
     const wrap = el('label', 'pickSlot');
     const label = el('span', 'pickSlot__label');
     const input = el('input', 'pickSlot__input');
-    label.textContent = `第 ${i + 1} 张牌代表什么`;
+    label.textContent = t('customMeaningLabel', i + 1);
     input.type = 'text';
-    input.placeholder = `例如：核心问题 / 对方状态 / 结果`;
+    input.placeholder = t('customMeaningPlaceholder');
     input.dataset.meaningIndex = String(i);
     wrap.append(label, input);
     box.append(wrap);
@@ -527,10 +1126,10 @@ function buildSpreadFromForm() {
   const count = Number($('#customSpreadCount').value);
   const inputs = $$('#customMeaningList input');
   const labels = inputs.map(i => i.value.trim()).filter(Boolean);
-  if (!name) return { error: '请先填写自定义牌阵名称。' };
-  if (!Number.isInteger(count) || count < 1 || count > 20) return { error: '自定义牌阵张数请输入 1-20。' };
-  if (labels.length !== count) return { error: '请把每一张牌的含义都填完整。' };
-  return { key: 'custom', name, labels, desc: `自定义牌阵 · ${count} 张` };
+  if (!name) return { error: t('customNeedName') };
+  if (!Number.isInteger(count) || count < 1 || count > 20) return { error: t('customNeedCount') };
+  if (labels.length !== count) return { error: t('customNeedLabels') };
+  return { key: 'custom', name, labels, desc: state.lang === 'zh' ? `自定义牌阵 · ${count} 张` : `Custom spread · ${count} cards` };
 }
 
 function renderPickInputs() {
@@ -551,7 +1150,7 @@ function renderPickInputs() {
     wrap.append(labelEl, input);
     panel.append(wrap);
   });
-  $('#pickTitle').textContent = `请为「${state.spread.name}」的每个牌位输入 1-78 的随机数字`;
+  $('#pickTitle').textContent = t('pickTitleForSpread', translateSpreadName(state.spread.name));
   $('#pickDesc').textContent = '';
 }
 
@@ -564,7 +1163,7 @@ function renderGrid() {
     const card = el('button', 'card card--simple');
     card.type = 'button';
     card.dataset.slot = String(i);
-    card.setAttribute('aria-label', `${label} 牌位`);
+    card.setAttribute('aria-label', state.lang === 'zh' ? `${label} 牌位` : `${translateLabel(label)} position`);
     const back = el('div', 'card__face card__back');
     const front = el('div', 'card__face card__front');
     const frame = el('div', 'card__frame');
@@ -575,8 +1174,8 @@ function renderGrid() {
     const meta = el('div', 'card__meta');
     const name = el('div', 'card__name card__name--simple');
     const subtitle = el('div', 'card__subtitle card__subtitle--simple');
-    tl.textContent = label;
-    img.alt = `${label} 牌位图片`;
+    tl.textContent = translateLabel(label);
+    img.alt = state.lang === 'zh' ? `${label} 牌位图片` : `${translateLabel(label)} card image`;
     media.append(img, overlay);
     meta.append(name, subtitle);
     front.append(frame, tl, media, meta);
@@ -586,7 +1185,7 @@ function renderGrid() {
       hydrateCard(card, d, label);
       if (d.revealed) card.classList.add('is-flipped');
     } else {
-      name.textContent = '等待匹配';
+      name.textContent = t('cardWaiting');
       subtitle.textContent = '';
     }
     card.addEventListener('click', () => onFlip(i));
@@ -596,13 +1195,13 @@ function renderGrid() {
 
 function hydrateCard(cardBtn, draw, label) {
   const front = cardBtn.querySelector('.card__front');
-  front.querySelector('.card__corner--tl').textContent = label;
-  front.querySelector('.card__name').textContent = draw.name;
-  front.querySelector('.card__subtitle').textContent = draw.ori === 'up' ? '正位' : '逆位';
+  front.querySelector('.card__corner--tl').textContent = translateLabel(label);
+  front.querySelector('.card__name').textContent = getDisplayCardName(draw);
+  front.querySelector('.card__subtitle').textContent = getOriLabel(draw.ori);
   const img = front.querySelector('.card__image');
   if (img) {
     img.src = draw.image;
-    img.alt = `${draw.name} ${draw.ori === 'up' ? '正位' : '逆位'}`;
+    img.alt = `${getDisplayCardName(draw)} ${getOriLabel(draw.ori)}`;
     img.classList.toggle('is-reversed', draw.ori === 'rev');
   }
   front.style.transform = 'rotateY(180deg)';
@@ -623,8 +1222,15 @@ function openCardDetail(index) {
   const draw = state.drawn[index];
   if (!draw) return;
   state.activeDetailIndex = index;
-  $('#detailMeta').textContent = `${state.spread.name} · ${state.spread.labels[index]} · ${draw.ori === 'up' ? '正位' : '逆位'}`;
-  $('#detailName').textContent = draw.name;
+  logDebug('open-card-detail', {
+    index,
+    drawName: draw.name,
+    drawOri: draw.ori,
+    drawImage: draw.image,
+    dictHit: Boolean(getDictEntry(draw.name)),
+  });
+  $('#detailMeta').textContent = t('detailMeta', translateSpreadName(state.spread.name), translateLabel(state.spread.labels[index]), getOriLabel(draw.ori));
+  $('#detailName').textContent = getDisplayCardName(draw);
   const chips = $('#detailChips');
   chips.innerHTML = '';
   getCardDetailChips(draw, state.spread.labels[index]).forEach(text => {
@@ -634,10 +1240,10 @@ function openCardDetail(index) {
   });
   const poster = $('#detailPosterImage');
   poster.src = draw.image;
-  poster.alt = `${draw.name} ${draw.ori === 'up' ? '正位' : '逆位'}`;
+  poster.alt = `${getDisplayCardName(draw)} ${getOriLabel(draw.ori)}`;
   poster.classList.toggle('is-reversed', draw.ori === 'rev');
-  $('#detailPosterNote').textContent = `当前显示真实牌图 · ${draw.ori === 'up' ? '正位' : '逆位'}`;
-  $('#detailKeywords').textContent = getCardKeywords(draw).join(' · ') || '暂无关键词';
+  $('#detailPosterNote').textContent = t('posterNoteWithOri', getOriLabel(draw.ori));
+  $('#detailKeywords').textContent = getCardKeywords(draw).join(' · ') || (state.lang === 'zh' ? '暂无关键词' : 'No keywords yet');
   $('#detailUpKeywords').textContent = getCardMeaningKeywords(draw, 'up');
   $('#detailUp').textContent = getCardMeaning(draw, 'up');
   $('#detailRevKeywords').textContent = getCardMeaningKeywords(draw, 'rev');
@@ -651,9 +1257,9 @@ function openImageLightbox(index) {
   state.activeLightboxIndex = index;
   const img = $('#lightboxImage');
   img.src = draw.image;
-  img.alt = `${draw.name} ${draw.ori === 'up' ? '正位' : '逆位'}`;
+  img.alt = `${getDisplayCardName(draw)} ${getOriLabel(draw.ori)}`;
   img.classList.toggle('is-reversed', draw.ori === 'rev');
-  $('#lightboxMeta').textContent = `${draw.name} · ${draw.ori === 'up' ? '正位' : '逆位'} · 点击外部可关闭`;
+  $('#lightboxMeta').textContent = t('lightboxMeta', getDisplayCardName(draw), getOriLabel(draw.ori));
   $('#imageLightbox').showModal();
 }
 
@@ -673,15 +1279,194 @@ function closeCardDetail() {
   if (dlg.open) dlg.close();
 }
 
+function renderAiReading() {
+  const statusEl = $('#aiStatusText');
+  const bodyEl = $('#aiReading');
+  const actionsEl = $('#aiActions');
+  if (!statusEl || !bodyEl || !actionsEl) return;
+
+  const statusMap = t('aiStatusMap');
+  statusEl.textContent = statusMap[state.readingStatus] || state.readingStatus;
+  actionsEl.hidden = state.readingStatus !== 'error';
+
+  if (state.readingStatus === 'idle') {
+    bodyEl.innerHTML = `<p class="muted">${t('aiPlaceholder')}</p>`;
+    return;
+  }
+  if (state.readingStatus === 'loading') {
+    bodyEl.innerHTML = `<p class="muted">${t('aiLoading')}</p>`;
+    return;
+  }
+  if (state.readingStatus === 'error') {
+    bodyEl.innerHTML = `<p class="muted">${t('aiError')}</p>`;
+    return;
+  }
+
+  const result = state.readingResult || {};
+  const blocks = [];
+  if (result.summary) {
+    blocks.push(`<div class="aiPanel__block"><div class="aiPanel__label">${t('aiSummary')}</div><div>${result.summary}</div></div>`);
+  }
+  if (result.synthesis) {
+    blocks.push(`<div class="aiPanel__block"><div class="aiPanel__label">${t('aiSynthesis')}</div><div>${result.synthesis}</div></div>`);
+  }
+  if (result.advice) {
+    blocks.push(`<div class="aiPanel__block"><div class="aiPanel__label">${t('aiAdvice')}</div><div>${result.advice}</div></div>`);
+  }
+  if (result.riskNotes) {
+    blocks.push(`<div class="aiPanel__block"><div class="aiPanel__label">${t('aiRisk')}</div><div>${result.riskNotes}</div></div>`);
+  }
+  if (Array.isArray(result.followUps) && result.followUps.length) {
+    blocks.push(`<div class="aiPanel__block"><div class="aiPanel__label">${t('aiFollowups')}</div><div>${result.followUps.map(x => `• ${x}`).join('<br>')}</div></div>`);
+  }
+  bodyEl.innerHTML = blocks.join('') || `<p class="muted">${t('aiEmpty')}</p>`;
+}
+
+function setMockAiReadingFromCurrentDraw() {
+  if (!state.drawn.length) {
+    state.readingStatus = 'idle';
+    state.readingResult = null;
+    renderAiReading();
+    return;
+  }
+  const names = state.drawn.map(d => `${getDisplayCardName(d)} ${getOriLabel(d.ori)}`);
+  state.readingStatus = 'success';
+  state.readingResult = {
+    summary: t('mockSummary', names),
+    synthesis: t('mockSynthesis'),
+    advice: t('mockAdvice'),
+    riskNotes: t('mockRisk'),
+    followUps: t('mockFollowups'),
+  };
+  renderAiReading();
+}
+
+function buildInterpretPayload() {
+  return {
+    sessionId: state.sessionId || '',
+    drawId: state.drawId || '',
+    question: state.question?.trim() || '',
+    spreadType: state.spread?.key || state.selectedSpreadKey || 'blank3',
+    spreadName: state.spread?.name || '',
+    cards: state.drawn.map((draw, i) => ({
+      position: state.spread.labels[i],
+      name: draw.name,
+      orientation: draw.ori === 'up' ? 'upright' : 'reversed',
+      image: draw.image,
+      pick: draw.pick,
+    })),
+  };
+}
+
+function normalizeInterpretResponse(data) {
+  const result = data?.result || data?.data || data || {};
+  return {
+    summary: result.summary || result.overall || result.overallSummary || '',
+    synthesis: result.synthesis || result.analysis || result.linkage || '',
+    advice: result.advice || result.suggestion || result.recommendation || '',
+    riskNotes: result.riskNotes || result.risks || result.cautions || '',
+    followUps: Array.isArray(result.followUps)
+      ? result.followUps
+      : Array.isArray(result.followUpSuggestions)
+        ? result.followUpSuggestions
+        : [],
+  };
+}
+
+async function requestAiReading({ allowMockFallback = true } = {}) {
+  if (!state.drawn.length) {
+    state.readingStatus = 'idle';
+    state.readingResult = null;
+    renderAiReading();
+    return;
+  }
+  state.readingStatus = 'loading';
+  state.readingResult = null;
+  renderAiReading();
+
+  const api = window.VEGE_TAROT_API;
+  const payload = buildInterpretPayload();
+  logDebug('interpret-request', payload);
+
+  if (!api?.interpretReading) {
+    logDebug('interpret-missing-api', { allowMockFallback });
+    if (allowMockFallback) {
+      setMockAiReadingFromCurrentDraw();
+      return;
+    }
+    state.readingStatus = 'error';
+    renderAiReading();
+    return;
+  }
+
+  try {
+    const response = await api.interpretReading(payload);
+    const normalized = normalizeInterpretResponse(response);
+    const hasUsefulContent = normalized.summary || normalized.synthesis || normalized.advice || normalized.riskNotes || (normalized.followUps && normalized.followUps.length);
+    if (!hasUsefulContent) throw new Error('AI 返回成功，但没有可展示内容');
+    state.readingStatus = 'success';
+    state.readingResult = normalized;
+    logDebug('interpret-success', normalized);
+    renderAiReading();
+  } catch (error) {
+    logDebug('interpret-error', {
+      message: error?.message || String(error),
+      status: error?.status,
+      payload: error?.payload || null,
+      allowMockFallback,
+    });
+    if (allowMockFallback) {
+      setMockAiReadingFromCurrentDraw();
+      return;
+    }
+    state.readingStatus = 'error';
+    state.readingResult = null;
+    renderAiReading();
+  }
+}
+
+function renderDebugFingerprint() {
+  const versionEl = $('#debugVersion');
+  const bodyEl = $('#debugFingerprint');
+  if (versionEl) versionEl.textContent = `v${APP_VERSION}`;
+  if (!bodyEl) return;
+  if (state.lang === 'en' && !state.drawn.length) {
+    bodyEl.textContent = `version=${APP_VERSION}\ndictLoaded=${state.tarotDictLoaded}\ndictCount=${Object.keys(state.tarotDict || {}).length}\nstatus=waiting`;
+    return;
+  }
+  if (!state.drawn.length) {
+    bodyEl.textContent = `version=${APP_VERSION}\ndictLoaded=${state.tarotDictLoaded}\ndictCount=${Object.keys(state.tarotDict || {}).length}\nstatus=waiting`;
+    return;
+  }
+  const lines = [
+    `version=${APP_VERSION}`,
+    `dictLoaded=${state.tarotDictLoaded}`,
+    `dictCount=${Object.keys(state.tarotDict || {}).length}`,
+    `spread=${state.spread?.name || '-'}`,
+  ];
+  state.drawn.forEach((draw, i) => {
+    if (!draw) {
+      lines.push(`#${i + 1} empty`);
+      return;
+    }
+    const dictHit = Boolean(getDictEntry(draw.name));
+    lines.push(
+      `#${i + 1} slot=${translateLabel(state.spread.labels[i])} | name=${getDisplayCardName(draw)} | ori=${draw.ori} | pick=${draw.pick} | image=${draw.image || '-'} | dictHit=${dictHit}`
+    );
+  });
+  bodyEl.textContent = lines.join('\n');
+}
+
 function renderReading() {
   const box = $('#reading');
   if (!state.drawn.length) {
-    box.innerHTML = `<p class="muted">这里会展示每张牌的解读内容。</p>`;
-    setMeta('尚未匹配结果');
+    box.innerHTML = `<p class="muted">${t('readingPlaceholder')}</p>`;
+    setMeta(t('notMatched'));
+    renderDebugFingerprint();
     return;
   }
   const allRevealed = state.drawn.every(d => d && d.revealed);
-  setMeta(allRevealed ? '全部牌已翻开' : '已匹配结果，等待翻牌');
+  setMeta(allRevealed ? t('allRevealed') : t('waitingFlip'));
   const grid = el('div', 'readingGrid');
   state.spread.labels.forEach((label, i) => {
     const d = state.drawn[i];
@@ -689,15 +1474,15 @@ function renderReading() {
     const k = el('div', 'readingCard__k');
     const v = el('div', 'readingCard__v');
     if (!d) {
-      k.textContent = `${label} · 未匹配`;
-      v.textContent = '等待结果';
+      k.textContent = `${translateLabel(label)} · ${t('unrevealed')}`;
+      v.textContent = t('waitingResult');
     } else {
-      k.textContent = `${label}`;
+      k.textContent = `${translateLabel(label)}`;
       if (d.revealed) {
-        const keywords = getCardKeywords(d).join(' · ') || '暂无关键词';
-        v.innerHTML = `<strong>${d.name}</strong>（${d.ori === 'up' ? '正位' : '逆位'}）<div class="readingCard__summary">关键词：${keywords}</div><span class="readingCard__more">点击牌面查看完整牌义</span>`;
+        const keywords = getCardKeywords(d).join(' · ') || (state.lang === 'zh' ? '暂无关键词' : 'No keywords yet');
+        v.innerHTML = `<strong>${getDisplayCardName(d)}</strong>（${getOriLabel(d.ori)}）<div class="readingCard__summary">${t('keywordsLabel')}${keywords}</div><span class="readingCard__more">${t('readingMore')}</span>`;
       } else {
-        v.innerHTML = `<strong>${d.name}</strong><br><span class="muted">已匹配完成，点击上方卡牌翻开。</span>`;
+        v.innerHTML = `<strong>${getDisplayCardName(d)}</strong><br><span class="muted">${t('cardMatchedHint')}</span>`;
       }
     }
     c.append(k, v);
@@ -705,6 +1490,7 @@ function renderReading() {
   });
   box.innerHTML = '';
   box.append(grid);
+  renderDebugFingerprint();
 }
 
 function getPickValues() {
@@ -712,14 +1498,14 @@ function getPickValues() {
 }
 
 function validatePicks(values) {
-  if (values.length !== state.spread.labels.length) return '选号数量与当前牌阵不一致。';
-  if (values.some(v => !Number.isInteger(v) || v < 1 || v > 78)) return '请输入 1-78 之间的整数。';
-  if ((new Set(values)).size !== values.length) return '每个牌位的数字必须互不重复。';
+  if (values.length !== state.spread.labels.length) return t('validateCountMismatch');
+  if (values.some(v => !Number.isInteger(v) || v < 1 || v > 78)) return t('validateRange');
+  if ((new Set(values)).size !== values.length) return t('validateUnique');
   return '';
 }
 
 async function ritualShuffleAnimation() {
-  $('#shuffleText').textContent = '洗牌中…';
+  $('#shuffleText').textContent = t('shuffling');
   const orb = $('#ritualOrb');
   orb.classList.add('is-busy');
   beep('shuffle');
@@ -733,11 +1519,12 @@ async function ritualShuffleAnimation() {
   renderGrid();
   renderReading();
   orb.classList.remove('is-busy');
-  $('#shuffleText').textContent = '洗牌完毕';
-  setSequenceMeta('已完成后台洗牌');
-  $('#btnShuffle .primaryAction__top').textContent = '重新洗牌';
+  $('#shuffleText').textContent = t('shuffled');
+  setSequenceMeta(t('shuffledMeta'));
+  $('#btnShuffle .primaryAction__top').textContent = t('reshuffle');
   $('#btnToPick').hidden = false;
-  updateHint('已完成后台洗牌。现在请为每个牌位输入 1-78 的随机数字。');
+  $('#btnToPick').textContent = t('goPick');
+  updateHint(t('shuffledHint'));
 }
 
 function onLuckyPick() {
@@ -752,12 +1539,12 @@ function onLuckyPick() {
   state.picks = nums;
   $$('#pickPanel input[data-pick-index]').forEach((input, idx) => { input.value = nums[idx]; });
   renderGrid();
-  updateHint('已帮你随机填满所有牌位数字。');
+  updateHint(t('luckyDone'));
 }
 
 function onMatch() {
   if (!state.shuffled78.length) {
-    updateHint('你还没洗牌。先完成洗牌仪式。');
+    updateHint(t('notShuffled'));
     goToScreen('shuffle');
     return;
   }
@@ -770,17 +1557,31 @@ function onMatch() {
   state.picks = picks;
   state.drawn = picks.map((pick) => mapPickToDraw(pick)).filter(Boolean);
   state.phase = 'matched';
+  state.readingStatus = 'loading';
+  state.readingResult = null;
+  state.sessionId = `sess_${Date.now()}`;
+  state.drawId = `draw_${Date.now()}`;
   renderGrid();
   renderReading();
+  renderAiReading();
   renderQuestionEcho();
   renderSpreadEcho();
   goToScreen('result');
-  updateHint('匹配完成。现在轻触卡牌翻开，查看结果。');
+  updateHint(t('matchedHint'));
+  requestAiReading({ allowMockFallback: true });
 }
 
 function onFlip(slot) {
   const d = state.drawn[slot];
   if (!d) return;
+  logDebug('flip-card', {
+    slot,
+    drawName: d.name,
+    drawOri: d.ori,
+    drawImage: d.image,
+    revealed: d.revealed,
+    dictHit: Boolean(getDictEntry(d.name)),
+  });
   if (!d.revealed) {
     d.revealed = true;
     beep('flip');
@@ -795,7 +1596,7 @@ function onFlip(slot) {
 
 function onRevealAll() {
   if (!state.drawn.length) {
-    updateHint('还没有可翻开的结果。');
+    updateHint(t('noReveal'));
     return;
   }
   state.drawn.forEach(d => { if (d) d.revealed = true; });
@@ -818,6 +1619,10 @@ function onReset() {
   state.picks = [];
   state.drawn = [];
   state.phase = 'idle';
+  state.readingStatus = 'idle';
+  state.readingResult = null;
+  state.sessionId = '';
+  state.drawId = '';
   $('#questionInput').value = '';
   $('#customSpreadName').value = '';
   $('#customSpreadCount').value = '';
@@ -825,48 +1630,49 @@ function onReset() {
   $('#customMeaningList').innerHTML = '';
   $$('.spreadOption').forEach(btn => btn.classList.toggle('is-active', btn.dataset.spread === 'blank3'));
   $('#shuffleText').textContent = '';
-  $('#btnShuffle .primaryAction__top').textContent = '开始洗牌';
+  $('#btnShuffle .primaryAction__top').textContent = t('startShuffle');
   $('#btnToPick').hidden = true;
   renderQuestionEcho();
   renderSpreadEcho();
   renderPickInputs();
   renderGrid();
   renderReading();
+  renderAiReading();
   goToScreen('intro');
-  updateSpreadHint('当前默认牌阵：无牌阵三张。');
-  updateHint('提示：先输入问题，再选择牌阵。');
-  setSequenceMeta('尚未洗牌');
+  updateSpreadHint(t('spreadHintDefault'));
+  updateHint(t('resetHint'));
+  setSequenceMeta(t('sequenceIdle'));
 }
 
 async function onCopy() {
   if (!state.drawn.length) {
-    updateHint('还没有结果可复制。');
+    updateHint(t('noCopy'));
     return;
   }
   const lines = [];
-  lines.push(`VEGEBIRD TAROT 用户参与式塔罗结果（${new Date().toLocaleString()}）`);
-  lines.push(`问题：${state.question?.trim() || '未填写'}`);
-  lines.push(`牌阵：${state.spread.name}`);
+  lines.push(`VEGEBIRD TAROT ${state.lang === 'zh' ? '用户参与式塔罗结果' : 'Interactive tarot result'} (${new Date().toLocaleString(state.lang === 'en' ? 'en-US' : 'zh-CN')})`);
+  lines.push(`${t('questionEchoPrefix')}${state.question?.trim() || t('questionEmpty')}`);
+  lines.push(`${t('spreadEchoPrefix')}${translateSpreadName(state.spread.name)}`);
   state.spread.labels.forEach((label, i) => {
     const d = state.drawn[i];
     if (!d) return;
-    lines.push(`${label}：${d.name}（${d.ori === 'up' ? '正位' : '逆位'}）`);
+    lines.push(`${translateLabel(label)}: ${getDisplayCardName(d)} (${getOriLabel(d.ori)})`);
     lines.push(`- ${getCardMeaning(d, d.ori)}`);
     const summary = getCardSummary(d);
-    if (summary) lines.push(`- 基调：${summarizeText(summary, 120)}`);
+    if (summary) lines.push(`- ${state.lang === 'zh' ? '基调' : 'Theme'}: ${summarizeText(summary, 120)}`);
   });
   try {
     await navigator.clipboard.writeText(lines.join('\n'));
-    updateHint('已复制到剪贴板。');
+    updateHint(t('copied'));
   } catch {
-    updateHint('复制失败：浏览器可能禁止剪贴板。');
+    updateHint(t('copyFailed'));
   }
 }
 
 function bindSettings() {
-  const dlg = $('#settings');
-  $('#btnSettings').addEventListener('click', () => dlg.showModal());
   const mot = $('#motion');
+  const btnLang = $('#btnLang');
+  if (btnLang) btnLang.addEventListener('click', toggleLanguage);
   const motVal = $('#motionVal');
   mot.addEventListener('input', () => { motVal.textContent = mot.value; });
   $('#btnSave').addEventListener('click', () => {
@@ -883,10 +1689,10 @@ function bindSpreadSelection() {
       const isCustom = state.selectedSpreadKey === 'custom';
       $('#customPanel').hidden = !isCustom;
       if (isCustom) {
-        updateSpreadHint('你选择了自定义牌阵。请填写牌阵名称、牌数和每张牌的含义。');
+        updateSpreadHint(t('customSelectHint'));
       } else {
         const spread = PRESET_SPREADS[state.selectedSpreadKey];
-        updateSpreadHint(`当前牌阵：${spread.name} · ${spread.desc}`);
+        updateSpreadHint(t('currentSpread', translateSpreadName(spread.name), translateSpreadDesc(spread.desc)));
       }
     });
   });
@@ -914,7 +1720,7 @@ function bindFlow() {
     state.picks = new Array(state.spread.labels.length).fill('');
     state.drawn = [];
     $('#btnToPick').hidden = true;
-    $('#btnShuffle .primaryAction__top').textContent = '开始洗牌';
+    $('#btnShuffle .primaryAction__top').textContent = t('startShuffle');
     $('#shuffleText').textContent = '';
     renderSpreadEcho();
     renderPickInputs();
@@ -925,11 +1731,16 @@ function bindFlow() {
 
   $('#btnToPick').addEventListener('click', () => {
     if (!state.shuffled78.length) {
-      updateHint('先完成洗牌仪式。');
+      updateHint(t('needShuffleFirst'));
       return;
     }
     goToScreen('pick');
   });
+}
+
+function retryAiReading() {
+  if (!state.drawn.length) return;
+  requestAiReading({ allowMockFallback: false });
 }
 
 function bindActions() {
@@ -940,6 +1751,7 @@ function bindActions() {
   $('#btnRevealAll').addEventListener('click', onRevealAll);
   $('#btnReset').addEventListener('click', onReset);
   $('#btnCopy').addEventListener('click', onCopy);
+  $('#btnRetryAi').addEventListener('click', retryAiReading);
   $('#btnCloseDetail').addEventListener('click', closeCardDetail);
   $('#detailPosterImage').addEventListener('click', () => openImageLightbox(state.activeDetailIndex));
   $('#btnZoomFromDetail').addEventListener('click', () => openImageLightbox(state.activeDetailIndex));
@@ -963,15 +1775,23 @@ async function init() {
   renderPickInputs();
   renderGrid();
   renderReading();
+  renderAiReading();
   bindSettings();
   bindSpreadSelection();
   bindFlow();
   bindActions();
   goToScreen('intro');
-  updateSpreadHint('当前默认牌阵：无牌阵三张。');
-  updateHint('提示：先输入问题，再选择牌阵。');
-  setSequenceMeta('尚未洗牌');
+  applyTranslations();
+  updateSpreadHint(t('spreadHintDefault'));
+  updateHint(t('resetHint'));
+  setSequenceMeta(t('sequenceIdle'));
   await loadTarotDict();
+  renderDebugFingerprint();
+  logDebug('init-complete', {
+    version: APP_VERSION,
+    dictLoaded: state.tarotDictLoaded,
+    dictCount: Object.keys(state.tarotDict || {}).length,
+  });
 }
 
 init();
