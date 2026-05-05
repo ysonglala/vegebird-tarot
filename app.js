@@ -101,6 +101,7 @@ const I18N = {
     aiStatusMap: { idle: '未开始', loading: '生成中', success: '已生成', error: '失败' },
     aiLoading: '正在整理牌面关系与整体结论…',
     aiError: 'AI 解牌暂时失败了。你可以稍后重试，当前仍可先查看基础牌义。',
+    aiErrorColdStart: 'AI 服务可能正在冷启动。请等待 20~40 秒后再点一次「生成 AI 解读」。',
     aiEmpty: 'AI 已返回，但当前没有可展示的结构化内容。',
     aiSummary: '整体结论',
     aiSynthesis: '联动分析',
@@ -232,6 +233,7 @@ const I18N = {
     aiStatusMap: { idle: 'Not started', loading: 'Generating', success: 'Ready', error: 'Failed' },
     aiLoading: 'Connecting the cards and composing the overall reading…',
     aiError: 'AI reading failed for now. You can retry later, and the base card meanings are still available.',
+    aiErrorColdStart: 'The AI service may still be cold-starting. Wait 20–40 seconds, then tap “Generate AI reading” again.',
     aiEmpty: 'AI returned successfully, but there is no structured content to show yet.',
     aiSummary: 'Overall reading',
     aiSynthesis: 'Pattern synthesis',
@@ -705,6 +707,7 @@ const state = {
   tarotDictLoaded: false,
   readingStatus: 'idle',
   readingResult: null,
+  readingErrorCode: '',
   sessionId: '',
   drawId: '',
   _ac: null,
@@ -1330,7 +1333,8 @@ function renderAiReading() {
     return;
   }
   if (state.readingStatus === 'error') {
-    bodyEl.innerHTML = `<p class="muted">${t('aiError')}</p>`;
+    const errorText = state.readingErrorCode === 'cold-start' ? t('aiErrorColdStart') : t('aiError');
+    bodyEl.innerHTML = `<p class="muted">${errorText}</p>`;
     return;
   }
 
@@ -1417,11 +1421,13 @@ async function requestAiReading({ allowMockFallback = true } = {}) {
   if (!state.drawn.length) {
     state.readingStatus = 'idle';
     state.readingResult = null;
+    state.readingErrorCode = '';
     renderAiReading();
     return;
   }
   state.readingStatus = 'loading';
   state.readingResult = null;
+  state.readingErrorCode = '';
   renderAiReading();
 
   const api = window.VEGE_TAROT_API;
@@ -1435,6 +1441,7 @@ async function requestAiReading({ allowMockFallback = true } = {}) {
       return;
     }
     state.readingStatus = 'error';
+    state.readingErrorCode = 'api-missing';
     renderAiReading();
     return;
   }
@@ -1449,6 +1456,7 @@ async function requestAiReading({ allowMockFallback = true } = {}) {
     }
     state.readingStatus = 'success';
     state.readingResult = normalized;
+    state.readingErrorCode = '';
     logDebug('interpret-success', normalized);
     renderAiReading();
   } catch (error) {
@@ -1464,6 +1472,7 @@ async function requestAiReading({ allowMockFallback = true } = {}) {
     }
     state.readingStatus = 'error';
     state.readingResult = null;
+    state.readingErrorCode = error?.status === 503 || /timeout|timed out|cold|upstream/i.test(error?.message || '') ? 'cold-start' : 'request-failed';
     renderAiReading();
   }
 }
@@ -1570,8 +1579,9 @@ function onMatch() {
   state.picks = picks;
   state.drawn = picks.map((pick) => mapPickToDraw(pick)).filter(Boolean);
   state.phase = 'matched';
-  state.readingStatus = 'loading';
+  state.readingStatus = 'idle';
   state.readingResult = null;
+  state.readingErrorCode = '';
   state.sessionId = `sess_${Date.now()}`;
   state.drawId = `draw_${Date.now()}`;
   renderGrid();
@@ -1633,6 +1643,7 @@ function onReset() {
   state.phase = 'idle';
   state.readingStatus = 'idle';
   state.readingResult = null;
+  state.readingErrorCode = '';
   state.sessionId = '';
   state.drawId = '';
   $('#questionInput').value = '';
