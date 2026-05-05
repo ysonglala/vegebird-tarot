@@ -1418,6 +1418,11 @@ function isEnglishReadingResultClean(result) {
 }
 
 async function requestAiReading({ allowMockFallback = true } = {}) {
+  console.log('[ui] requestAiReading:start', {
+    allowMockFallback,
+    drawCount: state.drawn?.length || 0,
+    lang: state.lang,
+  });
   if (!state.drawn.length) {
     state.readingStatus = 'idle';
     state.readingResult = null;
@@ -1432,6 +1437,7 @@ async function requestAiReading({ allowMockFallback = true } = {}) {
 
   const api = window.VEGE_TAROT_API;
   const payload = buildInterpretPayload();
+  console.log('[ui] interpret payload', payload);
   logDebug('interpret-request', payload);
 
   if (!api?.interpretReading) {
@@ -1448,6 +1454,7 @@ async function requestAiReading({ allowMockFallback = true } = {}) {
 
   try {
     const response = await api.interpretReading(payload);
+    console.log('[ui] interpret response raw', response);
     const normalized = normalizeInterpretResponse(response);
     const hasUsefulContent = normalized.summary || normalized.synthesis || normalized.advice || normalized.riskNotes || (normalized.followUps && normalized.followUps.length);
     if (!hasUsefulContent) throw new Error('AI 返回成功，但没有可展示内容');
@@ -1460,6 +1467,11 @@ async function requestAiReading({ allowMockFallback = true } = {}) {
     logDebug('interpret-success', normalized);
     renderAiReading();
   } catch (error) {
+    console.error('[ui] interpret request failed', {
+      message: error?.message || String(error),
+      status: error?.status,
+      payload: error?.payload || null,
+    });
     logDebug('interpret-error', {
       message: error?.message || String(error),
       status: error?.status,
@@ -1763,6 +1775,11 @@ function bindFlow() {
 }
 
 function retryAiReading() {
+  console.log('[ui] btnInterpret clicked', {
+    drawCount: state.drawn?.length || 0,
+    lang: state.lang,
+    apiBase: window.VEGE_TAROT_API_BASE || 'http://127.0.0.1:8787',
+  });
   if (!state.drawn.length) return;
   requestAiReading({ allowMockFallback: false });
 }
