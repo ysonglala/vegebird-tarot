@@ -1660,8 +1660,8 @@ async function onCopy() {
     if (!d) return;
     lines.push(`${translateLabel(label)}: ${getDisplayCardName(d)} (${getOriLabel(d.ori)})`);
     lines.push(`- ${getCardMeaning(d, d.ori)}`);
-    const summary = getCardSummary(d);
-    if (summary) lines.push(`- ${state.lang === 'zh' ? '基调' : 'Theme'}: ${summarizeText(summary, 120)}`);
+    const theme = getDisplaySummary(d) || getCardSummary(d);
+    if (theme) lines.push(`- ${state.lang === 'zh' ? '基调' : 'Theme'}: ${theme}`);
   });
   try {
     await navigator.clipboard.writeText(lines.join('\n'));
