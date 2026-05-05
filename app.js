@@ -1002,6 +1002,7 @@ async function loadTarotDict() {
         `assets/tarot-dict-display-en.json?v=${APP_VERSION}`,
       ]
     : [
+        `assets/tarot-dict-display-zh.json?v=${APP_VERSION}`,
         `assets/tarot-dict-display.json?v=${APP_VERSION}`,
         `assets/tarot-dict-display-normalized.json?v=${APP_VERSION}`,
         `assets/tarot-dict-quickref.json?v=${APP_VERSION}`,
