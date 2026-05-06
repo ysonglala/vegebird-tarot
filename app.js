@@ -886,7 +886,7 @@ function preferVisibleEnglish(text = '') {
 function summarizeText(text = '', limit = 88) {
   const clean = normalizeDictText(text).replace(/…+/g, '');
   if (!clean) return '';
-  return clean.length > limit ? `${clean.slice(0, limit).trim()}…` : clean;
+  return clean;
 }
 
 function getDictEntry(name) {
