@@ -1755,6 +1755,15 @@ function onReset() {
   setSequenceMeta(t('sequenceIdle'));
 }
 
+function getCardCopyTheme(draw) {
+  const dict = getDictEntry(draw.name);
+  if (!dict) return '';
+  if (state.lang === 'en') {
+    return normalizeDictText(dict?.summary_en || dict?.summary || '');
+  }
+  return normalizeDictText(dict?.summary || '');
+}
+
 async function onCopy() {
   if (!state.drawn.length) {
     updateHint(t('noCopy'));
@@ -1770,7 +1779,7 @@ async function onCopy() {
     if (i > 0) lines.push('');
     lines.push(`${translateLabel(label)}: ${getDisplayCardName(d)} (${getOriLabel(d.ori)})`);
     lines.push(`- ${getCardMeaning(d, d.ori)}`);
-    const theme = getDisplaySummary(d) || getCardSummary(d);
+    const theme = getCardCopyTheme(d);
     if (theme) lines.push(`- ${state.lang === 'zh' ? '基调' : 'Theme'}: ${theme}`);
   });
   try {
