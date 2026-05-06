@@ -53,6 +53,7 @@ const I18N = {
     panelMetaIdle: '尚未匹配结果',
     questionEmpty: '未填写',
     questionEchoPrefix: '你的问题：',
+    resolvedQuestionEchoPrefix: '本次实际解读问题：',
     spreadEchoPrefix: '当前牌阵：',
     revealAll: '一键翻开',
     copyResult: '复制结果',
@@ -103,6 +104,7 @@ const I18N = {
     aiStatusMap: { idle: '未开始', loading: '生成中', success: '已生成', error: '失败', clarify: '需补充信息' },
     aiLoading: '正在整理牌面关系与整体结论…',
     aiError: 'AI 解牌暂时失败了。你可以稍后重试，当前仍可先查看基础牌义。',
+    aiErrorFallback: 'AI 这次没顺利返回完整结果。我先给你一版基于当前牌面的轻量综合解读，方便你先往下看。',
     aiErrorColdStart: 'AI 服务可能正在冷启动。请等待 20~40 秒后再点一次「生成 AI 解读」。',
     aiEmpty: 'AI 已返回，但当前没有可展示的结构化内容。',
     aiTitleReading: 'AI 综合解牌',
@@ -200,6 +202,7 @@ const I18N = {
     panelMetaIdle: 'No result matched yet',
     questionEmpty: 'Not filled in',
     questionEchoPrefix: 'Your question: ',
+    resolvedQuestionEchoPrefix: 'Question actually used for this reading: ',
     spreadEchoPrefix: 'Current spread: ',
     revealAll: 'Reveal all',
     copyResult: 'Copy result',
@@ -250,6 +253,7 @@ const I18N = {
     aiStatusMap: { idle: 'Not started', loading: 'Generating', success: 'Ready', error: 'Failed', clarify: 'Need more context' },
     aiLoading: 'Connecting the cards and composing the overall reading…',
     aiError: 'AI reading failed for now. You can retry later, and the base card meanings are still available.',
+    aiErrorFallback: 'AI did not return a full answer this time. I am showing you a lighter combined reading from the current cards so you can still continue.',
     aiErrorColdStart: 'The AI service may still be cold-starting. Wait 20–40 seconds, then tap “Generate AI reading” again.',
     aiEmpty: 'AI returned successfully, but there is no structured content to show yet.',
     aiTitleReading: 'AI full reading',
@@ -584,6 +588,7 @@ function applyTranslations() {
   if (clarifyInput) clarifyInput.placeholder = t('aiClarifyPlaceholder');
 
   renderQuestionEcho();
+  renderResolvedQuestionEcho();
   renderSpreadEcho();
   renderPickInputs();
   renderGrid();
@@ -1376,6 +1381,40 @@ function closeCardDetail() {
   if (dlg.open) dlg.close();
 }
 
+function buildResolvedQuestionText() {
+  const parts = [
+    state.question?.trim() || '',
+    state.clarifySubject?.trim() ? (state.lang === 'zh' ? `对象/事情：${state.clarifySubject.trim()}` : `Subject: ${state.clarifySubject.trim()}`) : '',
+    state.clarifySituation?.trim() ? (state.lang === 'zh' ? `当前状态：${state.clarifySituation.trim()}` : `Current situation: ${state.clarifySituation.trim()}`) : '',
+    state.clarifyFocus?.trim() ? (state.lang === 'zh' ? `最想看：${state.clarifyFocus.trim()}` : `Focus: ${state.clarifyFocus.trim()}`) : '',
+    state.clarifyTimeframe?.trim() ? (state.lang === 'zh' ? `时间范围：${state.clarifyTimeframe.trim()}` : `Time frame: ${state.clarifyTimeframe.trim()}`) : '',
+    state.clarifyInput?.trim() ? (state.lang === 'zh' ? `补充信息：${state.clarifyInput.trim()}` : `Extra context: ${state.clarifyInput.trim()}`) : '',
+  ].filter(Boolean);
+  return parts.join(' · ');
+}
+
+function renderResolvedQuestionEcho() {
+  const el = $('#resolvedQuestionEcho');
+  if (!el) return;
+  const resolved = buildResolvedQuestionText();
+  el.hidden = !resolved || resolved === (state.question?.trim() || '');
+  if (!el.hidden) {
+    el.textContent = `${t('resolvedQuestionEchoPrefix')}${resolved}`;
+  }
+}
+
+function buildFallbackReadingFromCurrentDraw() {
+  const names = state.drawn.map(d => `${getDisplayCardName(d)} ${getOriLabel(d.ori)}`);
+  return {
+    mode: 'reading',
+    summary: t('mockSummary', names),
+    synthesis: t('mockSynthesis'),
+    advice: `${t('aiErrorFallback')} ${t('mockAdvice')}`,
+    riskNotes: t('mockRisk'),
+    followUps: t('mockFollowups'),
+  };
+}
+
 function renderAiReading() {
   const panelEl = $('#llmPanel');
   const statusEl = $('#llmStatusText');
@@ -1536,7 +1575,13 @@ async function requestAiReading({ allowMockFallback = true } = {}) {
   if (!api?.interpretReading) {
     logDebug('interpret-missing-api', { allowMockFallback });
     if (allowMockFallback) {
-      setMockAiReadingFromCurrentDraw();
+      const fallback = buildFallbackReadingFromCurrentDraw();
+      state.readingStatus = 'success';
+      state.readingMode = 'reading';
+      state.readingResult = fallback;
+      state.readingErrorCode = 'fallback';
+      renderAiReading();
+      renderResolvedQuestionEcho();
       return;
     }
     state.readingStatus = 'error';
@@ -1573,7 +1618,13 @@ async function requestAiReading({ allowMockFallback = true } = {}) {
       allowMockFallback,
     });
     if (allowMockFallback) {
-      setMockAiReadingFromCurrentDraw();
+      const fallback = buildFallbackReadingFromCurrentDraw();
+      state.readingStatus = 'success';
+      state.readingMode = 'reading';
+      state.readingResult = fallback;
+      state.readingErrorCode = 'fallback';
+      renderAiReading();
+      renderResolvedQuestionEcho();
       return;
     }
     state.readingStatus = 'error';
@@ -1700,6 +1751,7 @@ function onMatch() {
   renderReading();
   renderAiReading();
   renderQuestionEcho();
+  renderResolvedQuestionEcho();
   renderSpreadEcho();
   goToScreen('result');
   updateHint(t('matchedHint'));
@@ -1850,6 +1902,7 @@ function bindFlow() {
   $('#btnToSpread').addEventListener('click', () => {
     state.question = $('#questionInput').value.trim();
     renderQuestionEcho();
+    renderResolvedQuestionEcho();
     goToScreen('spread');
   });
   $('#btnBackIntro').addEventListener('click', () => goToScreen('intro'));
@@ -1934,6 +1987,7 @@ async function init() {
   buildEncoded156();
   setMotion(state.motion);
   renderQuestionEcho();
+  renderResolvedQuestionEcho();
   renderSpreadEcho();
   updateDictBadge();
   renderPickInputs();
