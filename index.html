@@ -220,6 +220,29 @@
             <div class="readingPanel__body" id="llmReading">
               <p class="muted">这里将显示结构化 AI 解读。</p>
             </div>
+            <div class="aiClarify" id="aiClarifyBox" hidden>
+              <div class="aiClarify__title" id="aiClarifyTitle">补充一点信息，我再继续解</div>
+              <div class="aiClarify__sub" id="aiClarifySub">可以补充对象、现状、你最想看什么，以及时间范围。</div>
+              <div class="aiClarifyGrid">
+                <label class="pickSlot">
+                  <span class="pickSlot__label" id="aiClarifySubjectLabel">你想看谁 / 哪件事</span>
+                  <input id="aiClarifySubject" class="pickSlot__input" type="text" placeholder="例如：我和前任 / 这次面试 / 要不要离职" />
+                </label>
+                <label class="pickSlot">
+                  <span class="pickSlot__label" id="aiClarifySituationLabel">当前状态</span>
+                  <input id="aiClarifySituation" class="pickSlot__input" type="text" placeholder="例如：断联两周 / 正在暧昧 / 已进入终面" />
+                </label>
+                <label class="pickSlot">
+                  <span class="pickSlot__label" id="aiClarifyFocusLabel">你最想看什么</span>
+                  <input id="aiClarifyFocus" class="pickSlot__input" type="text" placeholder="例如：对方想法 / 走向 / 建议 / 风险 / 结果" />
+                </label>
+                <label class="pickSlot">
+                  <span class="pickSlot__label" id="aiClarifyTimeframeLabel">时间范围</span>
+                  <input id="aiClarifyTimeframe" class="pickSlot__input" type="text" placeholder="例如：未来三个月 / 这个月内 / 半年内" />
+                </label>
+              </div>
+              <textarea id="aiClarifyInput" class="questionInput aiClarify__input" placeholder="其他你觉得重要但上面没写到的信息，也可以补在这里。"></textarea>
+            </div>
           </section>
 
           <div class="bottomActions">

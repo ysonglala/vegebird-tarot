@@ -63,6 +63,8 @@ const I18N = {
     aiIdle: '未开始',
     aiPlaceholder: '这里将显示 OpenClaw 返回的整体结论、建议与推荐追问。',
     retryAi: '重试 AI 解牌',
+    aiGenerate: '生成 AI 解读',
+    aiRefine: '补充问题后再解读',
     backPick: '返回盲选',
     resetTop: '重新开始',
     resetSub: '清空问题、牌阵与本次抽牌结果',
@@ -98,11 +100,24 @@ const I18N = {
     upright: '正位',
     reversed: '逆位',
     keywordsLabel: '关键词：',
-    aiStatusMap: { idle: '未开始', loading: '生成中', success: '已生成', error: '失败' },
+    aiStatusMap: { idle: '未开始', loading: '生成中', success: '已生成', error: '失败', clarify: '需补充信息' },
     aiLoading: '正在整理牌面关系与整体结论…',
     aiError: 'AI 解牌暂时失败了。你可以稍后重试，当前仍可先查看基础牌义。',
     aiErrorColdStart: 'AI 服务可能正在冷启动。请等待 20~40 秒后再点一次「生成 AI 解读」。',
     aiEmpty: 'AI 已返回，但当前没有可展示的结构化内容。',
+    aiTitleReading: 'AI 综合解牌',
+    aiTitleClarify: '先补充问题，再正式解牌',
+    aiClarifyTitle: '补充一点信息，我再继续解',
+    aiClarifySub: '可以补充对象、现状、你最想看什么，以及时间范围。',
+    aiClarifySubjectLabel: '你想看谁 / 哪件事',
+    aiClarifySituationLabel: '当前状态',
+    aiClarifyFocusLabel: '你最想看什么',
+    aiClarifyTimeframeLabel: '时间范围',
+    aiClarifySubjectPlaceholder: '例如：我和前任 / 这次面试 / 要不要离职',
+    aiClarifySituationPlaceholder: '例如：断联两周 / 正在暧昧 / 已进入终面',
+    aiClarifyFocusPlaceholder: '例如：对方想法 / 走向 / 建议 / 风险 / 结果',
+    aiClarifyTimeframePlaceholder: '例如：未来三个月 / 这个月内 / 半年内',
+    aiClarifyPlaceholder: '其他你觉得重要但上面没写到的信息，也可以补在这里。',
     aiSummary: '整体结论',
     aiSynthesis: '联动分析',
     aiAdvice: '行动建议',
@@ -195,6 +210,8 @@ const I18N = {
     aiIdle: 'Not started',
     aiPlaceholder: 'OpenClaw’s overall reading, advice, and suggested follow-up questions will appear here.',
     retryAi: 'Retry AI reading',
+    aiGenerate: 'Generate AI reading',
+    aiRefine: 'Refine the question first',
     backPick: 'Back to pick',
     resetTop: 'Start over',
     resetSub: 'Clear the question, spread, and this draw result',
@@ -230,11 +247,24 @@ const I18N = {
     upright: 'Upright',
     reversed: 'Reversed',
     keywordsLabel: 'Keywords: ',
-    aiStatusMap: { idle: 'Not started', loading: 'Generating', success: 'Ready', error: 'Failed' },
+    aiStatusMap: { idle: 'Not started', loading: 'Generating', success: 'Ready', error: 'Failed', clarify: 'Need more context' },
     aiLoading: 'Connecting the cards and composing the overall reading…',
     aiError: 'AI reading failed for now. You can retry later, and the base card meanings are still available.',
     aiErrorColdStart: 'The AI service may still be cold-starting. Wait 20–40 seconds, then tap “Generate AI reading” again.',
     aiEmpty: 'AI returned successfully, but there is no structured content to show yet.',
+    aiTitleReading: 'AI full reading',
+    aiTitleClarify: 'Add context before the full reading',
+    aiClarifyTitle: 'Add a bit more context and I’ll continue',
+    aiClarifySub: 'You can add the person or topic, the current situation, what you most want to know, and the time frame.',
+    aiClarifySubjectLabel: 'Who or what is this about?',
+    aiClarifySituationLabel: 'Current situation',
+    aiClarifyFocusLabel: 'What do you most want to know?',
+    aiClarifyTimeframeLabel: 'Time frame',
+    aiClarifySubjectPlaceholder: 'For example: my ex / this interview / whether I should quit',
+    aiClarifySituationPlaceholder: 'For example: no contact for two weeks / currently flirting / already in the final round',
+    aiClarifyFocusPlaceholder: 'For example: their thoughts / direction / advice / risk / outcome',
+    aiClarifyTimeframePlaceholder: 'For example: the next three months / within this month / within half a year',
+    aiClarifyPlaceholder: 'Any other detail that matters but does not fit the fields above can go here.',
     aiSummary: 'Overall reading',
     aiSynthesis: 'Pattern synthesis',
     aiAdvice: 'Advice',
@@ -526,6 +556,32 @@ function applyTranslations() {
   if (state.activeLightboxIndex < 0) set('#lightboxMeta', t('lightboxSub'));
   set('#btnLightboxDetail', t('lightboxDetail'));
   set('#btnLightboxOpenOriginal', t('lightboxOpenOriginal'));
+  const interpretBtn = $('#btnInterpret');
+  if (interpretBtn) {
+    interpretBtn.textContent = state.readingMode === 'clarify' ? t('aiRefine') : t('aiGenerate');
+  }
+  const clarifyTitle = $('#aiClarifyTitle');
+  if (clarifyTitle) clarifyTitle.textContent = t('aiClarifyTitle');
+  const clarifySub = $('#aiClarifySub');
+  if (clarifySub) clarifySub.textContent = t('aiClarifySub');
+  const subjectLabel = $('#aiClarifySubjectLabel');
+  if (subjectLabel) subjectLabel.textContent = t('aiClarifySubjectLabel');
+  const situationLabel = $('#aiClarifySituationLabel');
+  if (situationLabel) situationLabel.textContent = t('aiClarifySituationLabel');
+  const focusLabel = $('#aiClarifyFocusLabel');
+  if (focusLabel) focusLabel.textContent = t('aiClarifyFocusLabel');
+  const timeframeLabel = $('#aiClarifyTimeframeLabel');
+  if (timeframeLabel) timeframeLabel.textContent = t('aiClarifyTimeframeLabel');
+  const subjectInput = $('#aiClarifySubject');
+  if (subjectInput) subjectInput.placeholder = t('aiClarifySubjectPlaceholder');
+  const situationInput = $('#aiClarifySituation');
+  if (situationInput) situationInput.placeholder = t('aiClarifySituationPlaceholder');
+  const focusInput = $('#aiClarifyFocus');
+  if (focusInput) focusInput.placeholder = t('aiClarifyFocusPlaceholder');
+  const timeframeInput = $('#aiClarifyTimeframe');
+  if (timeframeInput) timeframeInput.placeholder = t('aiClarifyTimeframePlaceholder');
+  const clarifyInput = $('#aiClarifyInput');
+  if (clarifyInput) clarifyInput.placeholder = t('aiClarifyPlaceholder');
 
   renderQuestionEcho();
   renderSpreadEcho();
@@ -690,6 +746,11 @@ const state = {
   motion: 0.70,
   sound: false,
   question: '',
+  clarifyInput: '',
+  clarifySubject: '',
+  clarifySituation: '',
+  clarifyFocus: '',
+  clarifyTimeframe: '',
   currentScreen: 'intro',
   base78: [],
   encoded156: [],
@@ -706,6 +767,7 @@ const state = {
   tarotDict: {},
   tarotDictLoaded: false,
   readingStatus: 'idle',
+  readingMode: 'reading',
   readingResult: null,
   readingErrorCode: '',
   sessionId: '',
@@ -1318,11 +1380,24 @@ function renderAiReading() {
   const panelEl = $('#llmPanel');
   const statusEl = $('#llmStatusText');
   const bodyEl = $('#llmReading');
+  const titleEl = $('#llmPanelTitle');
+  const clarifyBox = $('#aiClarifyBox');
+  const clarifyInput = $('#aiClarifyInput');
   if (!panelEl || !statusEl || !bodyEl) return;
 
   panelEl.hidden = !state.drawn.length;
+  const isClarify = state.readingStatus === 'success' && state.readingMode === 'clarify';
   const statusMap = t('aiStatusMap');
-  statusEl.textContent = statusMap[state.readingStatus] || state.readingStatus;
+  statusEl.textContent = isClarify ? (statusMap.clarify || 'clarify') : (statusMap[state.readingStatus] || state.readingStatus);
+  if (titleEl) titleEl.textContent = isClarify ? t('aiTitleClarify') : t('aiTitleReading');
+  if (clarifyBox) clarifyBox.hidden = !isClarify;
+  if ($('#aiClarifySubject') && $('#aiClarifySubject').value !== state.clarifySubject) $('#aiClarifySubject').value = state.clarifySubject || '';
+  if ($('#aiClarifySituation') && $('#aiClarifySituation').value !== state.clarifySituation) $('#aiClarifySituation').value = state.clarifySituation || '';
+  if ($('#aiClarifyFocus') && $('#aiClarifyFocus').value !== state.clarifyFocus) $('#aiClarifyFocus').value = state.clarifyFocus || '';
+  if ($('#aiClarifyTimeframe') && $('#aiClarifyTimeframe').value !== state.clarifyTimeframe) $('#aiClarifyTimeframe').value = state.clarifyTimeframe || '';
+  if (clarifyInput && clarifyInput.value !== state.clarifyInput) clarifyInput.value = state.clarifyInput || '';
+  const interpretBtn = $('#btnInterpret');
+  if (interpretBtn) interpretBtn.textContent = isClarify ? t('aiRefine') : t('aiGenerate');
 
   if (state.readingStatus === 'idle') {
     bodyEl.innerHTML = `<p class="muted">${t('aiPlaceholder')}</p>`;
@@ -1370,11 +1445,27 @@ function setMockAiReadingFromCurrentDraw() {
 }
 
 function buildInterpretPayload() {
+  const questionBase = state.question?.trim() || '';
+  const clarifyText = state.clarifyInput?.trim() || '';
+  const mergedPieces = [
+    questionBase,
+    state.clarifySubject?.trim() ? `对象/事情：${state.clarifySubject.trim()}` : '',
+    state.clarifySituation?.trim() ? `当前状态：${state.clarifySituation.trim()}` : '',
+    state.clarifyFocus?.trim() ? `最想看：${state.clarifyFocus.trim()}` : '',
+    state.clarifyTimeframe?.trim() ? `时间范围：${state.clarifyTimeframe.trim()}` : '',
+    clarifyText ? `补充信息：${clarifyText}` : '',
+  ].filter(Boolean);
   return {
     sessionId: state.sessionId || '',
     drawId: state.drawId || '',
     lang: state.lang,
-    question: state.question?.trim() || '',
+    question: mergedPieces.join('\n'),
+    originalQuestion: questionBase,
+    clarifySubject: state.clarifySubject?.trim() || '',
+    clarifySituation: state.clarifySituation?.trim() || '',
+    clarifyFocus: state.clarifyFocus?.trim() || '',
+    clarifyTimeframe: state.clarifyTimeframe?.trim() || '',
+    clarifyInput: clarifyText,
     spreadType: state.spread?.key || state.selectedSpreadKey || 'blank3',
     spreadName: translateSpreadName(state.spread?.name || ''),
     cards: state.drawn.map((draw, i) => {
@@ -1396,6 +1487,7 @@ function buildInterpretPayload() {
 function normalizeInterpretResponse(data) {
   const result = data?.result || data?.data || data || {};
   return {
+    mode: data?.mode || 'reading',
     summary: normalizeDictText(result.summary || result.overall || result.overallSummary || ''),
     synthesis: normalizeDictText(result.synthesis || result.analysis || result.linkage || ''),
     advice: normalizeDictText(result.advice || result.suggestion || result.recommendation || ''),
@@ -1431,6 +1523,7 @@ async function requestAiReading({ allowMockFallback = true } = {}) {
     return;
   }
   state.readingStatus = 'loading';
+  state.readingMode = 'reading';
   state.readingResult = null;
   state.readingErrorCode = '';
   renderAiReading();
@@ -1462,6 +1555,7 @@ async function requestAiReading({ allowMockFallback = true } = {}) {
       throw new Error('AI returned Chinese content while page is in English mode');
     }
     state.readingStatus = 'success';
+    state.readingMode = normalized.mode || 'reading';
     state.readingResult = normalized;
     state.readingErrorCode = '';
     logDebug('interpret-success', normalized);
@@ -1592,8 +1686,14 @@ function onMatch() {
   state.drawn = picks.map((pick) => mapPickToDraw(pick)).filter(Boolean);
   state.phase = 'matched';
   state.readingStatus = 'idle';
+  state.readingMode = 'reading';
   state.readingResult = null;
   state.readingErrorCode = '';
+  state.clarifyInput = '';
+  state.clarifySubject = '';
+  state.clarifySituation = '';
+  state.clarifyFocus = '';
+  state.clarifyTimeframe = '';
   state.sessionId = `sess_${Date.now()}`;
   state.drawId = `draw_${Date.now()}`;
   renderGrid();
@@ -1646,6 +1746,11 @@ function onRevealAll() {
 
 function onReset() {
   state.question = '';
+  state.clarifyInput = '';
+  state.clarifySubject = '';
+  state.clarifySituation = '';
+  state.clarifyFocus = '';
+  state.clarifyTimeframe = '';
   state.selectedSpreadKey = 'blank3';
   state.spread = { ...PRESET_SPREADS['blank3'] };
   state.shuffled78 = [];
@@ -1654,11 +1759,17 @@ function onReset() {
   state.drawn = [];
   state.phase = 'idle';
   state.readingStatus = 'idle';
+  state.readingMode = 'reading';
   state.readingResult = null;
   state.readingErrorCode = '';
   state.sessionId = '';
   state.drawId = '';
   $('#questionInput').value = '';
+  if ($('#aiClarifySubject')) $('#aiClarifySubject').value = '';
+  if ($('#aiClarifySituation')) $('#aiClarifySituation').value = '';
+  if ($('#aiClarifyFocus')) $('#aiClarifyFocus').value = '';
+  if ($('#aiClarifyTimeframe')) $('#aiClarifyTimeframe').value = '';
+  if ($('#aiClarifyInput')) $('#aiClarifyInput').value = '';
   $('#customSpreadName').value = '';
   $('#customSpreadCount').value = '';
   $('#customPanel').hidden = true;
@@ -1781,6 +1892,11 @@ function retryAiReading() {
     apiBase: window.VEGE_TAROT_API_BASE || 'http://127.0.0.1:8787',
   });
   if (!state.drawn.length) return;
+  state.clarifySubject = $('#aiClarifySubject')?.value?.trim() || '';
+  state.clarifySituation = $('#aiClarifySituation')?.value?.trim() || '';
+  state.clarifyFocus = $('#aiClarifyFocus')?.value?.trim() || '';
+  state.clarifyTimeframe = $('#aiClarifyTimeframe')?.value?.trim() || '';
+  state.clarifyInput = $('#aiClarifyInput')?.value?.trim() || '';
   requestAiReading({ allowMockFallback: false });
 }
 
@@ -1788,6 +1904,13 @@ function bindActions() {
   $('#btnShuffle').addEventListener('click', ritualShuffleAnimation);
   $('#btnReShuffle').addEventListener('click', ritualShuffleAnimation);
   $('#btnLucky').addEventListener('click', onLuckyPick);
+  $('#aiClarifySubject')?.addEventListener('input', (e) => { state.clarifySubject = e.target.value; });
+  $('#aiClarifySituation')?.addEventListener('input', (e) => { state.clarifySituation = e.target.value; });
+  $('#aiClarifyFocus')?.addEventListener('input', (e) => { state.clarifyFocus = e.target.value; });
+  $('#aiClarifyTimeframe')?.addEventListener('input', (e) => { state.clarifyTimeframe = e.target.value; });
+  $('#aiClarifyInput')?.addEventListener('input', (e) => {
+    state.clarifyInput = e.target.value;
+  });
   $('#btnMatch').addEventListener('click', onMatch);
   $('#btnRevealAll').addEventListener('click', onRevealAll);
   $('#btnReset').addEventListener('click', onReset);
