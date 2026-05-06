@@ -77,94 +77,12 @@ function isQuestionTooVague(question, lang) {
   return list.some(item => q === item || q.includes(item));
 }
 
-function getClarifyFields(body) {
-  return {
-    subject: normalizeText(body?.clarifySubject),
-    situation: normalizeText(body?.clarifySituation),
-    focus: normalizeText(body?.clarifyFocus),
-    timeframe: normalizeText(body?.clarifyTimeframe),
-    extra: normalizeText(body?.clarifyInput),
-  };
-}
-
-function buildMergedQuestion(body) {
-  const base = normalizeText(body?.originalQuestion || body?.question);
-  const fields = getClarifyFields(body);
-  const lines = [];
-  if (base) lines.push(base);
-  if (fields.subject) lines.push(`对象/事情：${fields.subject}`);
-  if (fields.situation) lines.push(`当前状态：${fields.situation}`);
-  if (fields.focus) lines.push(`最想看：${fields.focus}`);
-  if (fields.timeframe) lines.push(`时间范围：${fields.timeframe}`);
-  if (fields.extra) lines.push(`补充信息：${fields.extra}`);
-  return lines.join('\n');
-}
-
-function shouldClarify(body) {
-  const question = normalizeText(body?.originalQuestion || body?.question);
-  const spreadType = normalizeText(body?.spreadType);
-  const cardCount = Array.isArray(body?.cards) ? body.cards.length : 0;
-  const fields = getClarifyFields(body);
-  const structuredCount = [fields.subject, fields.situation, fields.focus, fields.timeframe].filter(Boolean).length;
-  if (!cardCount) {
-    return { need: true, reason: 'missing-cards' };
-  }
-  if (!question && structuredCount === 0 && !fields.extra) {
-    return { need: true, reason: 'missing-question' };
-  }
-  if (question && isQuestionTooVague(question, body.lang) && structuredCount < 2 && !fields.extra) {
-    return { need: true, reason: 'vague-question' };
-  }
-  if (spreadType === 'blank3' && !question && structuredCount < 2 && !fields.extra) {
-    return { need: true, reason: 'thin-context' };
-  }
-  if (spreadType === 'blank3' && question && question.length < 8 && structuredCount < 2 && !fields.extra) {
-    return { need: true, reason: 'thin-context' };
-  }
-  return { need: false, reason: '' };
-}
-
-function buildClarifyResult(body, reason = 'missing-context') {
-  const isZh = body.lang === 'zh';
-  return {
-    ok: true,
-    mode: 'clarify',
-    sessionId: body.sessionId || `sess_${Date.now()}`,
-    drawId: body.drawId || `draw_${Date.now()}`,
-    source: 'rules',
-    reason,
-    result: isZh ? {
-      summary: '这次我不建议直接硬解，因为你给的问题边界还不够清楚。牌可以继续看，但先缩题，结果会准很多。',
-      synthesis: '现在缺的不是牌，而是问题的落点：对象是谁、当前是什么状态、你最想看的到底是走向、对方想法、建议还是结果。题目一泛，解读就容易变成看起来都对、实际上不够准。',
-      advice: '先把问题补到能落地：1）你想看谁/什么事；2）现在处于什么状态；3）你最想看哪一个维度；4）你想看多久内的发展。你补完这些，我再正式整合整组牌。',
-      riskNotes: '现在最容易出的问题，不是牌面不够，而是把模糊问题硬套进具体剧情。这样会让解读听起来很满，但真正可用的信息反而不高。',
-      followUps: [
-        '你想看的是你和谁，或者哪一件具体的事？',
-        '你们现在是什么状态 / 这件事现在推进到哪一步了？',
-        '你更想看走向、对方想法、建议、风险，还是最终结果？',
-        '你想看多久内的发展？'
-      ]
-    } : {
-      summary: 'I would not force a full reading yet, because the question is still too broad or underdefined.',
-      synthesis: 'What is missing right now is not the cards but the target of the question: who or what this is about, the current situation, and whether you want direction, thoughts, advice, risk, or outcome. If the question stays too broad, the reading becomes less useful.',
-      advice: 'Narrow the question first: 1) who or what this is about, 2) the current situation, 3) what you most want to know, and 4) the time frame you care about. Once that is clear, the reading can become much sharper.',
-      riskNotes: 'The biggest risk right now is not the spread itself, but forcing a vague question into a specific story and mistaking a plausible reading for an accurate one.',
-      followUps: [
-        'Who or what exactly do you want to read about?',
-        'What is the current situation right now?',
-        'Do you want direction, their thoughts, advice, risk, or outcome?',
-        'What time frame do you want to look at?'
-      ]
-    }
-  };
-}
-
 function buildMockInterpretResult(body) {
   const isZh = body.lang === 'zh';
   const cards = Array.isArray(body.cards) ? body.cards : [];
   const names = cards.map(c => `${c.name}${c.orientation === 'upright' ? (isZh ? '正位' : ' (Upright)') : (isZh ? '逆位' : ' (Reversed)')}`);
   const spreadName = body.spreadName || body.spreadType || (isZh ? '当前牌阵' : 'Current spread');
-  const question = buildMergedQuestion(body) || (isZh ? '未提供具体问题' : 'No specific question was provided');
+  const question = normalizeText(body?.question) || (isZh ? '未提供具体问题' : 'No specific question was provided');
 
   return {
     ok: true,
@@ -195,7 +113,7 @@ function buildMockInterpretResult(body) {
 
 function buildLLMMessages(body) {
   const isZh = body.lang === 'zh';
-  const question = buildMergedQuestion(body) || (isZh ? '未填写' : 'Not filled in');
+  const question = normalizeText(body?.question) || (isZh ? '未填写' : 'Not filled in');
   const spreadName = normalizeText(body.spreadName) || normalizeText(body.spreadType) || (isZh ? '当前牌阵' : 'Current spread');
   const cards = body.cards.map((card, idx) => {
     const block = isZh
@@ -227,7 +145,7 @@ function buildLLMMessages(body) {
 
 核心规则：
 - 不编造用户没提供的信息；没有图就不要编画面细节。
-- 问题太泛时先缩题；如果信息仍不足，就明确指出不足，而不是硬解。
+- 直接根据用户当前给出的问题解牌；如果信息不足，可以指出边界或不确定性，但不要要求用户先补充信息再继续。
 - 多张牌要先看整组共同点，再看差异、推动项、拖拽项、风险项，不要逐张机械拼接。
 - 不做宿命论，不说必然、注定、100%。
 - 关系题优先看互动结构：谁更主动、谁更退缩、哪里在拉扯、真正矛盾在哪里。
@@ -250,7 +168,7 @@ Your task is not to recite card meanings. Build the reading strictly from the pr
 Core rules:
 - Do not invent information the user did not provide.
 - If there is no image, do not invent visual details.
-- If the question is too broad, narrow it before forcing a reading.
+- Read directly from the user's current question. If context is limited, state the uncertainty or boundary clearly, but do not ask the user to provide extra clarification before continuing.
 - Read the spread as one system: shared pattern first, then differences, drivers, draggers, opportunities, and risks.
 - Avoid fatalistic language or absolute certainty.
 - In relationship questions, focus on interaction structure, initiative vs retreat, avoidance vs pursuit, and where the real tension sits.
@@ -350,10 +268,6 @@ async function callOpenAICompatible(body) {
 }
 
 async function interpret(body) {
-  const clarify = shouldClarify(body);
-  if (clarify.need) {
-    return buildClarifyResult(body, clarify.reason);
-  }
   if (LLM_MODE === 'openai-compatible') {
     const result = await callOpenAICompatible(body);
     return { ...result, mode: 'reading' };

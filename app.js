@@ -53,7 +53,6 @@ const I18N = {
     panelMetaIdle: '尚未匹配结果',
     questionEmpty: '未填写',
     questionEchoPrefix: '你的问题：',
-    resolvedQuestionEchoPrefix: '本次实际解读问题：',
     spreadEchoPrefix: '当前牌阵：',
     revealAll: '一键翻开',
     copyResult: '复制结果',
@@ -101,7 +100,7 @@ const I18N = {
     upright: '正位',
     reversed: '逆位',
     keywordsLabel: '关键词：',
-    aiStatusMap: { idle: '未开始', loading: '生成中', success: '已生成', error: '失败', clarify: '需补充信息' },
+    aiStatusMap: { idle: '未开始', loading: '生成中', success: '已生成', error: '失败' },
     aiLoading: '正在整理牌面关系与整体结论…',
     aiError: 'AI 解牌暂时失败了。你可以稍后重试，当前仍可先查看基础牌义。',
     aiErrorFallback: 'AI 这次没顺利返回完整结果。我先给你一版基于当前牌面的轻量综合解读，方便你先往下看。',
@@ -202,7 +201,6 @@ const I18N = {
     panelMetaIdle: 'No result matched yet',
     questionEmpty: 'Not filled in',
     questionEchoPrefix: 'Your question: ',
-    resolvedQuestionEchoPrefix: 'Question actually used for this reading: ',
     spreadEchoPrefix: 'Current spread: ',
     revealAll: 'Reveal all',
     copyResult: 'Copy result',
@@ -250,7 +248,7 @@ const I18N = {
     upright: 'Upright',
     reversed: 'Reversed',
     keywordsLabel: 'Keywords: ',
-    aiStatusMap: { idle: 'Not started', loading: 'Generating', success: 'Ready', error: 'Failed', clarify: 'Need more context' },
+    aiStatusMap: { idle: 'Not started', loading: 'Generating', success: 'Ready', error: 'Failed' },
     aiLoading: 'Connecting the cards and composing the overall reading…',
     aiError: 'AI reading failed for now. You can retry later, and the base card meanings are still available.',
     aiErrorFallback: 'AI did not return a full answer this time. I am showing you a lighter combined reading from the current cards so you can still continue.',
@@ -562,33 +560,10 @@ function applyTranslations() {
   set('#btnLightboxOpenOriginal', t('lightboxOpenOriginal'));
   const interpretBtn = $('#btnInterpret');
   if (interpretBtn) {
-    interpretBtn.textContent = state.readingMode === 'clarify' ? t('aiRefine') : t('aiGenerate');
+    interpretBtn.textContent = t('aiGenerate');
   }
-  const clarifyTitle = $('#aiClarifyTitle');
-  if (clarifyTitle) clarifyTitle.textContent = t('aiClarifyTitle');
-  const clarifySub = $('#aiClarifySub');
-  if (clarifySub) clarifySub.textContent = t('aiClarifySub');
-  const subjectLabel = $('#aiClarifySubjectLabel');
-  if (subjectLabel) subjectLabel.textContent = t('aiClarifySubjectLabel');
-  const situationLabel = $('#aiClarifySituationLabel');
-  if (situationLabel) situationLabel.textContent = t('aiClarifySituationLabel');
-  const focusLabel = $('#aiClarifyFocusLabel');
-  if (focusLabel) focusLabel.textContent = t('aiClarifyFocusLabel');
-  const timeframeLabel = $('#aiClarifyTimeframeLabel');
-  if (timeframeLabel) timeframeLabel.textContent = t('aiClarifyTimeframeLabel');
-  const subjectInput = $('#aiClarifySubject');
-  if (subjectInput) subjectInput.placeholder = t('aiClarifySubjectPlaceholder');
-  const situationInput = $('#aiClarifySituation');
-  if (situationInput) situationInput.placeholder = t('aiClarifySituationPlaceholder');
-  const focusInput = $('#aiClarifyFocus');
-  if (focusInput) focusInput.placeholder = t('aiClarifyFocusPlaceholder');
-  const timeframeInput = $('#aiClarifyTimeframe');
-  if (timeframeInput) timeframeInput.placeholder = t('aiClarifyTimeframePlaceholder');
-  const clarifyInput = $('#aiClarifyInput');
-  if (clarifyInput) clarifyInput.placeholder = t('aiClarifyPlaceholder');
 
   renderQuestionEcho();
-  renderResolvedQuestionEcho();
   renderSpreadEcho();
   renderPickInputs();
   renderGrid();
@@ -751,11 +726,6 @@ const state = {
   motion: 0.70,
   sound: false,
   question: '',
-  clarifyInput: '',
-  clarifySubject: '',
-  clarifySituation: '',
-  clarifyFocus: '',
-  clarifyTimeframe: '',
   currentScreen: 'intro',
   base78: [],
   encoded156: [],
@@ -1381,28 +1351,6 @@ function closeCardDetail() {
   if (dlg.open) dlg.close();
 }
 
-function buildResolvedQuestionText() {
-  const parts = [
-    state.question?.trim() || '',
-    state.clarifySubject?.trim() ? (state.lang === 'zh' ? `对象/事情：${state.clarifySubject.trim()}` : `Subject: ${state.clarifySubject.trim()}`) : '',
-    state.clarifySituation?.trim() ? (state.lang === 'zh' ? `当前状态：${state.clarifySituation.trim()}` : `Current situation: ${state.clarifySituation.trim()}`) : '',
-    state.clarifyFocus?.trim() ? (state.lang === 'zh' ? `最想看：${state.clarifyFocus.trim()}` : `Focus: ${state.clarifyFocus.trim()}`) : '',
-    state.clarifyTimeframe?.trim() ? (state.lang === 'zh' ? `时间范围：${state.clarifyTimeframe.trim()}` : `Time frame: ${state.clarifyTimeframe.trim()}`) : '',
-    state.clarifyInput?.trim() ? (state.lang === 'zh' ? `补充信息：${state.clarifyInput.trim()}` : `Extra context: ${state.clarifyInput.trim()}`) : '',
-  ].filter(Boolean);
-  return parts.join(' · ');
-}
-
-function renderResolvedQuestionEcho() {
-  const el = $('#resolvedQuestionEcho');
-  if (!el) return;
-  const resolved = buildResolvedQuestionText();
-  el.hidden = !resolved || resolved === (state.question?.trim() || '');
-  if (!el.hidden) {
-    el.textContent = `${t('resolvedQuestionEchoPrefix')}${resolved}`;
-  }
-}
-
 function buildFallbackReadingFromCurrentDraw() {
   const names = state.drawn.map(d => `${getDisplayCardName(d)} ${getOriLabel(d.ori)}`);
   return {
@@ -1420,23 +1368,14 @@ function renderAiReading() {
   const statusEl = $('#llmStatusText');
   const bodyEl = $('#llmReading');
   const titleEl = $('#llmPanelTitle');
-  const clarifyBox = $('#aiClarifyBox');
-  const clarifyInput = $('#aiClarifyInput');
   if (!panelEl || !statusEl || !bodyEl) return;
 
   panelEl.hidden = !state.drawn.length;
-  const isClarify = state.readingStatus === 'success' && state.readingMode === 'clarify';
   const statusMap = t('aiStatusMap');
-  statusEl.textContent = isClarify ? (statusMap.clarify || 'clarify') : (statusMap[state.readingStatus] || state.readingStatus);
-  if (titleEl) titleEl.textContent = isClarify ? t('aiTitleClarify') : t('aiTitleReading');
-  if (clarifyBox) clarifyBox.hidden = !isClarify;
-  if ($('#aiClarifySubject') && $('#aiClarifySubject').value !== state.clarifySubject) $('#aiClarifySubject').value = state.clarifySubject || '';
-  if ($('#aiClarifySituation') && $('#aiClarifySituation').value !== state.clarifySituation) $('#aiClarifySituation').value = state.clarifySituation || '';
-  if ($('#aiClarifyFocus') && $('#aiClarifyFocus').value !== state.clarifyFocus) $('#aiClarifyFocus').value = state.clarifyFocus || '';
-  if ($('#aiClarifyTimeframe') && $('#aiClarifyTimeframe').value !== state.clarifyTimeframe) $('#aiClarifyTimeframe').value = state.clarifyTimeframe || '';
-  if (clarifyInput && clarifyInput.value !== state.clarifyInput) clarifyInput.value = state.clarifyInput || '';
+  statusEl.textContent = statusMap[state.readingStatus] || state.readingStatus;
+  if (titleEl) titleEl.textContent = t('aiTitleReading');
   const interpretBtn = $('#btnInterpret');
-  if (interpretBtn) interpretBtn.textContent = isClarify ? t('aiRefine') : t('aiGenerate');
+  if (interpretBtn) interpretBtn.textContent = t('aiGenerate');
 
   if (state.readingStatus === 'idle') {
     bodyEl.innerHTML = `<p class="muted">${t('aiPlaceholder')}</p>`;
@@ -1485,26 +1424,11 @@ function setMockAiReadingFromCurrentDraw() {
 
 function buildInterpretPayload() {
   const questionBase = state.question?.trim() || '';
-  const clarifyText = state.clarifyInput?.trim() || '';
-  const mergedPieces = [
-    questionBase,
-    state.clarifySubject?.trim() ? `对象/事情：${state.clarifySubject.trim()}` : '',
-    state.clarifySituation?.trim() ? `当前状态：${state.clarifySituation.trim()}` : '',
-    state.clarifyFocus?.trim() ? `最想看：${state.clarifyFocus.trim()}` : '',
-    state.clarifyTimeframe?.trim() ? `时间范围：${state.clarifyTimeframe.trim()}` : '',
-    clarifyText ? `补充信息：${clarifyText}` : '',
-  ].filter(Boolean);
   return {
     sessionId: state.sessionId || '',
     drawId: state.drawId || '',
     lang: state.lang,
-    question: mergedPieces.join('\n'),
-    originalQuestion: questionBase,
-    clarifySubject: state.clarifySubject?.trim() || '',
-    clarifySituation: state.clarifySituation?.trim() || '',
-    clarifyFocus: state.clarifyFocus?.trim() || '',
-    clarifyTimeframe: state.clarifyTimeframe?.trim() || '',
-    clarifyInput: clarifyText,
+    question: questionBase,
     spreadType: state.spread?.key || state.selectedSpreadKey || 'blank3',
     spreadName: translateSpreadName(state.spread?.name || ''),
     cards: state.drawn.map((draw, i) => {
@@ -1740,18 +1664,12 @@ function onMatch() {
   state.readingMode = 'reading';
   state.readingResult = null;
   state.readingErrorCode = '';
-  state.clarifyInput = '';
-  state.clarifySubject = '';
-  state.clarifySituation = '';
-  state.clarifyFocus = '';
-  state.clarifyTimeframe = '';
   state.sessionId = `sess_${Date.now()}`;
   state.drawId = `draw_${Date.now()}`;
   renderGrid();
   renderReading();
   renderAiReading();
   renderQuestionEcho();
-  renderResolvedQuestionEcho();
   renderSpreadEcho();
   goToScreen('result');
   updateHint(t('matchedHint'));
@@ -1798,11 +1716,6 @@ function onRevealAll() {
 
 function onReset() {
   state.question = '';
-  state.clarifyInput = '';
-  state.clarifySubject = '';
-  state.clarifySituation = '';
-  state.clarifyFocus = '';
-  state.clarifyTimeframe = '';
   state.selectedSpreadKey = 'blank3';
   state.spread = { ...PRESET_SPREADS['blank3'] };
   state.shuffled78 = [];
@@ -1902,7 +1815,6 @@ function bindFlow() {
   $('#btnToSpread').addEventListener('click', () => {
     state.question = $('#questionInput').value.trim();
     renderQuestionEcho();
-    renderResolvedQuestionEcho();
     goToScreen('spread');
   });
   $('#btnBackIntro').addEventListener('click', () => goToScreen('intro'));
@@ -1945,11 +1857,6 @@ function retryAiReading() {
     apiBase: window.VEGE_TAROT_API_BASE || 'http://127.0.0.1:8787',
   });
   if (!state.drawn.length) return;
-  state.clarifySubject = $('#aiClarifySubject')?.value?.trim() || '';
-  state.clarifySituation = $('#aiClarifySituation')?.value?.trim() || '';
-  state.clarifyFocus = $('#aiClarifyFocus')?.value?.trim() || '';
-  state.clarifyTimeframe = $('#aiClarifyTimeframe')?.value?.trim() || '';
-  state.clarifyInput = $('#aiClarifyInput')?.value?.trim() || '';
   requestAiReading({ allowMockFallback: false });
 }
 
@@ -1957,13 +1864,6 @@ function bindActions() {
   $('#btnShuffle').addEventListener('click', ritualShuffleAnimation);
   $('#btnReShuffle').addEventListener('click', ritualShuffleAnimation);
   $('#btnLucky').addEventListener('click', onLuckyPick);
-  $('#aiClarifySubject')?.addEventListener('input', (e) => { state.clarifySubject = e.target.value; });
-  $('#aiClarifySituation')?.addEventListener('input', (e) => { state.clarifySituation = e.target.value; });
-  $('#aiClarifyFocus')?.addEventListener('input', (e) => { state.clarifyFocus = e.target.value; });
-  $('#aiClarifyTimeframe')?.addEventListener('input', (e) => { state.clarifyTimeframe = e.target.value; });
-  $('#aiClarifyInput')?.addEventListener('input', (e) => {
-    state.clarifyInput = e.target.value;
-  });
   $('#btnMatch').addEventListener('click', onMatch);
   $('#btnRevealAll').addEventListener('click', onRevealAll);
   $('#btnReset').addEventListener('click', onReset);
@@ -1987,7 +1887,6 @@ async function init() {
   buildEncoded156();
   setMotion(state.motion);
   renderQuestionEcho();
-  renderResolvedQuestionEcho();
   renderSpreadEcho();
   updateDictBadge();
   renderPickInputs();
