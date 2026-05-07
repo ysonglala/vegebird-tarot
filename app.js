@@ -8,7 +8,7 @@ const el = (tag, cls) => {
   return n;
 };
 
-const APP_VERSION = '20260507-langmenu-b';
+const APP_VERSION = '20260507-langmenu-c';
 const DEBUG_ENABLED = false;
 
 const I18N = {
@@ -347,16 +347,22 @@ function toggleLanguageMenu(force) {
   const panel = $('#langMenuPanel');
   const btn = $('#btnLang');
   if (!menu || !panel || !btn) return;
-  const shouldOpen = typeof force === 'boolean' ? force : panel.hidden;
-  panel.hidden = !shouldOpen;
+  const isOpen = menu.classList.contains('is-open');
+  const shouldOpen = typeof force === 'boolean' ? force : !isOpen;
   menu.classList.toggle('is-open', shouldOpen);
+  panel.hidden = !shouldOpen;
   btn.setAttribute('aria-expanded', shouldOpen ? 'true' : 'false');
 }
 
 function selectLanguage(lang) {
   if (!I18N[lang]) return;
+  const nextLang = I18N[lang] ? lang : 'zh';
   toggleLanguageMenu(false);
-  setLanguage(lang);
+  if (nextLang === state.lang) {
+    applyTranslations();
+    return;
+  }
+  setLanguage(nextLang);
 }
 
 function getOriLabel(ori) {
