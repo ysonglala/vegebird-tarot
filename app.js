@@ -342,8 +342,21 @@ async function setLanguage(lang) {
   applyTranslations();
 }
 
-function toggleLanguage() {
-  setLanguage(state.lang === 'zh' ? 'en' : 'zh');
+function toggleLanguageMenu(force) {
+  const menu = $('#langMenu');
+  const panel = $('#langMenuPanel');
+  const btn = $('#btnLang');
+  if (!menu || !panel || !btn) return;
+  const shouldOpen = typeof force === 'boolean' ? force : panel.hidden;
+  panel.hidden = !shouldOpen;
+  menu.classList.toggle('is-open', shouldOpen);
+  btn.setAttribute('aria-expanded', shouldOpen ? 'true' : 'false');
+}
+
+function selectLanguage(lang) {
+  if (!I18N[lang]) return;
+  toggleLanguageMenu(false);
+  setLanguage(lang);
 }
 
 function getOriLabel(ori) {
@@ -356,7 +369,7 @@ const EN_CARD_NAMES = {
 };
 const EN_SUITS = { '权杖': 'Wands', '圣杯': 'Cups', '宝剑': 'Swords', '星币': 'Pentacles', '大阿卡纳': 'Major Arcana', '小阿卡纳': 'Minor Arcana' };
 const EN_RANKS = { '王牌': 'Ace', '二': 'Two', '三': 'Three', '四': 'Four', '五': 'Five', '六': 'Six', '七': 'Seven', '八': 'Eight', '九': 'Nine', '十': 'Ten', '侍从': 'Page', '骑士': 'Knight', '皇后': 'Queen', '王后': 'Queen', '国王': 'King' };
-const EN_ELEMENTS = { '风': 'Air', '水': 'Water', '火': 'Fire', '土': 'Earth', '水银 / 风': 'Mercury / Air' };
+const EN_ELEMENTS = { '风': 'Air', '水': 'Water', '火': 'Fire', '土': 'Earth' };
 const EN_MAJOR = {
   '愚者': { subtitle: 'Beginnings / Trust / Freedom', up: 'A new journey is calling you. Take the first step and let the answer appear on the road.', rev: 'Do not mistake impulse for courage. Understand what you are avoiding before you leap.' },
   '魔术师': { subtitle: 'Will / Resources / Manifestation', up: 'You already have enough tools in hand. Focus your attention on one real move.', rev: 'Your energy may be scattered or self-deceiving. Pull back the promises and close one small loop first.' },
@@ -479,10 +492,18 @@ function applyTranslations() {
   if (descMeta) descMeta.setAttribute('content', langPack.pageDescription);
   const btnLang = $('#btnLang');
   if (btnLang) {
-    const label = state.lang === 'zh' ? 'Switch to English' : '切换到中文';
+    const label = state.lang === 'zh' ? '选择语言 / Choose language' : 'Choose language / 选择语言';
     btnLang.setAttribute('aria-label', label);
     btnLang.setAttribute('title', label);
   }
+  const langCode = $('#langCode');
+  if (langCode) langCode.textContent = state.lang === 'zh' ? '中' : 'EN';
+  $$('.langMenu__item').forEach((node) => {
+    const isActive = node.dataset.lang === state.lang;
+    node.classList.toggle('is-active', isActive);
+    node.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+    node.setAttribute('aria-current', isActive ? 'true' : 'false');
+  });
 
   const set = (sel, value, html = false) => {
     const node = $(sel);
@@ -1793,7 +1814,26 @@ async function onCopy() {
 function bindSettings() {
   const mot = $('#motion');
   const btnLang = $('#btnLang');
-  if (btnLang) btnLang.addEventListener('click', toggleLanguage);
+  if (btnLang) {
+    btnLang.addEventListener('click', (e) => {
+      e.stopPropagation();
+      toggleLanguageMenu();
+    });
+  }
+  $$('.langMenu__item').forEach((item) => {
+    item.addEventListener('click', (e) => {
+      e.stopPropagation();
+      selectLanguage(item.dataset.lang);
+    });
+  });
+  document.addEventListener('click', (e) => {
+    const menu = $('#langMenu');
+    if (!menu) return;
+    if (!menu.contains(e.target)) toggleLanguageMenu(false);
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') toggleLanguageMenu(false);
+  });
   const motVal = $('#motionVal');
   mot.addEventListener('input', () => { motVal.textContent = mot.value; });
   $('#btnSave').addEventListener('click', () => {
