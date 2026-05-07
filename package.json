@@ -1,0 +1,28 @@
+{
+  "name": "vegebird-tarot-pages",
+  "version": "1.0.0",
+  "description": "![Vegebird Tarot Cover](./assets/github-cover.svg)",
+  "main": "api.js",
+  "scripts": {
+    "start": "node server.js",
+    "cap:prep": "node scripts/prepare-capacitor-web.cjs",
+    "cap:sync": "npm run cap:prep && npx cap sync",
+    "cap:open:ios": "npx cap open ios"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ysonglala/vegebird-tarot.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/ysonglala/vegebird-tarot/issues"
+  },
+  "homepage": "https://github.com/ysonglala/vegebird-tarot#readme",
+  "devDependencies": {
+    "@capacitor/cli": "^8.3.1",
+    "@capacitor/core": "^8.3.1"
+  }
+}

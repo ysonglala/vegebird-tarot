@@ -8,7 +8,7 @@ const el = (tag, cls) => {
   return n;
 };
 
-const APP_VERSION = '20260507-ios-pass1';
+const APP_VERSION = '20260507-langmenu-c';
 const DEBUG_ENABLED = false;
 
 const I18N = {
@@ -1347,32 +1347,7 @@ function openCardDetail(index) {
   $('#detailUp').textContent = getCardMeaning(draw, 'up');
   $('#detailRevKeywords').textContent = getCardMeaningKeywords(draw, 'rev');
   $('#detailRev').textContent = getCardMeaning(draw, 'rev');
-  safeShowDialog('#cardDetail');
-}
-
-function safeShowDialog(selector) {
-  const dlg = typeof selector === 'string' ? $(selector) : selector;
-  if (!dlg) return;
-  if (typeof dlg.showModal === 'function') dlg.showModal();
-  else dlg.setAttribute('open', 'open');
-}
-
-function safeCloseDialog(selector) {
-  const dlg = typeof selector === 'string' ? $(selector) : selector;
-  if (!dlg) return;
-  if (typeof dlg.close === 'function' && dlg.open) dlg.close();
-  else dlg.removeAttribute('open');
-}
-
-function revealIntoView(node) {
-  if (!node) return;
-  requestAnimationFrame(() => {
-    try {
-      node.scrollIntoView({ block: 'center', behavior: 'smooth' });
-    } catch (_) {
-      node.scrollIntoView();
-    }
-  });
+  $('#cardDetail').showModal();
 }
 
 function openImageLightbox(index) {
@@ -1384,11 +1359,12 @@ function openImageLightbox(index) {
   img.alt = `${getDisplayCardName(draw)} ${getOriLabel(draw.ori)}`;
   img.classList.toggle('is-reversed', draw.ori === 'rev');
   $('#lightboxMeta').textContent = t('lightboxMeta', getDisplayCardName(draw), getOriLabel(draw.ori));
-  safeShowDialog('#imageLightbox');
+  $('#imageLightbox').showModal();
 }
 
 function closeImageLightbox() {
-  safeCloseDialog('#imageLightbox');
+  const dlg = $('#imageLightbox');
+  if (dlg.open) dlg.close();
 }
 
 function openOriginalImage(index = state.activeDetailIndex) {
@@ -1398,7 +1374,8 @@ function openOriginalImage(index = state.activeDetailIndex) {
 }
 
 function closeCardDetail() {
-  safeCloseDialog('#cardDetail');
+  const dlg = $('#cardDetail');
+  if (dlg.open) dlg.close();
 }
 
 function buildFallbackReadingFromCurrentDraw() {
@@ -1939,14 +1916,6 @@ function retryAiReading() {
 }
 
 function bindActions() {
-  const questionInput = $('#questionInput');
-  if (questionInput) {
-    questionInput.addEventListener('focus', () => revealIntoView(questionInput));
-    questionInput.addEventListener('click', () => revealIntoView(questionInput));
-  }
-  $$('.pickSlot__input').forEach((input) => {
-    input.addEventListener('focus', () => revealIntoView(input));
-  });
   $('#btnShuffle').addEventListener('click', ritualShuffleAnimation);
   $('#btnReShuffle').addEventListener('click', ritualShuffleAnimation);
   $('#btnLucky').addEventListener('click', onLuckyPick);
