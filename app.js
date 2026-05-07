@@ -8,7 +8,7 @@ const el = (tag, cls) => {
   return n;
 };
 
-const APP_VERSION = '20260505-i18n-en4';
+const APP_VERSION = '20260507-langmenu-b';
 const DEBUG_ENABLED = false;
 
 const I18N = {
