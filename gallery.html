@@ -155,6 +155,7 @@
   <script>
     const state = { cards: [], tarotDict: {}, lang: localStorage.getItem('vege_tarot_lang') || 'zh', activeCard: null };
     const $ = s => document.querySelector(s);
+    const $$ = s => Array.from(document.querySelectorAll(s));
 
     const I18N = {
       zh: {
