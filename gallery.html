@@ -6,7 +6,7 @@
   <title>Vegebird Tarot · Card Gallery</title>
   <style>
     :root{
-      --bg:#090814;--card:#141126;--line:rgba(255,255,255,.08);--text:#f6f2ff;--muted:rgba(246,242,255,.68);--gold:#f0cd7a;
+      --bg:#090814;--card:#141126;--line:rgba(255,255,255,.08);--text:#f6f2ff;--muted:rgba(246,242,255,.68);--gold:#f0cd7a;--shadow2:0 10px 30px rgba(0,0,0,.35);
     }
     *{box-sizing:border-box}
     body{margin:0;font-family:"Noto Serif SC","PingFang SC","Microsoft YaHei",serif;background:radial-gradient(circle at top, #1b1638, #090814 55%);color:var(--text)}
@@ -19,17 +19,18 @@
     .toolbar{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin:18px 0 22px}
     .langMenu{position:relative;flex:0 0 auto}
     .langMenu__panel[hidden]{display:none !important}
-    .langMenu__panel{position:absolute;top:calc(100% + 10px);right:0;min-width:132px;padding:8px;border-radius:18px;border:1px solid rgba(240,205,122,.18);background:#141126;box-shadow:0 18px 40px rgba(0,0,0,.42);display:grid;gap:6px;z-index:12;transform-origin:top right;animation:langMenuIn 180ms cubic-bezier(.2,.9,.15,1)}
-    .langMenu__item{position:relative;width:100%;text-align:left;border:1px solid rgba(255,255,255,.10);background:#1b1638;color:var(--text);border-radius:12px;padding:10px 38px 10px 12px;font:inherit;font-size:13px;cursor:pointer;transition:transform 160ms ease, background 160ms ease, border-color 160ms ease, box-shadow 160ms ease}
+    .langMenu__panel{position:absolute;top:calc(100% + 10px);right:0;min-width:152px;padding:8px;border-radius:18px;border:1px solid rgba(240,205,122,.18);background:#141126;box-shadow:0 18px 40px rgba(0,0,0,.42);display:grid;gap:6px;z-index:12;transform-origin:top right;animation:langMenuIn 180ms cubic-bezier(.2,.9,.15,1)}
+    .langMenu__item{position:relative;width:100%;text-align:left;border:1px solid rgba(255,255,255,.10);background:#1b1638;color:var(--text);border-radius:12px;padding:12px 40px 12px 14px;font:inherit;font-size:14px;cursor:pointer;transition:transform 160ms ease, background 160ms ease, border-color 160ms ease, box-shadow 160ms ease}
     .langMenu__item:hover{transform:translateY(-1px);background:rgba(255,255,255,.08);border-color:rgba(240,205,122,.24)}
     .langMenu__item.is-active{background:linear-gradient(180deg, rgba(240,205,122,.18), rgba(240,205,122,.10));border-color:rgba(240,205,122,.42);color:rgba(255,239,181,.98);box-shadow:0 0 0 1px rgba(240,205,122,.12), inset 0 0 18px rgba(240,205,122,.05)}
     .langMenu__item.is-active::after{content:"✓";position:absolute;right:12px;top:50%;transform:translateY(-50%);color:rgba(255,239,181,.98);font-size:13px;font-weight:700}
-    .ghostBtn{cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px;text-decoration:none}
+    .ghostBtn{background:var(--card);color:var(--text);border:1px solid var(--line);border-radius:12px;padding:10px 12px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;transition:transform 160ms ease, background 160ms ease, border-color 160ms ease, box-shadow 160ms ease}
     .ghostBtn:hover{transform:translateY(-1px);background:rgba(255,255,255,.05)}
     .ghostBtn--icon{width:42px;height:42px;padding:0}
     .ghostIcon{width:18px;height:18px;display:block}
-    .ghostBtn--lang{color:rgba(246,242,255,.92);gap:8px;padding:0 12px;min-width:64px;height:42px;border-radius:999px}
-    .ghostBtn__langCode{display:inline-flex;align-items:center;justify-content:center;min-width:18px;font-size:12px;line-height:1;letter-spacing:.08em;color:rgba(255,239,181,.96)}
+    .ghostBtn--lang{color:rgba(246,242,255,.92);gap:8px;padding:0 12px;min-width:72px;height:42px;border-radius:999px;background:rgba(21,17,58,.35);border:1px solid rgba(240,205,122,.18);box-shadow:var(--shadow2)}
+    .ghostBtn--lang:hover{background:rgba(21,17,58,.48);border-color:rgba(240,205,122,.26)}
+    .ghostBtn__langCode{display:inline-flex;align-items:center;justify-content:center;min-width:18px;font-size:12px;line-height:1;letter-spacing:.08em;color:rgba(255,239,181,.96);font-weight:700}
     .ghostBtn__caret{display:inline-flex;align-items:center;justify-content:center;font-size:11px;color:rgba(246,242,255,.72);transition:transform 180ms ease,color 180ms ease}
     .langMenu.is-open .ghostBtn__caret{transform:rotate(180deg);color:rgba(255,239,181,.96)}
     @keyframes langMenuIn{from{opacity:0;transform:translateY(-6px) scale(.96)}to{opacity:1;transform:translateY(0) scale(1)}}
@@ -62,11 +63,12 @@
     .panelTitle{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:8px}
     @media (max-width:760px){.modalBody{grid-template-columns:1fr}.panelGrid{grid-template-columns:1fr}}
     @media (max-width:480px){
-      .wrap{padding:14px}.hero{margin-bottom:16px}h1{font-size:24px}.sub{font-size:13px;line-height:1.6}
+      .wrap{padding:14px}.hero{margin-bottom:16px;align-items:flex-start}h1{font-size:24px}.sub{font-size:13px;line-height:1.6}
+      .heroActions{width:100%;justify-content:space-between;align-items:center}.langMenu{margin-left:auto}.langMenu__panel{right:0;min-width:148px}
       .toolbar{gap:10px;margin:14px 0 18px}.input,.select{width:100%;padding:11px 12px;font-size:14px}
       .grid{grid-template-columns:1fr;gap:12px}.item{border-radius:16px}.body{padding:10px 10px 12px}
       .title{font-size:16px;line-height:1.35}.summary{font-size:11px;line-height:1.55;min-height:auto;margin-top:6px}
-      .chips{gap:6px;margin-top:8px}.tag{padding:3px 7px;font-size:11px}.meta{width:100%;font-size:12px}
+      .chips{gap:6px;margin-top:8px}.tag{padding:3px 7px;font-size:11px}.meta{width:100%;font-size:12px;order:3}
     }
   </style>
 </head>
