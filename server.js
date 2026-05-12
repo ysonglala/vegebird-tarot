@@ -193,6 +193,48 @@ Output requirements:
   ];
 }
 
+function extractJsonCandidate(value = '') {
+  const text = String(value || '').trim();
+  if (!text) return '';
+
+  const fenced = text.match(/```(?:json)?\s*([\s\S]*?)\s*```/i);
+  if (fenced?.[1]) return fenced[1].trim();
+
+  const start = text.indexOf('{');
+  const end = text.lastIndexOf('}');
+  if (start >= 0 && end > start) return text.slice(start, end + 1).trim();
+
+  return text;
+}
+
+function tryParseJsonLoose(value) {
+  if (value && typeof value === 'object') return value;
+
+  const candidate = extractJsonCandidate(value);
+  if (!candidate) return null;
+
+  try {
+    return JSON.parse(candidate);
+  } catch {}
+
+  try {
+    return JSON.parse(candidate.replace(/[\u201c\u201d]/g, '"').replace(/[\u2018\u2019]/g, "'"));
+  } catch {}
+
+  return null;
+}
+
+function buildInterpretFallbackFromText(text = '', lang = 'zh') {
+  const clean = normalizeText(text);
+  return {
+    summary: clean || (lang === 'en' ? 'The model returned an empty response.' : '模型这次没有返回可用内容。'),
+    synthesis: '',
+    advice: '',
+    riskNotes: '',
+    followUps: [],
+  };
+}
+
 async function callOpenAICompatible(body) {
   if (!LLM_API_KEY) {
     throw new Error('VEGE_TAROT_LLM_API_KEY is missing');
@@ -230,21 +272,21 @@ async function callOpenAICompatible(body) {
     }
 
     const content = data?.choices?.[0]?.message?.content || '{}';
-    let parsed;
-    try {
-      parsed = typeof content === 'string' ? JSON.parse(content) : content;
-    } catch {
-      throw new Error(`Model content is not valid JSON: ${String(content).slice(0, 300)}`);
+    const parsed = tryParseJsonLoose(content);
+
+    if (!parsed) {
+      console.warn('[interpret] model content not strict JSON, using text fallback');
     }
 
+    const fallback = buildInterpretFallbackFromText(content, body.lang);
     const result = {
-      summary: normalizeText(parsed?.summary),
-      synthesis: normalizeText(parsed?.synthesis),
-      advice: normalizeText(parsed?.advice),
-      riskNotes: normalizeText(parsed?.riskNotes),
+      summary: normalizeText(parsed?.summary) || fallback.summary,
+      synthesis: normalizeText(parsed?.synthesis) || fallback.synthesis,
+      advice: normalizeText(parsed?.advice) || fallback.advice,
+      riskNotes: normalizeText(parsed?.riskNotes) || fallback.riskNotes,
       followUps: Array.isArray(parsed?.followUps)
         ? parsed.followUps.map(item => normalizeText(item)).filter(Boolean)
-        : [],
+        : fallback.followUps,
     };
 
     if (body.lang === 'en') {
@@ -258,7 +300,7 @@ async function callOpenAICompatible(body) {
       ok: true,
       sessionId: body.sessionId || `sess_${Date.now()}`,
       drawId: body.drawId || `draw_${Date.now()}`,
-      source: 'llm',
+      source: parsed ? 'llm' : 'llm-fallback',
       model: LLM_MODEL,
       result,
     };
