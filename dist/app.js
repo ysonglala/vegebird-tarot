@@ -1543,7 +1543,7 @@ function buildAiReadingImageCanvas() {
   const cards = state.drawn.map((draw, i) => `${translateLabel(state.spread.labels[i] || String(i + 1))}：${getDisplayCardName(draw)} · ${getOriLabel(draw.ori)}`);
 
   let height = 126;
-  height += 58;
+  height += 34;
   height += wrapCanvasText(m, `${t('questionEchoPrefix')}${question}`, contentWidth).length * 38 + 18;
   height += wrapCanvasText(m, `${t('spreadEchoPrefix')}${spreadName}`, contentWidth).length * 38 + 14;
   height += cards.reduce((sum, line) => sum + wrapCanvasText(m, line, contentWidth).length * 34, 0) + 40;
@@ -1551,7 +1551,7 @@ function buildAiReadingImageCanvas() {
     height += 60;
     height += wrapCanvasText(m, section.text, contentWidth - blockPad * 2).length * bodyLineHeight + 42;
   });
-  height += 96;
+  height += 150;
   height = Math.max(1500, Math.ceil(height));
 
   const canvas = document.createElement('canvas');
@@ -1581,11 +1581,8 @@ function buildAiReadingImageCanvas() {
   ctx.fillStyle = '#ffefb5';
   ctx.font = '700 44px serif';
   ctx.fillText('Vegebird Tarot', pad, 98);
-  ctx.fillStyle = 'rgba(244,241,255,0.70)';
-  ctx.font = '24px serif';
-  ctx.fillText(state.lang === 'zh' ? 'AI 综合解牌 · 保存卡片' : 'AI Reading · Saved Card', pad, 134);
 
-  let y = 198;
+  let y = 168;
   ctx.fillStyle = 'rgba(244,241,255,0.90)';
   ctx.font = '28px serif';
   y += drawWrappedText(ctx, `${t('questionEchoPrefix')}${question}`, pad, y, contentWidth, 38) + 18;
@@ -1621,11 +1618,14 @@ function buildAiReadingImageCanvas() {
     y += blockHeight + 22;
   });
 
-  ctx.fillStyle = 'rgba(244,241,255,0.52)';
+  const footerY = height - 74;
+  ctx.fillStyle = 'rgba(247,208,122,0.16)';
+  ctx.fillRect(pad, footerY - 34, contentWidth, 1);
+  ctx.fillStyle = 'rgba(244,241,255,0.58)';
   ctx.font = '22px serif';
-  ctx.fillText('vegebird-tarot', pad, height - 54);
+  ctx.fillText('vegebird-tarot', pad, footerY);
   ctx.textAlign = 'right';
-  ctx.fillText(new Date().toLocaleDateString(state.lang === 'zh' ? 'zh-CN' : 'en-US'), width - pad, height - 54);
+  ctx.fillText(new Date().toLocaleDateString(state.lang === 'zh' ? 'zh-CN' : 'en-US'), width - pad, footerY);
   ctx.textAlign = 'left';
 
   return canvas;
