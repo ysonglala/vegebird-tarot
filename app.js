@@ -73,7 +73,7 @@ const I18N = {
     saveImageClose: '关闭',
     donateCta: '🐦 投喂一下菜鸟塔罗',
     donateTitle: '感谢投喂',
-    donateSub: '如果这次解读刚好帮你理清了一点思路，可以随缘投喂一下这只菜鸟。每一份支持，都会变成网站继续更新的能量。',
+    donateSub: '如果这次解读刚好帮你理清了一点思路，可以随缘投喂一下这只菜鸟。每一份支持，都会变成网站继续维持的能量。（Token好贵TT）',
     donateHint: '微信内可长按识别赞赏码。',
     shareImageTitle: '菜鸟塔罗 AI 解读',
     aiRefine: '补充问题后再解读',
