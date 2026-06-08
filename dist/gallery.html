@@ -514,25 +514,33 @@
     $('#group').addEventListener('change', render);
     const btnLang = $('#btnLang');
     if (btnLang) {
+      let lastLangButtonPointerAt = 0;
       const handleLangButtonPress = (e) => {
         e.preventDefault();
         e.stopPropagation();
+        lastLangButtonPointerAt = Date.now();
         toggleLanguageMenu();
       };
       btnLang.addEventListener('pointerdown', handleLangButtonPress);
       btnLang.addEventListener('click', (e) => {
-        if (e.detail === 0) handleLangButtonPress(e);
+        e.preventDefault();
+        e.stopPropagation();
+        if (Date.now() - lastLangButtonPointerAt > 450) toggleLanguageMenu();
       });
     }
     $$('.langMenu__item').forEach((item) => {
+      let lastLangItemPointerAt = 0;
       const handleLangItemPress = (e) => {
         e.preventDefault();
         e.stopPropagation();
+        lastLangItemPointerAt = Date.now();
         selectLanguage(item.dataset.lang);
       };
       item.addEventListener('pointerdown', handleLangItemPress);
       item.addEventListener('click', (e) => {
-        if (e.detail === 0) handleLangItemPress(e);
+        e.preventDefault();
+        e.stopPropagation();
+        if (Date.now() - lastLangItemPointerAt > 450) selectLanguage(item.dataset.lang);
       });
     });
     document.addEventListener('click', (e) => {
