@@ -1548,10 +1548,11 @@ function buildAiReadingImageCanvas() {
   height += wrapCanvasText(m, `${t('spreadEchoPrefix')}${spreadName}`, contentWidth).length * 38 + 14;
   height += cards.reduce((sum, line) => sum + wrapCanvasText(m, line, contentWidth).length * 34, 0) + 40;
   sections.forEach((section) => {
-    height += 60;
-    height += wrapCanvasText(m, section.text, contentWidth - blockPad * 2).length * bodyLineHeight + 42;
+    height += wrapCanvasText(m, section.text, contentWidth - blockPad * 2).length * bodyLineHeight + 122;
   });
-  height += 150;
+  const footerGap = 118;
+  const footerHeight = 110;
+  height += footerGap + footerHeight;
   height = Math.max(1500, Math.ceil(height));
 
   const canvas = document.createElement('canvas');
@@ -1618,7 +1619,7 @@ function buildAiReadingImageCanvas() {
     y += blockHeight + 22;
   });
 
-  const footerY = height - 74;
+  const footerY = Math.max(y + footerGap, height - 74);
   ctx.fillStyle = 'rgba(247,208,122,0.16)';
   ctx.fillRect(pad, footerY - 34, contentWidth, 1);
   ctx.fillStyle = 'rgba(244,241,255,0.58)';
