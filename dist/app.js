@@ -1448,25 +1448,37 @@ function getAiReadingExportSections() {
 function wrapCanvasText(ctx, text, maxWidth) {
   const raw = String(text || '').replace(/\r/g, '').split('\n');
   const lines = [];
-  raw.forEach((paragraph) => {
+  const pushToken = (token, joinWithSpace) => {
+    if (!token) return;
+    const tokenText = String(token);
+    const tokenFits = ctx.measureText(tokenText).width <= maxWidth;
+    if (!tokenFits) {
+      Array.from(tokenText).forEach((char) => pushToken(char, false));
+      return;
+    }
+    const last = lines.length ? lines[lines.length - 1] : '';
+    const next = last ? `${last}${joinWithSpace ? ' ' : ''}${tokenText}` : tokenText;
+    if (!last || ctx.measureText(next).width <= maxWidth) {
+      if (lines.length) lines[lines.length - 1] = next;
+      else lines.push(next);
+    } else {
+      lines.push(tokenText);
+    }
+  };
+
+  raw.forEach((paragraph, pIndex) => {
     const source = paragraph.trim();
     if (!source) {
       lines.push('');
       return;
     }
-    let line = '';
     const hasSpaces = /\s/.test(source);
-    const parts = hasSpaces ? source.split(/\s+/) : Array.from(source);
-    parts.forEach((part) => {
-      const next = hasSpaces ? (line ? `${line} ${part}` : part) : `${line}${part}`;
-      if (ctx.measureText(next).width <= maxWidth || !line) {
-        line = next;
-      } else {
-        lines.push(line);
-        line = part;
-      }
-    });
-    if (line) lines.push(line);
+    if (hasSpaces) {
+      source.split(/\s+/).forEach((token) => pushToken(token, true));
+    } else {
+      Array.from(source).forEach((char) => pushToken(char, false));
+    }
+    if (pIndex < raw.length - 1) lines.push('');
   });
   return lines;
 }
@@ -1496,11 +1508,13 @@ function buildAiReadingImageCanvas() {
 
   const scale = Math.max(2, Math.min(3, window.devicePixelRatio || 2));
   const width = 1200;
-  const pad = 72;
+  const pad = 78;
   const contentWidth = width - pad * 2;
+  const blockPad = 34;
+  const bodyLineHeight = 38;
   const measureCanvas = document.createElement('canvas');
   const m = measureCanvas.getContext('2d');
-  m.font = '34px serif';
+  m.font = '26px serif';
 
   const question = state.question?.trim() || t('questionEmpty');
   const spreadName = translateSpreadName(state.spread?.name || '');
@@ -1510,10 +1524,10 @@ function buildAiReadingImageCanvas() {
   height += 58;
   height += wrapCanvasText(m, `${t('questionEchoPrefix')}${question}`, contentWidth).length * 38 + 18;
   height += wrapCanvasText(m, `${t('spreadEchoPrefix')}${spreadName}`, contentWidth).length * 38 + 14;
-  height += cards.length * 38 + 36;
+  height += cards.reduce((sum, line) => sum + wrapCanvasText(m, line, contentWidth).length * 34, 0) + 40;
   sections.forEach((section) => {
-    height += 56;
-    height += wrapCanvasText(m, section.text, contentWidth - 42).length * 36 + 34;
+    height += 60;
+    height += wrapCanvasText(m, section.text, contentWidth - blockPad * 2).length * bodyLineHeight + 42;
   });
   height += 96;
   height = Math.max(1500, Math.ceil(height));
@@ -1559,14 +1573,14 @@ function buildAiReadingImageCanvas() {
   ctx.fillStyle = 'rgba(244,241,255,0.76)';
   ctx.font = '25px serif';
   cards.forEach((line) => {
-    ctx.fillText(line, pad, y);
-    y += 38;
+    y += drawWrappedText(ctx, line, pad, y, contentWidth, 34);
   });
-  y += 18;
+  y += 22;
 
   sections.forEach((section) => {
-    const lines = wrapCanvasText(ctx, section.text, contentWidth - 42);
-    const blockHeight = 58 + Math.max(1, lines.length) * 36 + 24;
+    ctx.font = '26px serif';
+    const lines = wrapCanvasText(ctx, section.text, contentWidth - blockPad * 2);
+    const blockHeight = 70 + Math.max(1, lines.length) * bodyLineHeight + 30;
     drawRoundRect(ctx, pad, y, contentWidth, blockHeight, 28);
     ctx.fillStyle = 'rgba(21,17,58,0.92)';
     ctx.fill();
@@ -1576,11 +1590,11 @@ function buildAiReadingImageCanvas() {
 
     ctx.fillStyle = '#ffefb5';
     ctx.font = '700 25px serif';
-    ctx.fillText(section.label, pad + 28, y + 42);
+    ctx.fillText(section.label, pad + blockPad, y + 44);
     ctx.fillStyle = 'rgba(244,241,255,0.88)';
     ctx.font = '26px serif';
     lines.forEach((line, index) => {
-      if (line) ctx.fillText(line, pad + 28, y + 84 + index * 36);
+      if (line) ctx.fillText(line, pad + blockPad, y + 88 + index * bodyLineHeight);
     });
     y += blockHeight + 22;
   });
