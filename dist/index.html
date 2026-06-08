@@ -234,6 +234,7 @@
             <button class="secondaryAction" id="btnBackPick" type="button">返回盲选</button>
             <button class="secondaryAction" id="btnInterpret" type="button">生成 AI 解读</button>
             <button class="secondaryAction saveImageAction" id="btnSaveImage" type="button" hidden>保存为图片</button>
+            <button class="secondaryAction donateAction" id="btnDonate" type="button">☕ 喜欢这次解读？随缘支持</button>
             <button class="primaryAction" id="btnReset" type="button">
               <span class="primaryAction__top">重新开始</span>
               <span class="primaryAction__sub">清空问题、牌阵与本次抽牌结果</span>
@@ -243,6 +244,22 @@
       </div>
     </section>
   </main>
+
+  <dialog class="modal modal--donate" id="donateModal" aria-label="感谢支持">
+    <div class="modal__card donateCard">
+      <div class="modal__head">
+        <div>
+          <div class="modal__title" id="donateTitle">感谢支持菜鸟塔罗</div>
+          <div class="modal__sub" id="donateSub">如果这次解读对你有帮助，可以随缘投喂一下，让这个小网站继续维护下去。</div>
+        </div>
+        <button class="x" id="btnCloseDonate" type="button" aria-label="关闭">×</button>
+      </div>
+      <div class="modal__body donateBody">
+        <img class="donateQr" src="assets/donate-qr.jpg" alt="感谢支持二维码" />
+        <div class="donateHint" id="donateHint">微信内可长按二维码识别 / 保存。</div>
+      </div>
+    </div>
+  </dialog>
 
   <dialog class="modal" id="settings" aria-label="设置">
     <form method="dialog" class="modal__card">

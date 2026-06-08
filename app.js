@@ -71,6 +71,10 @@ const I18N = {
     saveImagePreviewHint: '如果你在微信里打开，请长按下方图片保存到手机。',
     saveImageDownload: '下载图片',
     saveImageClose: '关闭',
+    donateCta: '☕ 喜欢这次解读？随缘支持',
+    donateTitle: '感谢支持菜鸟塔罗',
+    donateSub: '如果这次解读对你有帮助，可以随缘投喂一下，让这个小网站继续维护下去。',
+    donateHint: '微信内可长按二维码识别 / 保存。',
     shareImageTitle: '菜鸟塔罗 AI 解读',
     aiRefine: '补充问题后再解读',
     backPick: '返回盲选',
@@ -227,6 +231,10 @@ const I18N = {
     saveImagePreviewHint: 'If you are viewing this in WeChat, long-press the image below to save it.',
     saveImageDownload: 'Download image',
     saveImageClose: 'Close',
+    donateCta: '☕ Enjoyed this reading? Support Vegebird Tarot',
+    donateTitle: 'Thank you for supporting Vegebird Tarot',
+    donateSub: 'If this reading helped you, you can leave a small tip to support ongoing maintenance.',
+    donateHint: 'In WeChat, long-press the QR code to scan or save it.',
     shareImageTitle: 'Vegebird Tarot AI Reading',
     aiRefine: 'Refine the question first',
     backPick: 'Back to pick',
@@ -1417,6 +1425,20 @@ function closeCardDetail() {
   safeCloseDialog('#cardDetail');
 }
 
+function openDonateModal() {
+  const title = $('#donateTitle');
+  const sub = $('#donateSub');
+  const hint = $('#donateHint');
+  if (title) title.textContent = t('donateTitle');
+  if (sub) sub.textContent = t('donateSub');
+  if (hint) hint.textContent = t('donateHint');
+  safeShowDialog('#donateModal');
+}
+
+function closeDonateModal() {
+  safeCloseDialog('#donateModal');
+}
+
 function buildFallbackReadingFromCurrentDraw() {
   const names = state.drawn.map(d => `${getDisplayCardName(d)} ${getOriLabel(d.ori)}`);
   return {
@@ -1694,6 +1716,8 @@ function renderAiReading() {
   if (titleEl) titleEl.textContent = t('aiTitleReading');
   const interpretBtn = $('#btnInterpret');
   if (interpretBtn) interpretBtn.textContent = t('aiGenerate');
+  const donateBtn = $('#btnDonate');
+  if (donateBtn) donateBtn.textContent = t('donateCta');
   const saveImageBtn = $('#btnSaveImage');
   if (saveImageBtn) {
     saveImageBtn.textContent = t('saveImage');
@@ -2240,6 +2264,12 @@ function bindActions() {
   $('#btnInterpret').addEventListener('click', retryAiReading);
   const saveImageBtn = $('#btnSaveImage');
   if (saveImageBtn) saveImageBtn.addEventListener('click', saveAiReadingAsImage);
+  const donateBtn = $('#btnDonate');
+  if (donateBtn) donateBtn.addEventListener('click', openDonateModal);
+  const closeDonateBtn = $('#btnCloseDonate');
+  if (closeDonateBtn) closeDonateBtn.addEventListener('click', closeDonateModal);
+  const donateModal = $('#donateModal');
+  if (donateModal) donateModal.addEventListener('click', (e) => { if (e.target === donateModal) closeDonateModal(); });
   $('#btnCloseDetail').addEventListener('click', closeCardDetail);
   $('#detailPosterImage').addEventListener('click', () => openImageLightbox(state.activeDetailIndex));
   $('#btnZoomFromDetail').addEventListener('click', () => openImageLightbox(state.activeDetailIndex));
