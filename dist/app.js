@@ -8,7 +8,7 @@ const el = (tag, cls) => {
   return n;
 };
 
-const APP_VERSION = '20260507-langmenu-c';
+const APP_VERSION = '20260507-ios-pass1';
 const DEBUG_ENABLED = false;
 
 const I18N = {
@@ -64,6 +64,11 @@ const I18N = {
     aiPlaceholder: '这里将显示 OpenClaw 返回的整体结论、建议与推荐追问。',
     retryAi: '重试 AI 解牌',
     aiGenerate: '生成 AI 解读',
+    saveImage: '保存为图片',
+    saveImagePreparing: '正在生成图片…',
+    saveImageDone: '图片已生成，请在浏览器下载或系统分享面板中保存。',
+    saveImageFailed: '生成图片失败了，请稍后重试。',
+    shareImageTitle: '菜鸟塔罗 AI 解读',
     aiRefine: '补充问题后再解读',
     backPick: '返回盲选',
     resetTop: '重新开始',
@@ -212,6 +217,11 @@ const I18N = {
     aiPlaceholder: 'OpenClaw’s overall reading, advice, and suggested follow-up questions will appear here.',
     retryAi: 'Retry AI reading',
     aiGenerate: 'Generate AI reading',
+    saveImage: 'Save as image',
+    saveImagePreparing: 'Generating image…',
+    saveImageDone: 'Image generated. Save it from your browser download or system share sheet.',
+    saveImageFailed: 'Failed to generate the image. Please try again later.',
+    shareImageTitle: 'Vegebird Tarot AI Reading',
     aiRefine: 'Refine the question first',
     backPick: 'Back to pick',
     resetTop: 'Start over',
@@ -1347,7 +1357,32 @@ function openCardDetail(index) {
   $('#detailUp').textContent = getCardMeaning(draw, 'up');
   $('#detailRevKeywords').textContent = getCardMeaningKeywords(draw, 'rev');
   $('#detailRev').textContent = getCardMeaning(draw, 'rev');
-  $('#cardDetail').showModal();
+  safeShowDialog('#cardDetail');
+}
+
+function safeShowDialog(selector) {
+  const dlg = typeof selector === 'string' ? $(selector) : selector;
+  if (!dlg) return;
+  if (typeof dlg.showModal === 'function') dlg.showModal();
+  else dlg.setAttribute('open', 'open');
+}
+
+function safeCloseDialog(selector) {
+  const dlg = typeof selector === 'string' ? $(selector) : selector;
+  if (!dlg) return;
+  if (typeof dlg.close === 'function' && dlg.open) dlg.close();
+  else dlg.removeAttribute('open');
+}
+
+function revealIntoView(node) {
+  if (!node) return;
+  requestAnimationFrame(() => {
+    try {
+      node.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    } catch (_) {
+      node.scrollIntoView();
+    }
+  });
 }
 
 function openImageLightbox(index) {
@@ -1359,12 +1394,11 @@ function openImageLightbox(index) {
   img.alt = `${getDisplayCardName(draw)} ${getOriLabel(draw.ori)}`;
   img.classList.toggle('is-reversed', draw.ori === 'rev');
   $('#lightboxMeta').textContent = t('lightboxMeta', getDisplayCardName(draw), getOriLabel(draw.ori));
-  $('#imageLightbox').showModal();
+  safeShowDialog('#imageLightbox');
 }
 
 function closeImageLightbox() {
-  const dlg = $('#imageLightbox');
-  if (dlg.open) dlg.close();
+  safeCloseDialog('#imageLightbox');
 }
 
 function openOriginalImage(index = state.activeDetailIndex) {
@@ -1374,8 +1408,7 @@ function openOriginalImage(index = state.activeDetailIndex) {
 }
 
 function closeCardDetail() {
-  const dlg = $('#cardDetail');
-  if (dlg.open) dlg.close();
+  safeCloseDialog('#cardDetail');
 }
 
 function buildFallbackReadingFromCurrentDraw() {
@@ -1388,6 +1421,211 @@ function buildFallbackReadingFromCurrentDraw() {
     riskNotes: t('mockRisk'),
     followUps: t('mockFollowups'),
   };
+}
+
+function getAiReadingExportSections() {
+  const result = state.readingResult || {};
+  const sections = [];
+  if (result.summary) sections.push({ label: t('aiSummary'), text: normalizeDictText(result.summary) });
+  if (result.synthesis) sections.push({ label: t('aiSynthesis'), text: normalizeDictText(result.synthesis) });
+  if (result.advice) sections.push({ label: t('aiAdvice'), text: normalizeDictText(result.advice) });
+  if (result.riskNotes) sections.push({ label: t('aiRisk'), text: normalizeDictText(result.riskNotes) });
+  if (Array.isArray(result.followUps) && result.followUps.length) {
+    sections.push({
+      label: t('aiFollowups'),
+      text: result.followUps.map(x => `• ${normalizeDictText(x)}`).filter(Boolean).join('\n'),
+    });
+  }
+  return sections.filter(section => section.text);
+}
+
+function wrapCanvasText(ctx, text, maxWidth) {
+  const raw = String(text || '').replace(/\r/g, '').split('\n');
+  const lines = [];
+  raw.forEach((paragraph) => {
+    const source = paragraph.trim();
+    if (!source) {
+      lines.push('');
+      return;
+    }
+    let line = '';
+    const hasSpaces = /\s/.test(source);
+    const parts = hasSpaces ? source.split(/\s+/) : Array.from(source);
+    parts.forEach((part) => {
+      const next = hasSpaces ? (line ? `${line} ${part}` : part) : `${line}${part}`;
+      if (ctx.measureText(next).width <= maxWidth || !line) {
+        line = next;
+      } else {
+        lines.push(line);
+        line = part;
+      }
+    });
+    if (line) lines.push(line);
+  });
+  return lines;
+}
+
+function drawRoundRect(ctx, x, y, width, height, radius) {
+  const r = Math.min(radius, width / 2, height / 2);
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + width, y, x + width, y + height, r);
+  ctx.arcTo(x + width, y + height, x, y + height, r);
+  ctx.arcTo(x, y + height, x, y, r);
+  ctx.arcTo(x, y, x + width, y, r);
+  ctx.closePath();
+}
+
+function drawWrappedText(ctx, text, x, y, maxWidth, lineHeight) {
+  const lines = wrapCanvasText(ctx, text, maxWidth);
+  lines.forEach((line, index) => {
+    if (line) ctx.fillText(line, x, y + index * lineHeight);
+  });
+  return lines.length * lineHeight;
+}
+
+function buildAiReadingImageCanvas() {
+  const sections = getAiReadingExportSections();
+  if (!sections.length) throw new Error('No AI reading content to export');
+
+  const scale = Math.max(2, Math.min(3, window.devicePixelRatio || 2));
+  const width = 1200;
+  const pad = 72;
+  const contentWidth = width - pad * 2;
+  const measureCanvas = document.createElement('canvas');
+  const m = measureCanvas.getContext('2d');
+  m.font = '34px serif';
+
+  const question = state.question?.trim() || t('questionEmpty');
+  const spreadName = translateSpreadName(state.spread?.name || '');
+  const cards = state.drawn.map((draw, i) => `${translateLabel(state.spread.labels[i] || String(i + 1))}：${getDisplayCardName(draw)} · ${getOriLabel(draw.ori)}`);
+
+  let height = 126;
+  height += 58;
+  height += wrapCanvasText(m, `${t('questionEchoPrefix')}${question}`, contentWidth).length * 38 + 18;
+  height += wrapCanvasText(m, `${t('spreadEchoPrefix')}${spreadName}`, contentWidth).length * 38 + 14;
+  height += cards.length * 38 + 36;
+  sections.forEach((section) => {
+    height += 56;
+    height += wrapCanvasText(m, section.text, contentWidth - 42).length * 36 + 34;
+  });
+  height += 96;
+  height = Math.max(1500, Math.ceil(height));
+
+  const canvas = document.createElement('canvas');
+  canvas.width = Math.round(width * scale);
+  canvas.height = Math.round(height * scale);
+  canvas.style.width = `${width}px`;
+  canvas.style.height = `${height}px`;
+  const ctx = canvas.getContext('2d');
+  ctx.scale(scale, scale);
+
+  const bg = ctx.createLinearGradient(0, 0, 0, height);
+  bg.addColorStop(0, '#090814');
+  bg.addColorStop(0.48, '#141126');
+  bg.addColorStop(1, '#070611');
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, width, height);
+
+  ctx.fillStyle = 'rgba(247,208,122,0.10)';
+  ctx.beginPath();
+  ctx.arc(170, 120, 210, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = 'rgba(169,140,255,0.12)';
+  ctx.beginPath();
+  ctx.arc(width - 120, 310, 260, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.fillStyle = '#ffefb5';
+  ctx.font = '700 44px serif';
+  ctx.fillText('Vegebird Tarot', pad, 98);
+  ctx.fillStyle = 'rgba(244,241,255,0.70)';
+  ctx.font = '24px serif';
+  ctx.fillText(state.lang === 'zh' ? 'AI 综合解牌 · 保存卡片' : 'AI Reading · Saved Card', pad, 134);
+
+  let y = 198;
+  ctx.fillStyle = 'rgba(244,241,255,0.90)';
+  ctx.font = '28px serif';
+  y += drawWrappedText(ctx, `${t('questionEchoPrefix')}${question}`, pad, y, contentWidth, 38) + 18;
+  ctx.fillStyle = 'rgba(255,239,181,0.92)';
+  y += drawWrappedText(ctx, `${t('spreadEchoPrefix')}${spreadName}`, pad, y, contentWidth, 38) + 22;
+
+  ctx.fillStyle = 'rgba(244,241,255,0.76)';
+  ctx.font = '25px serif';
+  cards.forEach((line) => {
+    ctx.fillText(line, pad, y);
+    y += 38;
+  });
+  y += 18;
+
+  sections.forEach((section) => {
+    const lines = wrapCanvasText(ctx, section.text, contentWidth - 42);
+    const blockHeight = 58 + Math.max(1, lines.length) * 36 + 24;
+    drawRoundRect(ctx, pad, y, contentWidth, blockHeight, 28);
+    ctx.fillStyle = 'rgba(21,17,58,0.92)';
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(247,208,122,0.20)';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    ctx.fillStyle = '#ffefb5';
+    ctx.font = '700 25px serif';
+    ctx.fillText(section.label, pad + 28, y + 42);
+    ctx.fillStyle = 'rgba(244,241,255,0.88)';
+    ctx.font = '26px serif';
+    lines.forEach((line, index) => {
+      if (line) ctx.fillText(line, pad + 28, y + 84 + index * 36);
+    });
+    y += blockHeight + 22;
+  });
+
+  ctx.fillStyle = 'rgba(244,241,255,0.52)';
+  ctx.font = '22px serif';
+  ctx.fillText('vegebird-tarot', pad, height - 54);
+  ctx.textAlign = 'right';
+  ctx.fillText(new Date().toLocaleDateString(state.lang === 'zh' ? 'zh-CN' : 'en-US'), width - pad, height - 54);
+  ctx.textAlign = 'left';
+
+  return canvas;
+}
+
+async function saveAiReadingAsImage() {
+  if (state.readingStatus !== 'success' || !state.readingResult) return;
+  const btn = $('#btnSaveImage');
+  const original = btn?.textContent || t('saveImage');
+  try {
+    if (btn) {
+      btn.disabled = true;
+      btn.textContent = t('saveImagePreparing');
+    }
+    const canvas = buildAiReadingImageCanvas();
+    const blob = await new Promise((resolve, reject) => {
+      canvas.toBlob((value) => value ? resolve(value) : reject(new Error('Canvas export failed')), 'image/png', 0.96);
+    });
+    const filename = `vegebird-tarot-ai-reading-${new Date().toISOString().slice(0, 10)}.png`;
+    const file = new File([blob], filename, { type: 'image/png' });
+    if (navigator.canShare?.({ files: [file] }) && navigator.share) {
+      await navigator.share({ title: t('shareImageTitle'), files: [file] });
+    } else {
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1500);
+    }
+    updateHint(t('saveImageDone'));
+  } catch (err) {
+    console.error('[ui] save image failed', err);
+    updateHint(t('saveImageFailed'));
+  } finally {
+    if (btn) {
+      btn.disabled = false;
+      btn.textContent = original;
+    }
+  }
 }
 
 function renderAiReading() {
@@ -1403,6 +1641,11 @@ function renderAiReading() {
   if (titleEl) titleEl.textContent = t('aiTitleReading');
   const interpretBtn = $('#btnInterpret');
   if (interpretBtn) interpretBtn.textContent = t('aiGenerate');
+  const saveImageBtn = $('#btnSaveImage');
+  if (saveImageBtn) {
+    saveImageBtn.textContent = t('saveImage');
+    saveImageBtn.hidden = state.readingStatus !== 'success' || !state.readingResult;
+  }
 
   if (state.readingStatus === 'idle') {
     bodyEl.innerHTML = `<p class="muted">${t('aiPlaceholder')}</p>`;
@@ -1821,15 +2064,25 @@ function bindSettings() {
   const mot = $('#motion');
   const btnLang = $('#btnLang');
   if (btnLang) {
-    btnLang.addEventListener('click', (e) => {
+    const handleLangButtonPress = (e) => {
+      e.preventDefault();
       e.stopPropagation();
       toggleLanguageMenu();
+    };
+    btnLang.addEventListener('pointerup', handleLangButtonPress);
+    btnLang.addEventListener('click', (e) => {
+      if (e.detail === 0) handleLangButtonPress(e);
     });
   }
   $$('.langMenu__item').forEach((item) => {
-    item.addEventListener('click', (e) => {
+    const handleLangItemPress = (e) => {
+      e.preventDefault();
       e.stopPropagation();
       selectLanguage(item.dataset.lang);
+    };
+    item.addEventListener('pointerup', handleLangItemPress);
+    item.addEventListener('click', (e) => {
+      if (e.detail === 0) handleLangItemPress(e);
     });
   });
   document.addEventListener('click', (e) => {
@@ -1916,6 +2169,14 @@ function retryAiReading() {
 }
 
 function bindActions() {
+  const questionInput = $('#questionInput');
+  if (questionInput) {
+    questionInput.addEventListener('focus', () => revealIntoView(questionInput));
+    questionInput.addEventListener('click', () => revealIntoView(questionInput));
+  }
+  $$('.pickSlot__input').forEach((input) => {
+    input.addEventListener('focus', () => revealIntoView(input));
+  });
   $('#btnShuffle').addEventListener('click', ritualShuffleAnimation);
   $('#btnReShuffle').addEventListener('click', ritualShuffleAnimation);
   $('#btnLucky').addEventListener('click', onLuckyPick);
@@ -1924,6 +2185,8 @@ function bindActions() {
   $('#btnReset').addEventListener('click', onReset);
   $('#btnCopy').addEventListener('click', onCopy);
   $('#btnInterpret').addEventListener('click', retryAiReading);
+  const saveImageBtn = $('#btnSaveImage');
+  if (saveImageBtn) saveImageBtn.addEventListener('click', saveAiReadingAsImage);
   $('#btnCloseDetail').addEventListener('click', closeCardDetail);
   $('#detailPosterImage').addEventListener('click', () => openImageLightbox(state.activeDetailIndex));
   $('#btnZoomFromDetail').addEventListener('click', () => openImageLightbox(state.activeDetailIndex));
