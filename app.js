@@ -1972,9 +1972,13 @@ async function ritualShuffleAnimation() {
   orb.classList.remove('is-busy');
   $('#shuffleText').textContent = t('shuffled');
   setSequenceMeta(t('shuffledMeta'));
-  $('#btnShuffle .primaryAction__top').textContent = t('reshuffle');
-  $('#btnToPick').hidden = false;
-  $('#btnToPick').textContent = t('goPick');
+  const shuffleBtn = $('#btnShuffle');
+  const toPickBtn = $('#btnToPick');
+  shuffleBtn.className = 'secondaryAction';
+  shuffleBtn.querySelector('.primaryAction__top').textContent = t('reshuffle');
+  toPickBtn.className = 'primaryAction primaryAction--single';
+  toPickBtn.hidden = false;
+  toPickBtn.textContent = t('goPick');
   updateHint(t('shuffledHint'));
 }
 
@@ -2089,8 +2093,12 @@ function onReset() {
   $('#customMeaningList').innerHTML = '';
   $$('.spreadOption').forEach(btn => btn.classList.toggle('is-active', btn.dataset.spread === 'blank3'));
   $('#shuffleText').textContent = '';
-  $('#btnShuffle .primaryAction__top').textContent = t('startShuffle');
-  $('#btnToPick').hidden = true;
+  const shuffleBtn = $('#btnShuffle');
+  const toPickBtn = $('#btnToPick');
+  shuffleBtn.className = 'primaryAction primaryAction--single';
+  shuffleBtn.innerHTML = `<span class="primaryAction__top">${t('startShuffle')}</span>`;
+  toPickBtn.className = 'secondaryAction';
+  toPickBtn.hidden = true;
   renderQuestionEcho();
   renderSpreadEcho();
   renderPickInputs();
