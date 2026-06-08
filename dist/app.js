@@ -66,8 +66,11 @@ const I18N = {
     aiGenerate: '生成 AI 解读',
     saveImage: '保存为图片',
     saveImagePreparing: '正在生成图片…',
-    saveImageDone: '图片已生成，请在浏览器下载或系统分享面板中保存。',
+    saveImageDone: '图片已生成，请在浏览器下载、系统分享面板，或长按预览图保存。',
     saveImageFailed: '生成图片失败了，请稍后重试。',
+    saveImagePreviewHint: '如果你在微信里打开，请长按下方图片保存到手机。',
+    saveImageDownload: '下载图片',
+    saveImageClose: '关闭',
     shareImageTitle: '菜鸟塔罗 AI 解读',
     aiRefine: '补充问题后再解读',
     backPick: '返回盲选',
@@ -219,8 +222,11 @@ const I18N = {
     aiGenerate: 'Generate AI reading',
     saveImage: 'Save as image',
     saveImagePreparing: 'Generating image…',
-    saveImageDone: 'Image generated. Save it from your browser download or system share sheet.',
+    saveImageDone: 'Image generated. Save it from your browser download, system share sheet, or by long-pressing the preview image.',
     saveImageFailed: 'Failed to generate the image. Please try again later.',
+    saveImagePreviewHint: 'If you are viewing this in WeChat, long-press the image below to save it.',
+    saveImageDownload: 'Download image',
+    saveImageClose: 'Close',
     shareImageTitle: 'Vegebird Tarot AI Reading',
     aiRefine: 'Refine the question first',
     backPick: 'Back to pick',
@@ -1589,6 +1595,33 @@ function buildAiReadingImageCanvas() {
   return canvas;
 }
 
+function showImageSavePreview(dataUrl, filename) {
+  const bodyEl = $('#llmReading');
+  if (!bodyEl || !dataUrl) return;
+  const old = $('#saveImagePreview');
+  if (old) old.remove();
+  const wrap = el('div', 'sharePreview');
+  wrap.id = 'saveImagePreview';
+  const hint = el('p', 'sharePreview__hint');
+  hint.textContent = t('saveImagePreviewHint');
+  const img = el('img', 'sharePreview__image');
+  img.src = dataUrl;
+  img.alt = t('shareImageTitle');
+  const actions = el('div', 'sharePreview__actions');
+  const download = el('a', 'ghost ghost--small');
+  download.href = dataUrl;
+  download.download = filename;
+  download.textContent = t('saveImageDownload');
+  const close = el('button', 'ghost ghost--small');
+  close.type = 'button';
+  close.textContent = t('saveImageClose');
+  close.addEventListener('click', () => wrap.remove());
+  actions.append(download, close);
+  wrap.append(hint, img, actions);
+  bodyEl.appendChild(wrap);
+  wrap.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
 async function saveAiReadingAsImage() {
   if (state.readingStatus !== 'success' || !state.readingResult) return;
   const btn = $('#btnSaveImage');
@@ -1603,6 +1636,8 @@ async function saveAiReadingAsImage() {
       canvas.toBlob((value) => value ? resolve(value) : reject(new Error('Canvas export failed')), 'image/png', 0.96);
     });
     const filename = `vegebird-tarot-ai-reading-${new Date().toISOString().slice(0, 10)}.png`;
+    const dataUrl = canvas.toDataURL('image/png', 0.96);
+    showImageSavePreview(dataUrl, filename);
     const file = new File([blob], filename, { type: 'image/png' });
     if (navigator.canShare?.({ files: [file] }) && navigator.share) {
       await navigator.share({ title: t('shareImageTitle'), files: [file] });
@@ -1618,6 +1653,10 @@ async function saveAiReadingAsImage() {
     }
     updateHint(t('saveImageDone'));
   } catch (err) {
+    if (err?.name === 'AbortError' || err?.name === 'NotAllowedError') {
+      updateHint(t('saveImageDone'));
+      return;
+    }
     console.error('[ui] save image failed', err);
     updateHint(t('saveImageFailed'));
   } finally {
