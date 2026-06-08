@@ -2146,7 +2146,7 @@ function bindSettings() {
       e.stopPropagation();
       toggleLanguageMenu();
     };
-    btnLang.addEventListener('pointerup', handleLangButtonPress);
+    btnLang.addEventListener('pointerdown', handleLangButtonPress);
     btnLang.addEventListener('click', (e) => {
       if (e.detail === 0) handleLangButtonPress(e);
     });
@@ -2157,7 +2157,7 @@ function bindSettings() {
       e.stopPropagation();
       selectLanguage(item.dataset.lang);
     };
-    item.addEventListener('pointerup', handleLangItemPress);
+    item.addEventListener('pointerdown', handleLangItemPress);
     item.addEventListener('click', (e) => {
       if (e.detail === 0) handleLangItemPress(e);
     });
