@@ -756,15 +756,99 @@ function callOpenClawControlWsOnce(wsUrl, token, requestBody) {
 function buildOpenClawDeepReadingPrompt(requestBody) {
   const payload = requestBody.payload || {};
   const isZh = payload.lang === 'zh';
-  const json = JSON.stringify(requestBody, null, 2);
-  const callbackNote = requestBody.callbackUrl
+  const question = normalizeText(payload.question) || (isZh ? '未填写具体问题' : 'No specific question provided');
+  const spreadName = normalizeText(payload.spreadName) || normalizeText(payload.spreadType) || (isZh ? '当前牌阵' : 'Current spread');
+  const cards = Array.isArray(payload.cards) ? payload.cards : [];
+  const cardLines = cards.map((card, idx) => {
+    const position = normalizeText(card.position) || (isZh ? `第${idx + 1}张` : `Card ${idx + 1}`);
+    const name = normalizeText(card.name) || (isZh ? '未知牌' : 'Unknown card');
+    const orientation = card.orientation === 'reversed'
+      ? (isZh ? '逆位' : 'reversed')
+      : (isZh ? '正位' : 'upright');
+    const summary = normalizeText(card.summary);
+    const keywords = normalizeText(card.keywords);
+    const meaning = normalizeText(card.meaning);
+    if (isZh) {
+      return [
+        `${idx + 1}. ${position}：${name}（${orientation}）`,
+        summary ? `   摘要：${summary}` : '',
+        keywords ? `   关键词：${keywords}` : '',
+        meaning ? `   牌义：${meaning}` : '',
+      ].filter(Boolean).join('\n');
+    }
+    return [
+      `${idx + 1}. ${position}: ${name} (${orientation})`,
+      summary ? `   Summary: ${summary}` : '',
+      keywords ? `   Keywords: ${keywords}` : '',
+      meaning ? `   Meaning: ${meaning}` : '',
+    ].filter(Boolean).join('\n');
+  }).join('\n');
+  const callbackBlock = requestBody.callbackUrl
     ? (isZh
-        ? `\n\n如果你有可用的 HTTP/命令行工具，请在完成后 POST 到 callbackUrl。请求 JSON 必须包含 jobId 和 result，result 字段含 summary, synthesis, advice, riskNotes, followUps。callbackSecret 如存在，请用 X-OpenClaw-Callback-Secret 请求头发送。`
-        : `\n\nIf you have an HTTP/command-line tool available, POST the completed result to callbackUrl. The JSON body must include jobId and result with summary, synthesis, advice, riskNotes, followUps. If callbackSecret is present, send it as the X-OpenClaw-Callback-Secret header.`)
+        ? [
+            '回调要求：',
+            `- 完成解读后，请 POST 到：${requestBody.callbackUrl}`,
+            '- 请求体必须是 JSON：{"jobId":"...","result":{"summary":"...","synthesis":"...","advice":"...","riskNotes":"...","followUps":["..."]}}',
+            '- result 字段必须包含 summary, synthesis, advice, riskNotes, followUps。',
+            requestBody.callbackSecret ? `- 请求头必须带：X-OpenClaw-Callback-Secret: ${requestBody.callbackSecret}` : '',
+          ].filter(Boolean).join('\n')
+        : [
+            'Callback requirements:',
+            `- After completing the reading, POST to: ${requestBody.callbackUrl}`,
+            '- The request body must be JSON: {"jobId":"...","result":{"summary":"...","synthesis":"...","advice":"...","riskNotes":"...","followUps":["..."]}}',
+            '- result must include summary, synthesis, advice, riskNotes, followUps.',
+            requestBody.callbackSecret ? `- Include this header: X-OpenClaw-Callback-Secret: ${requestBody.callbackSecret}` : '',
+          ].filter(Boolean).join('\n'))
     : '';
-  return isZh
-    ? `你正在为 Vegebird Tarot 网站生成“深度解读”。\n\n要求：\n- 严格依据 payload 里的问题、牌阵、牌名、正逆位、摘要、关键词和牌义。\n- 不要编造用户没提供的信息。\n- 不要输出寒暄、Markdown 或代码块。\n- 只返回 JSON，对象字段固定为 summary, synthesis, advice, riskNotes, followUps。\n- followUps 必须是字符串数组。${callbackNote}\n\n请求数据：\n${json}`
-    : `Generate a Deep Reading for the Vegebird Tarot website.\n\nRules:\n- Use only the question, spread, card names, orientations, summaries, keywords, and meanings in the payload.\n- Do not invent facts the user did not provide.\n- Do not output greetings, Markdown, or code fences.\n- Return JSON only with exactly these fields: summary, synthesis, advice, riskNotes, followUps.\n- followUps must be an array of strings.${callbackNote}\n\nRequest data:\n${json}`;
+
+  if (isZh) {
+    return `你现在是 VEGEBIRD TAROT 的正式解牌助手。严格执行塔罗正式解读 SOP。必须做主牌核验，并按固定结构输出：结论 → 人话版 → 建议 → 风险提醒 → 牌理推理。
+
+解读规则：
+- 严格依据下面的用户问题、牌阵、牌名、正逆位、摘要、关键词和牌义。
+- 不要编造用户没提供的现实事实，不要做宿命论，不说必然、注定、100%。
+- 先判断主牌/核心矛盾，再看辅助牌如何推动、阻碍或修正主牌。
+- 逆位优先理解为过度、不足、卡住、失衡、未展开，不要简单等于坏。
+- 关系题看互动结构；工作/选择题看现实约束、行动顺序和风险。
+- 涉及医疗、法律、投资、安全等高风险问题时，只解读倾向与心理/处境，不替代专业意见。
+
+输出要求：
+- 解读内容必须覆盖：结论、人话版、建议、风险提醒、牌理推理。
+- 最终给网站的结果必须是 JSON，不要 Markdown，不要代码块，不要寒暄。
+- JSON 字段固定为：summary, synthesis, advice, riskNotes, followUps。
+- 字段映射：summary=结论；synthesis=人话版+牌理推理；advice=建议；riskNotes=风险提醒；followUps=可继续追问的问题数组。
+- followUps 必须是字符串数组。
+
+用户问题：${question}
+牌阵：${spreadName}
+抽到的牌：
+${cardLines || '（无牌面数据）'}
+
+${callbackBlock}`.trim();
+  }
+
+  return `You are the official VEGEBIRD TAROT reading assistant. Follow the formal deep-reading SOP. You must identify the main/core card and output in this fixed structure: conclusion → plain-language reading → advice → risk notes → card-logic reasoning.
+
+Reading rules:
+- Use only the user's question, spread, card names, orientations, summaries, keywords, and meanings below.
+- Do not invent real-world facts the user did not provide. Avoid fatalism and absolute certainty.
+- Identify the core card/core tension first, then explain how supporting cards push, block, or modify it.
+- Read reversals as excess, deficiency, blockage, distortion, instability, or unexpressed potential — not simply bad.
+- For high-risk medical, legal, financial, safety, or psychiatric topics, only discuss tendencies and boundaries; do not replace professional advice.
+
+Output requirements:
+- Cover conclusion, plain-language reading, advice, risk notes, and card-logic reasoning.
+- The final website result must be JSON only. No Markdown, no code fences, no greetings.
+- Use exactly these fields: summary, synthesis, advice, riskNotes, followUps.
+- Field mapping: summary=conclusion; synthesis=plain-language reading + card-logic reasoning; advice=advice; riskNotes=risk notes; followUps=array of follow-up questions.
+- followUps must be an array of strings.
+
+User question: ${question}
+Spread: ${spreadName}
+Cards:
+${cardLines || '(No card data)'}
+
+${callbackBlock}`.trim();
 }
 
 function extractLatestAssistantText(history) {
