@@ -64,6 +64,8 @@ const I18N = {
     aiPlaceholder: '这里将显示 OpenClaw 返回的整体结论、建议与推荐追问。',
     retryAi: '重试 AI 解牌',
     aiGenerate: '生成 AI 解读',
+    aiDeepGenerate: '深度解读',
+    aiDeepLoading: '正在请求 OpenClaw 做深度解读…这可能需要几十秒。',
     saveImage: '保存为图片',
     saveImagePreparing: '正在生成图片…',
     saveImageDone: '图片已生成，请在浏览器下载、系统分享面板，或长按预览图保存。',
@@ -224,6 +226,8 @@ const I18N = {
     aiPlaceholder: 'OpenClaw’s overall reading, advice, and suggested follow-up questions will appear here.',
     retryAi: 'Retry AI reading',
     aiGenerate: 'Generate AI reading',
+    aiDeepGenerate: 'Deep reading',
+    aiDeepLoading: 'Asking OpenClaw for a deep reading… this may take tens of seconds.',
     saveImage: 'Save as image',
     saveImagePreparing: 'Generating image…',
     saveImageDone: 'Image generated. Save it from your browser download, system share sheet, or by long-pressing the preview image.',
@@ -583,6 +587,7 @@ function applyTranslations() {
   set('.readingPanel__head span:first-child', t('readingTitle'));
   set('#llmPanelTitle', t('aiTitle'));
   set('#btnInterpret', state.lang === 'zh' ? '生成 AI 解读' : 'Generate AI reading');
+  set('#btnDeepInterpret', t('aiDeepGenerate'));
   set('#btnReset .primaryAction__top', t('resetTop'));
   set('#btnReset .primaryAction__sub', t('resetSub'));
   set('#settings .modal__title', t('settingsTitle'));
@@ -612,6 +617,10 @@ function applyTranslations() {
   const interpretBtn = $('#btnInterpret');
   if (interpretBtn) {
     interpretBtn.textContent = t('aiGenerate');
+  }
+  const deepInterpretBtn = $('#btnDeepInterpret');
+  if (deepInterpretBtn) {
+    deepInterpretBtn.textContent = t('aiDeepGenerate');
   }
 
   renderQuestionEcho();
@@ -1716,7 +1725,15 @@ function renderAiReading() {
   statusEl.textContent = statusMap[state.readingStatus] || state.readingStatus;
   if (titleEl) titleEl.textContent = t('aiTitleReading');
   const interpretBtn = $('#btnInterpret');
-  if (interpretBtn) interpretBtn.textContent = t('aiGenerate');
+  if (interpretBtn) {
+    interpretBtn.textContent = t('aiGenerate');
+    interpretBtn.disabled = state.readingStatus === 'loading';
+  }
+  const deepInterpretBtn = $('#btnDeepInterpret');
+  if (deepInterpretBtn) {
+    deepInterpretBtn.textContent = t('aiDeepGenerate');
+    deepInterpretBtn.disabled = state.readingStatus === 'loading';
+  }
   const donateBtn = $('#btnDonate');
   if (donateBtn) donateBtn.textContent = t('donateCta');
   const saveImageBtn = $('#btnSaveImage');
@@ -1730,7 +1747,7 @@ function renderAiReading() {
     return;
   }
   if (state.readingStatus === 'loading') {
-    bodyEl.innerHTML = `<p class="muted">${t('aiLoading')}</p>`;
+    bodyEl.innerHTML = `<p class="muted">${state.readingMode === 'deep' ? t('aiDeepLoading') : t('aiLoading')}</p>`;
     return;
   }
   if (state.readingStatus === 'error') {
@@ -1900,6 +1917,77 @@ async function requestAiReading({ allowMockFallback = true } = {}) {
       return;
     }
     state.readingStatus = 'error';
+    state.readingResult = null;
+    state.readingErrorCode = error?.status === 503 || /timeout|timed out|cold|upstream/i.test(error?.message || '') ? 'cold-start' : 'request-failed';
+    renderAiReading();
+  }
+}
+
+async function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function requestDeepReading() {
+  console.log('[ui] requestDeepReading:start', {
+    drawCount: state.drawn?.length || 0,
+    lang: state.lang,
+    apiBase: window.VEGE_TAROT_API_BASE || 'http://127.0.0.1:8787',
+  });
+  if (!state.drawn.length) return;
+  const api = window.VEGE_TAROT_API;
+  if (!api?.createDeepReading || !api?.getDeepReadingJob) {
+    state.readingStatus = 'error';
+    state.readingMode = 'deep';
+    state.readingResult = null;
+    state.readingErrorCode = 'api-missing';
+    renderAiReading();
+    return;
+  }
+
+  state.readingStatus = 'loading';
+  state.readingMode = 'deep';
+  state.readingResult = null;
+  state.readingErrorCode = '';
+  renderAiReading();
+
+  const payload = { ...buildInterpretPayload(), depth: 'deep' };
+  logDebug('deep-interpret-create', payload);
+
+  try {
+    const created = await api.createDeepReading(payload);
+    const jobId = created?.jobId;
+    if (!jobId) throw new Error('深度解读任务创建失败：缺少 jobId');
+
+    let latest = created;
+    for (let i = 0; i < 60; i += 1) {
+      if (latest?.status === 'success' || latest?.status === 'failed') break;
+      await sleep(i < 6 ? 1500 : 3000);
+      latest = await api.getDeepReadingJob(jobId);
+      logDebug('deep-interpret-poll', { jobId, status: latest?.status, i });
+    }
+
+    if (latest?.status !== 'success') {
+      throw new Error(latest?.error || '深度解读还没有完成，请稍后再试');
+    }
+    const normalized = normalizeInterpretResponse({ mode: 'deep', result: latest.result });
+    const hasUsefulContent = normalized.summary || normalized.synthesis || normalized.advice || normalized.riskNotes || (normalized.followUps && normalized.followUps.length);
+    if (!hasUsefulContent) throw new Error('深度解读返回成功，但没有可展示内容');
+    if (state.lang === 'en' && !isEnglishReadingResultClean(normalized)) {
+      throw new Error('Deep reading returned Chinese content while page is in English mode');
+    }
+    state.readingStatus = 'success';
+    state.readingMode = 'deep';
+    state.readingResult = normalized;
+    state.readingErrorCode = '';
+    renderAiReading();
+  } catch (error) {
+    console.error('[ui] deep interpret request failed', {
+      message: error?.message || String(error),
+      status: error?.status,
+      payload: error?.payload || null,
+    });
+    state.readingStatus = 'error';
+    state.readingMode = 'deep';
     state.readingResult = null;
     state.readingErrorCode = error?.status === 503 || /timeout|timed out|cold|upstream/i.test(error?.message || '') ? 'cold-start' : 'request-failed';
     renderAiReading();
@@ -2262,6 +2350,16 @@ function retryAiReading() {
   requestAiReading({ allowMockFallback: false });
 }
 
+function retryDeepReading() {
+  console.log('[ui] btnDeepInterpret clicked', {
+    drawCount: state.drawn?.length || 0,
+    lang: state.lang,
+    apiBase: window.VEGE_TAROT_API_BASE || 'http://127.0.0.1:8787',
+  });
+  if (!state.drawn.length) return;
+  requestDeepReading();
+}
+
 function bindActions() {
   const questionInput = $('#questionInput');
   if (questionInput) {
@@ -2279,6 +2377,8 @@ function bindActions() {
   $('#btnReset').addEventListener('click', onReset);
   $('#btnCopy').addEventListener('click', onCopy);
   $('#btnInterpret').addEventListener('click', retryAiReading);
+  const deepInterpretBtn = $('#btnDeepInterpret');
+  if (deepInterpretBtn) deepInterpretBtn.addEventListener('click', retryDeepReading);
   const saveImageBtn = $('#btnSaveImage');
   if (saveImageBtn) saveImageBtn.addEventListener('click', saveAiReadingAsImage);
   const donateBtn = $('#btnDonate');

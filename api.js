@@ -36,6 +36,19 @@ window.VEGE_TAROT_API = (() => {
     });
   }
 
+  async function createDeepReading(payload) {
+    return request('/api/tarot/deep-interpret', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
+  }
+
+  async function getDeepReadingJob(jobId) {
+    return request(`/api/tarot/deep-interpret/${encodeURIComponent(jobId)}`, {
+      method: 'GET',
+    });
+  }
+
   async function followUpReading(payload) {
     return request('/api/tarot/follow-up', {
       method: 'POST',
@@ -52,6 +65,8 @@ window.VEGE_TAROT_API = (() => {
   return {
     request,
     interpretReading,
+    createDeepReading,
+    getDeepReadingJob,
     followUpReading,
     fetchHistory,
   };
