@@ -828,13 +828,12 @@ function buildOpenClawDeepReadingPrompt(requestBody) {
     : '';
 
   if (isZh) {
-    return `你现在只需要根据下面这次抽牌结果，按你自己的塔罗解牌规则直接解读。
+    return `任务一：先根据下面这次抽牌结果，按你自己的塔罗解牌规则直接完成解读。
 
-要求：
+解读要求：
 - 重点围绕用户的问题来解，不要偏离问题本身。
-- 直接输出一整段完整解读，保持你自然的解牌方式。
+- 先写出一整段完整自然的解读原文，保持你自然的解牌方式。
 - 不要把结果拆成固定栏目，不要强行写成报告模板。
-- 不要输出 JSON，不要代码块，不要解释你的流程。
 - 如果有不确定性，可以直接在解读里说明。
 - 涉及医疗、法律、投资、安全等高风险问题时，只做塔罗层面的倾向分析，不替代专业意见。
 
@@ -843,16 +842,20 @@ function buildOpenClawDeepReadingPrompt(requestBody) {
 抽牌结果：
 ${cardLines || '（无牌面数据）'}
 
+任务二：完成上面的解读原文后，再执行 HTTP 回调。
+- 这里的 JSON 只用于 HTTP 回调，不是给用户展示的输出格式。
+- 请把你刚才写好的完整解读原文，原样放进 fullText 字段。
+- 不要重新概括，不要缩写，不要拆字段。
+
 ${callbackBlock}`.trim();
   }
 
-  return `Use the tarot draw below and interpret it according to your own reading method.
+  return `Task 1: first interpret the tarot draw below in your own reading style.
 
-Requirements:
+Reading requirements:
 - Stay focused on the user's actual question.
-- Return one complete reading in your natural style.
+- First produce one complete natural reading in your own style.
 - Do not split the answer into rigid report sections.
-- Do not output JSON, code fences, or an explanation of your process.
 - If the reading is uncertain, say so naturally inside the reading.
 - For medical, legal, financial, safety, or similarly high-risk topics, only give tarot-level tendencies and do not replace professional advice.
 
@@ -860,6 +863,11 @@ User question: ${question}
 Spread: ${spreadName}
 Draw result:
 ${cardLines || '(No card data)'}
+
+Task 2: after finishing the reading above, perform the HTTP callback.
+- The JSON here is only for the HTTP callback, not for user-facing display.
+- Put the exact full reading you just wrote into the fullText field.
+- Do not summarize it again, do not shorten it, and do not split it into multiple fields.
 
 ${callbackBlock}`.trim();
 }
@@ -922,8 +930,8 @@ async function runDeepReadingJob(jobId) {
     depth: 'deep',
     payload: job.payload,
     instructions: job.payload.lang === 'en'
-      ? 'Return the final tarot reading as one complete plain-text response.'
-      : '请直接返回一整段完整塔罗解读原文，不要拆字段。',
+      ? 'First write one complete tarot reading, then send that exact reading back in callback result.fullText.'
+      : '先完成一整段完整塔罗解读原文，再把这段原文原样放进 callback 的 result.fullText。',
   };
 
   if (!hook.url && !url) {
