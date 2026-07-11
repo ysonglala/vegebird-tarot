@@ -1764,7 +1764,7 @@ function renderAiReading() {
   const interpretBtn = $('#btnInterpret');
   if (interpretBtn) {
     interpretBtn.textContent = t('aiGenerate');
-    interpretBtn.disabled = state.readingStatus === 'loading';
+    interpretBtn.disabled = state.readingStatus === 'loading' || (state.readingMode === 'deep' && state.readingStatus === 'success');
   }
   const deepInterpretBtn = $('#btnDeepInterpret');
   if (deepInterpretBtn) {
