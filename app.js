@@ -1476,19 +1476,7 @@ function buildFallbackReadingFromCurrentDraw() {
 function getAiReadingExportSections() {
   const result = state.readingResult || {};
   const sections = [];
-  if (result.summary) sections.push({ label: t('aiSummary'), text: normalizeDictText(result.summary) });
-  if (result.plainSpeak) sections.push({ label: t('aiPlainSpeak'), text: normalizeDictText(result.plainSpeak) });
-  if (result.mainCardCheck) sections.push({ label: t('aiMainCardCheck'), text: normalizeDictText(result.mainCardCheck) });
-  if (result.synthesis) sections.push({ label: t('aiSynthesis'), text: normalizeDictText(result.synthesis) });
-  if (result.reasoning) sections.push({ label: t('aiReasoning'), text: normalizeDictText(result.reasoning) });
-  if (result.advice) sections.push({ label: t('aiAdvice'), text: normalizeDictText(result.advice) });
-  if (result.riskNotes) sections.push({ label: t('aiRisk'), text: normalizeDictText(result.riskNotes) });
-  if (Array.isArray(result.followUps) && result.followUps.length) {
-    sections.push({
-      label: t('aiFollowups'),
-      text: result.followUps.map(x => `• ${normalizeDictText(x)}`).filter(Boolean).join('\n'),
-    });
-  }
+  if (result.summary) sections.push({ label: state.readingMode === 'deep' ? t('aiTitleDeepReading') : t('aiSummary'), text: normalizeDictText(result.summary) });
   return sections.filter(section => section.text);
 }
 
@@ -1801,23 +1789,9 @@ function renderAiReading() {
   const result = state.readingResult || {};
   const isDeep = state.readingMode === 'deep' || result.mode === 'deep';
   const blocks = [];
-  if (isDeep) {
-    if (result.summary) blocks.push(renderReadingSection(t('aiSummary'), result.summary, 'aiPanel__block--hero'));
-    if (result.plainSpeak) blocks.push(renderReadingSection(t('aiPlainSpeak'), result.plainSpeak));
-    if (result.mainCardCheck) blocks.push(renderReadingSection(t('aiMainCardCheck'), result.mainCardCheck, 'aiPanel__block--accent'));
-    if (result.synthesis) blocks.push(renderReadingSection(t('aiSynthesis'), result.synthesis));
-    if (result.reasoning) blocks.push(renderReadingSection(t('aiReasoning'), result.reasoning, 'aiPanel__block--logic'));
-    if (result.advice) blocks.push(renderReadingSection(t('aiAdvice'), result.advice));
-    if (result.riskNotes) blocks.push(renderReadingSection(t('aiRisk'), result.riskNotes, 'aiPanel__block--risk'));
-  } else {
-    if (result.summary) blocks.push(renderReadingSection(t('aiSummary'), result.summary));
-    if (result.synthesis) blocks.push(renderReadingSection(t('aiSynthesis'), result.synthesis));
-    if (result.advice) blocks.push(renderReadingSection(t('aiAdvice'), result.advice));
-    if (result.riskNotes) blocks.push(renderReadingSection(t('aiRisk'), result.riskNotes));
-  }
-  if (Array.isArray(result.followUps) && result.followUps.length) {
-    const items = result.followUps.map(x => `<li>${escapeHtml(normalizeDictText(x))}</li>`).filter(Boolean).join('');
-    if (items) blocks.push(`<section class="aiPanel__block aiPanel__block--follow"><div class="aiPanel__label">${escapeHtml(t('aiFollowups'))}</div><ul class="aiPanel__followups">${items}</ul></section>`);
+  if (result.summary) {
+    const label = isDeep ? t('aiTitleDeepReading') : t('aiSummary');
+    blocks.push(renderReadingSection(label, result.summary, isDeep ? 'aiPanel__block--hero' : 'aiPanel__block--accent'));
   }
   bodyEl.innerHTML = blocks.length ? `<div class="${isDeep ? 'deepReport' : 'quickReport'}">${blocks.join('')}</div>` : `<p class="muted">${t('aiEmpty')}</p>`;
 }
@@ -1868,26 +1842,35 @@ function buildInterpretPayload() {
 
 function normalizeInterpretResponse(data) {
   const result = data?.result || data?.data || data || {};
+  const fullText = normalizeDictText(
+    result.fullText
+    || result.text
+    || result.message
+    || result.content
+    || result.answer
+    || result.output
+    || result.reading
+    || result.summary
+    || result.overall
+    || result.overallSummary
+    || ''
+  );
   return {
     mode: data?.mode || 'reading',
-    summary: normalizeDictText(result.summary || result.overall || result.overallSummary || ''),
-    plainSpeak: normalizeDictText(result.plainSpeak || result.plainLanguage || result.humanVersion || result.humanReadable || ''),
-    mainCardCheck: normalizeDictText(result.mainCardCheck || result.mainCard || result.coreCard || result.coreCheck || ''),
-    synthesis: normalizeDictText(result.synthesis || result.analysis || result.linkage || ''),
-    reasoning: normalizeDictText(result.reasoning || result.cardLogic || result.cardReasoning || result.tarotLogic || result.logic || ''),
-    advice: normalizeDictText(result.advice || result.suggestion || result.recommendation || ''),
-    riskNotes: normalizeDictText(result.riskNotes || result.risks || result.cautions || ''),
-    followUps: Array.isArray(result.followUps)
-      ? result.followUps.map(x => normalizeDictText(x)).filter(Boolean)
-      : Array.isArray(result.followUpSuggestions)
-        ? result.followUpSuggestions.map(x => normalizeDictText(x)).filter(Boolean)
-        : [],
+    summary: fullText,
+    plainSpeak: '',
+    mainCardCheck: '',
+    synthesis: '',
+    reasoning: '',
+    advice: '',
+    riskNotes: '',
+    followUps: [],
   };
 }
 
 function isEnglishReadingResultClean(result) {
   if (!result) return false;
-  const texts = [result.summary, result.plainSpeak, result.mainCardCheck, result.synthesis, result.reasoning, result.advice, result.riskNotes, ...(result.followUps || [])]
+  const texts = [result.summary]
     .map(x => normalizeDictText(x))
     .filter(Boolean);
   if (!texts.length) return false;
@@ -1940,7 +1923,7 @@ async function requestAiReading({ allowMockFallback = true } = {}) {
     const response = await api.interpretReading(payload);
     console.log('[ui] interpret response raw', response);
     const normalized = normalizeInterpretResponse(response);
-    const hasUsefulContent = normalized.summary || normalized.plainSpeak || normalized.mainCardCheck || normalized.synthesis || normalized.reasoning || normalized.advice || normalized.riskNotes || (normalized.followUps && normalized.followUps.length);
+    const hasUsefulContent = normalized.summary;
     if (!hasUsefulContent) throw new Error('AI 返回成功，但没有可展示内容');
     if (state.lang === 'en' && !isEnglishReadingResultClean(normalized)) {
       throw new Error('AI returned Chinese content while page is in English mode');
@@ -2027,7 +2010,7 @@ async function requestDeepReading() {
       throw new Error(latest?.error || '深度解读还没有完成，请稍后再试');
     }
     const normalized = normalizeInterpretResponse({ mode: 'deep', result: latest.result });
-    const hasUsefulContent = normalized.summary || normalized.plainSpeak || normalized.mainCardCheck || normalized.synthesis || normalized.reasoning || normalized.advice || normalized.riskNotes || (normalized.followUps && normalized.followUps.length);
+    const hasUsefulContent = normalized.summary;
     if (!hasUsefulContent) throw new Error('深度解读返回成功，但没有可展示内容');
     if (state.lang === 'en' && !isEnglishReadingResultClean(normalized)) {
       throw new Error('Deep reading returned Chinese content while page is in English mode');

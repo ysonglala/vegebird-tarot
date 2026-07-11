@@ -169,15 +169,28 @@ function buildMockDeepResult(body) {
 
 function normalizeDeepResultPayload(payload) {
   const data = payload?.result || payload?.data || payload || {};
+  const fullText = normalizeText(
+    data.fullText
+    || data.text
+    || data.message
+    || data.content
+    || data.answer
+    || data.output
+    || data.reading
+    || data.summary
+    || data.overall
+    || data.overallSummary
+    || ''
+  );
   return {
-    summary: normalizeText(data.summary || data.overall || data.overallSummary || ''),
-    plainSpeak: normalizeText(data.plainSpeak || data.plainLanguage || data.humanVersion || data.humanReadable || ''),
-    mainCardCheck: normalizeText(data.mainCardCheck || data.mainCard || data.coreCard || data.coreCheck || ''),
-    synthesis: normalizeText(data.synthesis || data.analysis || data.deepAnalysis || data.linkage || ''),
-    reasoning: normalizeText(data.reasoning || data.cardLogic || data.cardReasoning || data.tarotLogic || data.logic || ''),
-    advice: normalizeText(data.advice || data.suggestion || data.recommendation || ''),
-    riskNotes: normalizeText(data.riskNotes || data.risks || data.cautions || ''),
-    followUps: Array.isArray(data.followUps) ? data.followUps.map(item => normalizeText(item)).filter(Boolean) : [],
+    summary: fullText,
+    plainSpeak: '',
+    mainCardCheck: '',
+    synthesis: '',
+    reasoning: '',
+    advice: '',
+    riskNotes: '',
+    followUps: [],
   };
 }
 
@@ -797,66 +810,55 @@ function buildOpenClawDeepReadingPrompt(requestBody) {
         ? [
             '回调要求：',
             `- 完成解读后，请 POST 到：${requestBody.callbackUrl}`,
-            '- 请求体必须是 JSON：{"jobId":"...","result":{"summary":"...","plainSpeak":"...","mainCardCheck":"...","synthesis":"...","reasoning":"...","advice":"...","riskNotes":"...","followUps":["..."]}}',
-            '- result 字段必须包含 summary, plainSpeak, mainCardCheck, synthesis, reasoning, advice, riskNotes, followUps。',
+            '- 请求体必须是 JSON。',
+            '- 推荐格式：{"jobId":"...","result":{"fullText":"完整解读原文"}}',
+            '- 也接受：{"jobId":"...","fullText":"完整解读原文"}。',
+            '- 不要把内容拆成很多字段，直接返回完整解读原文。',
             requestBody.callbackSecret ? `- 请求头必须带：X-OpenClaw-Callback-Secret: ${requestBody.callbackSecret}` : '',
           ].filter(Boolean).join('\n')
         : [
             'Callback requirements:',
             `- After completing the reading, POST to: ${requestBody.callbackUrl}`,
-            '- The request body must be JSON: {"jobId":"...","result":{"summary":"...","plainSpeak":"...","mainCardCheck":"...","synthesis":"...","reasoning":"...","advice":"...","riskNotes":"...","followUps":["..."]}}',
-            '- result must include summary, plainSpeak, mainCardCheck, synthesis, reasoning, advice, riskNotes, followUps.',
+            '- The request body must be JSON.',
+            '- Preferred format: {"jobId":"...","result":{"fullText":"the full reading text"}}',
+            '- Also accepted: {"jobId":"...","fullText":"the full reading text"}.',
+            '- Do not split the reading into many fields. Return the full reading text as one whole result.',
             requestBody.callbackSecret ? `- Include this header: X-OpenClaw-Callback-Secret: ${requestBody.callbackSecret}` : '',
           ].filter(Boolean).join('\n'))
     : '';
 
   if (isZh) {
-    return `你现在是 VEGEBIRD TAROT 的正式解牌助手。严格执行塔罗正式解读 SOP。必须做主牌核验，并按固定结构输出：结论 → 人话版 → 建议 → 风险提醒 → 牌理推理。
+    return `你现在只需要根据下面这次抽牌结果，按你自己的塔罗解牌规则直接解读。
 
-解读规则：
-- 严格依据下面的用户问题、牌阵、牌名、正逆位、摘要、关键词和牌义。
-- 不要编造用户没提供的现实事实，不要做宿命论，不说必然、注定、100%。
-- 先判断主牌/核心矛盾，再看辅助牌如何推动、阻碍或修正主牌。
-- 逆位优先理解为过度、不足、卡住、失衡、未展开，不要简单等于坏。
-- 关系题看互动结构；工作/选择题看现实约束、行动顺序和风险。
-- 涉及医疗、法律、投资、安全等高风险问题时，只解读倾向与心理/处境，不替代专业意见。
-
-输出要求：
-- 解读内容必须覆盖：结论、人话版、主牌核验、建议、风险提醒、牌理推理。
-- 最终给网站的结果必须是 JSON，不要 Markdown，不要代码块，不要寒暄。
-- JSON 字段固定为：summary, plainSpeak, mainCardCheck, synthesis, reasoning, advice, riskNotes, followUps。
-- 字段映射：summary=结论；plainSpeak=人话版；mainCardCheck=主牌核验；synthesis=整体综合；reasoning=牌理推理/元素扫描/结构推导；advice=建议；riskNotes=风险提醒；followUps=可继续追问的问题数组。
-- mainCardCheck 必须明确指出主牌/核心矛盾以及判定理由；reasoning 不要少于 3 个推理点。
-- followUps 必须是字符串数组。
+要求：
+- 重点围绕用户的问题来解，不要偏离问题本身。
+- 直接输出一整段完整解读，保持你自然的解牌方式。
+- 不要把结果拆成固定栏目，不要强行写成报告模板。
+- 不要输出 JSON，不要代码块，不要解释你的流程。
+- 如果有不确定性，可以直接在解读里说明。
+- 涉及医疗、法律、投资、安全等高风险问题时，只做塔罗层面的倾向分析，不替代专业意见。
 
 用户问题：${question}
 牌阵：${spreadName}
-抽到的牌：
+抽牌结果：
 ${cardLines || '（无牌面数据）'}
 
 ${callbackBlock}`.trim();
   }
 
-  return `You are the official VEGEBIRD TAROT reading assistant. Follow the formal deep-reading SOP. You must identify the main/core card and output in this fixed structure: conclusion → plain-language reading → advice → risk notes → card-logic reasoning.
+  return `Use the tarot draw below and interpret it according to your own reading method.
 
-Reading rules:
-- Use only the user's question, spread, card names, orientations, summaries, keywords, and meanings below.
-- Do not invent real-world facts the user did not provide. Avoid fatalism and absolute certainty.
-- Identify the core card/core tension first, then explain how supporting cards push, block, or modify it.
-- Read reversals as excess, deficiency, blockage, distortion, instability, or unexpressed potential — not simply bad.
-- For high-risk medical, legal, financial, safety, or psychiatric topics, only discuss tendencies and boundaries; do not replace professional advice.
-
-Output requirements:
-- Cover conclusion, plain-language reading, main-card check, advice, risk notes, and card-logic reasoning.
-- The final website result must be JSON only. No Markdown, no code fences, no greetings.
-- Use exactly these fields: summary, plainSpeak, mainCardCheck, synthesis, reasoning, advice, riskNotes, followUps.
-- Field mapping: summary=conclusion; plainSpeak=plain-language reading; mainCardCheck=main-card/core-tension check; synthesis=overall synthesis; reasoning=card-logic reasoning/element scan/structural deduction; advice=advice; riskNotes=risk notes; followUps=array of follow-up questions.
-- mainCardCheck must name the main card/core tension and explain why; reasoning should contain at least 3 reasoning points.
-- followUps must be an array of strings.
+Requirements:
+- Stay focused on the user's actual question.
+- Return one complete reading in your natural style.
+- Do not split the answer into rigid report sections.
+- Do not output JSON, code fences, or an explanation of your process.
+- If the reading is uncertain, say so naturally inside the reading.
+- For medical, legal, financial, safety, or similarly high-risk topics, only give tarot-level tendencies and do not replace professional advice.
 
 User question: ${question}
 Spread: ${spreadName}
-Cards:
+Draw result:
 ${cardLines || '(No card data)'}
 
 ${callbackBlock}`.trim();
@@ -920,8 +922,8 @@ async function runDeepReadingJob(jobId) {
     depth: 'deep',
     payload: job.payload,
     instructions: job.payload.lang === 'en'
-      ? 'Return a deep tarot reading as JSON with fields: summary, synthesis, advice, riskNotes, followUps.'
-      : '请作为深度塔罗解读助手，返回 JSON，字段固定为 summary, synthesis, advice, riskNotes, followUps。重点分析牌与牌之间的关系、隐藏模式、行动建议和风险提醒。',
+      ? 'Return the final tarot reading as one complete plain-text response.'
+      : '请直接返回一整段完整塔罗解读原文，不要拆字段。',
   };
 
   if (!hook.url && !url) {
@@ -962,7 +964,7 @@ async function runDeepReadingJob(jobId) {
 
     // If OpenClaw returns final content synchronously, accept it immediately.
     const result = normalizeDeepResultPayload(data);
-    const hasContent = result.summary || result.synthesis || result.advice || result.riskNotes || result.followUps.length;
+    const hasContent = result.summary;
     if (hasContent) {
       job.status = 'success';
       job.source = 'openclaw-sync';
@@ -1146,7 +1148,7 @@ const server = http.createServer(async (req, res) => {
         job.error = normalizeText(body.error || body.message || 'OpenClaw deep reading failed');
       } else {
         const result = normalizeDeepResultPayload(body);
-        const hasContent = result.summary || result.synthesis || result.advice || result.riskNotes || result.followUps.length;
+        const hasContent = result.summary;
         if (!hasContent) {
           return sendJson(res, 400, { ok: false, message: 'Callback result is empty', code: 'EMPTY_RESULT' });
         }
