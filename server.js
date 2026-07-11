@@ -14,7 +14,7 @@ const OPENCLAW_URL_RAW = process.env.VEGE_TAROT_OPENCLAW_URL || '';
 const OPENCLAW_TOKEN = process.env.VEGE_TAROT_OPENCLAW_TOKEN || '';
 const OPENCLAW_HOOK_URL_RAW = process.env.VEGE_TAROT_OPENCLAW_HOOK_URL || '';
 const OPENCLAW_HOOK_TOKEN = process.env.VEGE_TAROT_OPENCLAW_HOOK_TOKEN || '';
-const OPENCLAW_TIMEOUT_MS = Number(process.env.VEGE_TAROT_OPENCLAW_TIMEOUT_MS || 180000);
+const OPENCLAW_TIMEOUT_MS = Number(process.env.VEGE_TAROT_OPENCLAW_TIMEOUT_MS || 45000);
 const OPENCLAW_CALLBACK_SECRET = process.env.VEGE_TAROT_OPENCLAW_CALLBACK_SECRET || '';
 const PUBLIC_API_BASE = process.env.VEGE_TAROT_PUBLIC_API_BASE || '';
 
@@ -618,7 +618,7 @@ async function callOpenClawHookAgent(requestBody) {
 }
 
 function scheduleDeepFallback(jobId, delayMs = OPENCLAW_TIMEOUT_MS) {
-  const safeDelay = Math.max(5000, Math.min(delayMs, 10 * 60 * 1000));
+  const safeDelay = Math.max(12000, Math.min(delayMs, 60000));
   setTimeout(() => {
     const current = deepReadingJobs.get(jobId);
     if (!current || current.status !== 'running') return;
