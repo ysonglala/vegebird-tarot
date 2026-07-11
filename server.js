@@ -146,7 +146,10 @@ function buildMockDeepResult(body) {
   if (!isZh) {
     return {
       summary: `Deep reading: the spread is centered on ${names.join(', ')}. The deeper pattern is less about a single yes/no and more about what is being avoided, delayed, or over-controlled.`,
+      plainSpeak: 'In plain language: this reading is not trying to impress you with more words. It is checking the core tension, the usable signal, and the concrete next step.',
+      mainCardCheck: 'Main-card check: identify the central card or strongest structural tension first, then read the other cards as support, friction, or correction.',
       synthesis: 'At a deeper layer, the cards should be read as an interaction system: current pressure, hidden mechanism, and likely direction if the pattern continues.',
+      reasoning: 'Card-logic reasoning: compare the card positions, orientations, elements, and repeated themes before forming the final judgment.',
       advice: 'Use this reading as a mirror, not a verdict. Name the real issue, choose one concrete next action, and leave room to revise your view when new facts appear.',
       riskNotes: 'Do not treat the reading as fate or as professional advice for medical, legal, financial, or safety-critical decisions.',
       followUps: ['What is the hidden pattern I keep repeating?', 'What should I stop doing first?']
@@ -154,7 +157,10 @@ function buildMockDeepResult(body) {
   }
   return {
     summary: `深度解读：这组牌的核心不是简单吉凶，而是你在“${normalizeText(body.question) || '这个问题'}”里真正卡住的模式。当前牌面包括：${names.join('、')}。`,
+    plainSpeak: '人话版：这不是把免费解读拉长，而是先确认主轴，再把牌面信号整理成能复盘、能行动的判断。',
+    mainCardCheck: '主牌核验：先明确主牌或核心矛盾，再说明其他牌是在推动、阻碍还是修正这条主线。',
     synthesis: '从深层结构看，这组牌需要先看整体互动：哪张牌代表当前压力，哪张牌代表隐藏机制，哪张牌代表如果继续这样下去的走向。深度解读会更关注动机、阻碍、反复出现的模式，以及你真正能改变的那一环。',
+    reasoning: '牌理推理：结合牌位、正逆位、元素、数字和共同主题做结构判断，不逐张机械堆牌义。',
     advice: '建议把这次解读当成一面镜子，而不是判决书。先确认你最想改变的一个具体行为，再决定下一步，不要被情绪推着一次性做过大决定。',
     riskNotes: '不要把塔罗当成宿命或现实专业判断。涉及医疗、法律、投资、安全等问题时，必须回到现实证据和专业意见。',
     followUps: ['我一直重复的隐藏模式是什么？', '我现在最该先停止做什么？']
@@ -165,7 +171,10 @@ function normalizeDeepResultPayload(payload) {
   const data = payload?.result || payload?.data || payload || {};
   return {
     summary: normalizeText(data.summary || data.overall || data.overallSummary || ''),
+    plainSpeak: normalizeText(data.plainSpeak || data.plainLanguage || data.humanVersion || data.humanReadable || ''),
+    mainCardCheck: normalizeText(data.mainCardCheck || data.mainCard || data.coreCard || data.coreCheck || ''),
     synthesis: normalizeText(data.synthesis || data.analysis || data.deepAnalysis || data.linkage || ''),
+    reasoning: normalizeText(data.reasoning || data.cardLogic || data.cardReasoning || data.tarotLogic || data.logic || ''),
     advice: normalizeText(data.advice || data.suggestion || data.recommendation || ''),
     riskNotes: normalizeText(data.riskNotes || data.risks || data.cautions || ''),
     followUps: Array.isArray(data.followUps) ? data.followUps.map(item => normalizeText(item)).filter(Boolean) : [],
@@ -788,15 +797,15 @@ function buildOpenClawDeepReadingPrompt(requestBody) {
         ? [
             '回调要求：',
             `- 完成解读后，请 POST 到：${requestBody.callbackUrl}`,
-            '- 请求体必须是 JSON：{"jobId":"...","result":{"summary":"...","synthesis":"...","advice":"...","riskNotes":"...","followUps":["..."]}}',
-            '- result 字段必须包含 summary, synthesis, advice, riskNotes, followUps。',
+            '- 请求体必须是 JSON：{"jobId":"...","result":{"summary":"...","plainSpeak":"...","mainCardCheck":"...","synthesis":"...","reasoning":"...","advice":"...","riskNotes":"...","followUps":["..."]}}',
+            '- result 字段必须包含 summary, plainSpeak, mainCardCheck, synthesis, reasoning, advice, riskNotes, followUps。',
             requestBody.callbackSecret ? `- 请求头必须带：X-OpenClaw-Callback-Secret: ${requestBody.callbackSecret}` : '',
           ].filter(Boolean).join('\n')
         : [
             'Callback requirements:',
             `- After completing the reading, POST to: ${requestBody.callbackUrl}`,
-            '- The request body must be JSON: {"jobId":"...","result":{"summary":"...","synthesis":"...","advice":"...","riskNotes":"...","followUps":["..."]}}',
-            '- result must include summary, synthesis, advice, riskNotes, followUps.',
+            '- The request body must be JSON: {"jobId":"...","result":{"summary":"...","plainSpeak":"...","mainCardCheck":"...","synthesis":"...","reasoning":"...","advice":"...","riskNotes":"...","followUps":["..."]}}',
+            '- result must include summary, plainSpeak, mainCardCheck, synthesis, reasoning, advice, riskNotes, followUps.',
             requestBody.callbackSecret ? `- Include this header: X-OpenClaw-Callback-Secret: ${requestBody.callbackSecret}` : '',
           ].filter(Boolean).join('\n'))
     : '';
@@ -813,10 +822,11 @@ function buildOpenClawDeepReadingPrompt(requestBody) {
 - 涉及医疗、法律、投资、安全等高风险问题时，只解读倾向与心理/处境，不替代专业意见。
 
 输出要求：
-- 解读内容必须覆盖：结论、人话版、建议、风险提醒、牌理推理。
+- 解读内容必须覆盖：结论、人话版、主牌核验、建议、风险提醒、牌理推理。
 - 最终给网站的结果必须是 JSON，不要 Markdown，不要代码块，不要寒暄。
-- JSON 字段固定为：summary, synthesis, advice, riskNotes, followUps。
-- 字段映射：summary=结论；synthesis=人话版+牌理推理；advice=建议；riskNotes=风险提醒；followUps=可继续追问的问题数组。
+- JSON 字段固定为：summary, plainSpeak, mainCardCheck, synthesis, reasoning, advice, riskNotes, followUps。
+- 字段映射：summary=结论；plainSpeak=人话版；mainCardCheck=主牌核验；synthesis=整体综合；reasoning=牌理推理/元素扫描/结构推导；advice=建议；riskNotes=风险提醒；followUps=可继续追问的问题数组。
+- mainCardCheck 必须明确指出主牌/核心矛盾以及判定理由；reasoning 不要少于 3 个推理点。
 - followUps 必须是字符串数组。
 
 用户问题：${question}
@@ -837,10 +847,11 @@ Reading rules:
 - For high-risk medical, legal, financial, safety, or psychiatric topics, only discuss tendencies and boundaries; do not replace professional advice.
 
 Output requirements:
-- Cover conclusion, plain-language reading, advice, risk notes, and card-logic reasoning.
+- Cover conclusion, plain-language reading, main-card check, advice, risk notes, and card-logic reasoning.
 - The final website result must be JSON only. No Markdown, no code fences, no greetings.
-- Use exactly these fields: summary, synthesis, advice, riskNotes, followUps.
-- Field mapping: summary=conclusion; synthesis=plain-language reading + card-logic reasoning; advice=advice; riskNotes=risk notes; followUps=array of follow-up questions.
+- Use exactly these fields: summary, plainSpeak, mainCardCheck, synthesis, reasoning, advice, riskNotes, followUps.
+- Field mapping: summary=conclusion; plainSpeak=plain-language reading; mainCardCheck=main-card/core-tension check; synthesis=overall synthesis; reasoning=card-logic reasoning/element scan/structural deduction; advice=advice; riskNotes=risk notes; followUps=array of follow-up questions.
+- mainCardCheck must name the main card/core tension and explain why; reasoning should contain at least 3 reasoning points.
 - followUps must be an array of strings.
 
 User question: ${question}
@@ -883,7 +894,10 @@ function buildDeepResultFromText(text, lang) {
   const isZh = lang === 'zh';
   return {
     summary: clean || (isZh ? 'OpenClaw 已完成深度解读，但返回内容为空。' : 'OpenClaw completed the deep reading, but returned no readable content.'),
+    plainSpeak: '',
+    mainCardCheck: '',
     synthesis: '',
+    reasoning: '',
     advice: '',
     riskNotes: isZh ? '塔罗解读仅供自我观察，不替代现实专业判断。' : 'Tarot readings are for reflection only and do not replace real-world professional judgment.',
     followUps: [],
