@@ -828,44 +828,42 @@ function buildOpenClawDeepReadingPrompt(requestBody) {
     : '';
 
   if (isZh) {
-    return `任务一：先根据下面这次抽牌结果，按你自己的塔罗解牌规则直接完成解读。
+    return `请根据下面的用户问题、牌阵和抽牌结果，按照你自己已经训练好的塔罗解牌逻辑进行解读。
 
-解读要求：
-- 重点围绕用户的问题来解，不要偏离问题本身。
-- 先写出一整段完整自然的解读原文，保持你自然的解牌方式。
-- 不要把结果拆成固定栏目，不要强行写成报告模板。
-- 如果有不确定性，可以直接在解读里说明。
-- 涉及医疗、法律、投资、安全等高风险问题时，只做塔罗层面的倾向分析，不替代专业意见。
+要求：
+- 围绕用户的实际问题作答。
+- 进行完整、深入、全面的解析。
+- 不要刻意缩短内容。
+- 如果牌面存在多种可能性，可以自然展开说明。
 
 用户问题：${question}
 牌阵：${spreadName}
 抽牌结果：
 ${cardLines || '（无牌面数据）'}
 
-任务二：完成上面的解读原文后，再执行 HTTP 回调。
-- 这里的 JSON 只用于 HTTP 回调，不是给用户展示的输出格式。
+完成解读后，请再执行 HTTP 回调。
+- callback 里的 JSON 只用于回传，不是给用户展示的格式。
 - 请把你刚才写好的完整解读原文，原样放进 fullText 字段。
 - 不要重新概括，不要缩写，不要拆字段。
 
 ${callbackBlock}`.trim();
   }
 
-  return `Task 1: first interpret the tarot draw below in your own reading style.
+  return `Please interpret the following user question, spread, and drawn cards according to your own trained tarot reading logic.
 
-Reading requirements:
-- Stay focused on the user's actual question.
-- First produce one complete natural reading in your own style.
-- Do not split the answer into rigid report sections.
-- If the reading is uncertain, say so naturally inside the reading.
-- For medical, legal, financial, safety, or similarly high-risk topics, only give tarot-level tendencies and do not replace professional advice.
+Requirements:
+- Answer around the user's actual question.
+- Provide a complete, in-depth, and comprehensive reading.
+- Do not deliberately shorten the content.
+- If the cards support more than one plausible reading, you may explain that naturally.
 
 User question: ${question}
 Spread: ${spreadName}
 Draw result:
 ${cardLines || '(No card data)'}
 
-Task 2: after finishing the reading above, perform the HTTP callback.
-- The JSON here is only for the HTTP callback, not for user-facing display.
+After completing the reading, perform the HTTP callback.
+- The JSON in the callback is only for returning the result, not for user-facing display.
 - Put the exact full reading you just wrote into the fullText field.
 - Do not summarize it again, do not shorten it, and do not split it into multiple fields.
 
@@ -930,8 +928,8 @@ async function runDeepReadingJob(jobId) {
     depth: 'deep',
     payload: job.payload,
     instructions: job.payload.lang === 'en'
-      ? 'First write one complete tarot reading, then send that exact reading back in callback result.fullText.'
-      : '先完成一整段完整塔罗解读原文，再把这段原文原样放进 callback 的 result.fullText。',
+      ? 'Use your own trained tarot reading logic, give a complete in-depth reading, then send that exact reading back in callback result.fullText.'
+      : '按照你自己已经训练好的塔罗解牌逻辑，给出完整深入的解读，再把这段原文原样放进 callback 的 result.fullText。',
   };
 
   if (!hook.url && !url) {
