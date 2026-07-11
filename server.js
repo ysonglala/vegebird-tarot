@@ -14,7 +14,7 @@ const OPENCLAW_URL_RAW = process.env.VEGE_TAROT_OPENCLAW_URL || '';
 const OPENCLAW_TOKEN = process.env.VEGE_TAROT_OPENCLAW_TOKEN || '';
 const OPENCLAW_HOOK_URL_RAW = process.env.VEGE_TAROT_OPENCLAW_HOOK_URL || '';
 const OPENCLAW_HOOK_TOKEN = process.env.VEGE_TAROT_OPENCLAW_HOOK_TOKEN || '';
-const OPENCLAW_TIMEOUT_MS = Number(process.env.VEGE_TAROT_OPENCLAW_TIMEOUT_MS || 45000);
+const OPENCLAW_TIMEOUT_MS = Number(process.env.VEGE_TAROT_OPENCLAW_TIMEOUT_MS || 180000);
 const OPENCLAW_CALLBACK_SECRET = process.env.VEGE_TAROT_OPENCLAW_CALLBACK_SECRET || '';
 const PUBLIC_API_BASE = process.env.VEGE_TAROT_PUBLIC_API_BASE || '';
 
@@ -631,13 +631,13 @@ async function callOpenClawHookAgent(requestBody) {
 }
 
 function scheduleDeepFallback(jobId, delayMs = OPENCLAW_TIMEOUT_MS) {
-  const safeDelay = Math.max(12000, Math.min(delayMs, 60000));
+  const safeDelay = Math.max(12000, Math.min(delayMs, 3 * 60 * 1000));
   setTimeout(() => {
     const current = deepReadingJobs.get(jobId);
     if (!current || current.status !== 'running') return;
-    current.status = 'success';
-    current.source = current.source ? `${current.source}+mock-timeout-fallback` : 'mock-deep-timeout-fallback';
-    current.result = buildMockDeepResult(current.payload);
+    current.status = 'failed';
+    current.source = current.source ? `${current.source}+callback-timeout` : 'openclaw-callback-timeout';
+    current.result = null;
     current.error = current.error || 'OpenClaw did not return a callback before timeout';
     current.updatedAt = new Date().toISOString();
     current.finishedAt = current.updatedAt;
@@ -936,9 +936,10 @@ async function runDeepReadingJob(jobId) {
     setTimeout(() => {
       const current = deepReadingJobs.get(jobId);
       if (!current || current.status === 'success') return;
-      current.status = 'success';
-      current.source = 'mock-deep';
-      current.result = buildMockDeepResult(current.payload);
+      current.status = 'failed';
+      current.source = 'openclaw-not-configured';
+      current.result = null;
+      current.error = 'OpenClaw hook or control endpoint is not configured';
       current.updatedAt = new Date().toISOString();
       current.finishedAt = current.updatedAt;
     }, 1200);
@@ -985,10 +986,10 @@ async function runDeepReadingJob(jobId) {
       scheduleDeepFallback(jobId);
     }
   } catch (err) {
-    console.error('[deep-interpret] openclaw failed, using mock fallback', err.message || err);
-    job.status = 'success';
-    job.source = 'mock-deep-fallback';
-    job.result = buildMockDeepResult(job.payload);
+    console.error('[deep-interpret] openclaw failed', err.message || err);
+    job.status = 'failed';
+    job.source = 'openclaw-request-failed';
+    job.result = null;
     job.error = err.message || String(err);
     job.updatedAt = new Date().toISOString();
     job.finishedAt = job.updatedAt;
