@@ -905,8 +905,13 @@ function buildBase78() {
 
 function normalizeDictText(text = '') {
   return String(text || '')
+    .replace(/\uFFFD+/g, '')
+    .replace(/�+/g, '')
     .replace(/^[：:、，\s]+/, '')
-    .replace(/\s+/g, ' ')
+    .replace(/[ \t\f\v]+/g, ' ')
+    .replace(/\n[ \t]+/g, '\n')
+    .replace(/[ \t]+\n/g, '\n')
+    .replace(/\n{3,}/g, '\n\n')
     .trim();
 }
 
