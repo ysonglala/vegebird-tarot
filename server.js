@@ -633,21 +633,45 @@ async function callOpenClawHookAgent(requestBody) {
 function scheduleDeepFallback(jobId, delayMs = OPENCLAW_TIMEOUT_MS) {
   const safeDelay = Math.max(12000, Math.min(delayMs, 3 * 60 * 1000));
   setTimeout(() => {
-    const current = deepReadingJobs.get(jobId);
-    if (!current || current.status !== 'running') return;
+    void runDeepFallback(jobId).catch(err => {
+      const current = deepReadingJobs.get(jobId);
+      if (!current || current.status !== 'running') return;
+      current.status = 'failed';
+      current.source = current.source ? `${current.source}+callback-timeout` : 'openclaw-callback-timeout';
+      current.result = null;
+      current.error = err?.message || current.error || 'OpenClaw did not return a callback before timeout';
+      current.updatedAt = new Date().toISOString();
+      current.finishedAt = current.updatedAt;
+    });
+  }, safeDelay);
+}
+
+async function runDeepFallback(jobId) {
+  const current = deepReadingJobs.get(jobId);
+  if (!current || current.status !== 'running') return;
+
+  const sessionKey = current?.remote?.sessionKey || `vegebird-tarot:${jobId}`;
+  const fallback = await fetchDeepResultFromSession(sessionKey, current.payload?.lang);
+  const hasContent = normalizeText(fallback?.result?.summary);
+
+  if (hasContent) {
+    current.status = 'success';
+    current.source = current.source ? `${current.source}+session-fallback` : 'openclaw-session-fallback';
+    current.result = fallback.result;
+    current.error = '';
+  } else {
     current.status = 'failed';
     current.source = current.source ? `${current.source}+callback-timeout` : 'openclaw-callback-timeout';
     current.result = null;
-    current.error = current.error || 'OpenClaw did not return a callback before timeout';
-    current.updatedAt = new Date().toISOString();
-    current.finishedAt = current.updatedAt;
-  }, safeDelay);
+    current.error = 'OpenClaw did not return a callback before timeout';
+  }
+  current.updatedAt = new Date().toISOString();
+  current.finishedAt = current.updatedAt;
 }
 
 async function callOpenClawControlWs(requestBody) {
   const { url, token } = normalizeOpenClawEndpoint();
   if (!url) throw new Error('OpenClaw URL is not configured');
-  if (typeof WebSocket !== 'function') throw new Error('WebSocket is not available in this Node runtime');
 
   const candidates = resolveOpenClawWsUrls(url);
   if (candidates.length === 0) throw new Error('Unable to derive OpenClaw WebSocket URL');
@@ -671,7 +695,6 @@ function callOpenClawControlWsOnce(wsUrl, token, requestBody) {
     });
     const pending = new Map();
     const sessionKey = `vegebird-tarot:${requestBody.jobId}`;
-    const startedAt = Date.now();
     let settled = false;
     let connected = false;
 
@@ -692,7 +715,7 @@ function callOpenClawControlWsOnce(wsUrl, token, requestBody) {
       close();
       resolve(value);
     };
-    const overallTimer = setTimeout(() => fail(new Error('OpenClaw WebSocket request timed out')), OPENCLAW_TIMEOUT_MS);
+    const overallTimer = setTimeout(() => fail(new Error('OpenClaw WebSocket request timed out')), 30000);
 
     const sendFrame = frame => ws.send(JSON.stringify(frame));
     const request = (method, params, timeoutMs = 30000) => new Promise((res, rej) => {
@@ -739,16 +762,12 @@ function callOpenClawControlWsOnce(wsUrl, token, requestBody) {
             label: 'Vegebird Tarot Deep Reading',
             timeout: Math.max(30, Math.floor(OPENCLAW_TIMEOUT_MS / 1000)),
           }, 30000);
-          const runId = normalizeText(agentAccepted?.runId) || requestBody.jobId;
-          const waited = await request('agent.wait', {
-            runId,
-            timeoutMs: Math.max(1000, OPENCLAW_TIMEOUT_MS - (Date.now() - startedAt) - 5000),
-          }, null);
-          if (waited?.status !== 'ok') throw new Error(`OpenClaw agent status: ${waited?.status || 'unknown'}${waited?.error ? ` - ${waited.error}` : ''}`);
-          const history = await request('sessions.get', { key: sessionKey, limit: 12 }, 30000);
-          const text = extractLatestAssistantText(history);
-          const parsed = parseJsonFromText(text);
-          done(parsed || { result: buildDeepResultFromText(text, requestBody.payload.lang) });
+          done({
+            ok: true,
+            accepted: true,
+            sessionKey,
+            runId: normalizeText(agentAccepted?.runId) || requestBody.jobId,
+          });
           return;
         }
         if (frame.type === 'res') {
@@ -773,6 +792,39 @@ function callOpenClawControlWsOnce(wsUrl, token, requestBody) {
       if (!settled && !connected) fail(new Error(`OpenClaw WebSocket closed before connect (${event.code || 'unknown'})`));
     });
   });
+}
+
+async function fetchDeepResultFromSession(sessionKey, lang = 'zh') {
+  const { url, token } = normalizeOpenClawEndpoint();
+  if (!url) throw new Error('OpenClaw URL is not configured');
+
+  const target = new URL(url);
+  target.pathname = '/api/sessions/get';
+  target.search = '';
+  target.hash = '';
+
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 30000);
+  try {
+    const response = await fetch(target.toString(), {
+      method: 'POST',
+      signal: controller.signal,
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+      body: JSON.stringify({ key: sessionKey, limit: 12 }),
+    });
+    const text = await response.text();
+    let data = null;
+    try { data = text ? JSON.parse(text) : null; } catch { data = { raw: text }; }
+    if (!response.ok) throw new Error(data?.message || data?.error || `OpenClaw sessions.get HTTP ${response.status}`);
+    const messageText = extractLatestAssistantText(data);
+    const parsed = parseJsonFromText(messageText);
+    return parsed ? { result: normalizeDeepResultPayload(parsed) } : { result: buildDeepResultFromText(messageText, lang) };
+  } finally {
+    clearTimeout(timeout);
+  }
 }
 
 function buildOpenClawDeepReadingPrompt(requestBody) {
@@ -830,12 +882,6 @@ function buildOpenClawDeepReadingPrompt(requestBody) {
   if (isZh) {
     return `请根据下面的用户问题、牌阵和抽牌结果，按照你自己已经训练好的塔罗解牌逻辑进行解读。
 
-要求：
-- 围绕用户的实际问题作答。
-- 进行完整、深入、全面的解析。
-- 不要刻意缩短内容。
-- 如果牌面存在多种可能性，可以自然展开说明。
-
 用户问题：${question}
 牌阵：${spreadName}
 抽牌结果：
@@ -850,12 +896,6 @@ ${callbackBlock}`.trim();
   }
 
   return `Please interpret the following user question, spread, and drawn cards according to your own trained tarot reading logic.
-
-Requirements:
-- Answer around the user's actual question.
-- Provide a complete, in-depth, and comprehensive reading.
-- Do not deliberately shorten the content.
-- If the cards support more than one plausible reading, you may explain that naturally.
 
 User question: ${question}
 Spread: ${spreadName}
@@ -981,7 +1021,7 @@ async function runDeepReadingJob(jobId) {
     } else {
       job.status = 'running';
       job.source = hook.url ? 'openclaw-hook-accepted' : 'openclaw-accepted';
-      job.remote = data;
+      job.remote = { ...(data || {}), sessionKey: `vegebird-tarot:${jobId}` };
       job.updatedAt = new Date().toISOString();
       scheduleDeepFallback(jobId);
     }
