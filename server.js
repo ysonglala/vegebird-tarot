@@ -167,6 +167,12 @@ function buildMockDeepResult(body) {
   };
 }
 
+function hasDeepResultContent(result) {
+  if (!result || typeof result !== 'object') return false;
+  const fields = [result.summary, result.plainSpeak, result.mainCardCheck, result.synthesis, result.reasoning, result.advice, result.riskNotes];
+  return fields.some(value => normalizeText(value));
+}
+
 function normalizeDeepResultPayload(payload) {
   const data = payload?.result || payload?.data || payload || {};
   const fullText = normalizeText(
@@ -184,13 +190,13 @@ function normalizeDeepResultPayload(payload) {
   );
   return {
     summary: fullText,
-    plainSpeak: '',
-    mainCardCheck: '',
-    synthesis: '',
-    reasoning: '',
-    advice: '',
-    riskNotes: '',
-    followUps: [],
+    plainSpeak: normalizeText(data.plainSpeak),
+    mainCardCheck: normalizeText(data.mainCardCheck),
+    synthesis: normalizeText(data.synthesis),
+    reasoning: normalizeText(data.reasoning),
+    advice: normalizeText(data.advice),
+    riskNotes: normalizeText(data.riskNotes),
+    followUps: Array.isArray(data.followUps) ? data.followUps.map(item => normalizeText(item)).filter(Boolean) : [],
   };
 }
 
@@ -632,7 +638,9 @@ async function callOpenClawHookAgent(requestBody) {
 
 function scheduleDeepFallback(jobId, delayMs = OPENCLAW_TIMEOUT_MS) {
   const safeDelay = Math.max(12000, Math.min(delayMs, 3 * 60 * 1000));
-  setTimeout(() => {
+  const timer = setTimeout(() => {
+    const current = deepReadingJobs.get(jobId);
+    if (current) current.timeoutHandle = null;
     void runDeepFallback(jobId).catch(err => {
       const current = deepReadingJobs.get(jobId);
       if (!current || current.status !== 'running') return;
@@ -644,6 +652,8 @@ function scheduleDeepFallback(jobId, delayMs = OPENCLAW_TIMEOUT_MS) {
       current.finishedAt = current.updatedAt;
     });
   }, safeDelay);
+  const job = deepReadingJobs.get(jobId);
+  if (job) job.timeoutHandle = timer;
 }
 
 async function runDeepFallback(jobId) {
@@ -652,7 +662,7 @@ async function runDeepFallback(jobId) {
 
   const sessionKey = current?.remote?.sessionKey || `vegebird-tarot:${jobId}`;
   const fallback = await fetchDeepResultFromSession(sessionKey, current.payload?.lang);
-  const hasContent = normalizeText(fallback?.result?.summary);
+  const hasContent = hasDeepResultContent(fallback?.result);
 
   if (hasContent) {
     current.status = 'success';
@@ -973,7 +983,7 @@ async function runDeepReadingJob(jobId) {
   };
 
   if (!hook.url && !url) {
-    setTimeout(() => {
+    const timer = setTimeout(() => {
       const current = deepReadingJobs.get(jobId);
       if (!current || current.status === 'success') return;
       current.status = 'failed';
@@ -982,7 +992,9 @@ async function runDeepReadingJob(jobId) {
       current.error = 'OpenClaw hook or control endpoint is not configured';
       current.updatedAt = new Date().toISOString();
       current.finishedAt = current.updatedAt;
+      current.timeoutHandle = null;
     }, 1200);
+    job.timeoutHandle = timer;
     return;
   }
 
@@ -1184,28 +1196,54 @@ const server = http.createServer(async (req, res) => {
         }
       }
       const body = await readJson(req);
-      const jobId = normalizeText(body.jobId || url.searchParams.get('jobId'));
+      const explicitJobId = normalizeText(body.jobId || url.searchParams.get('jobId'));
+      const callbackSessionKey = normalizeText(body.sessionKey || body.session || body.run?.sessionKey || body.payload?.sessionKey);
+      const inferredJobId = callbackSessionKey.split(':').pop();
+      const jobId = explicitJobId || inferredJobId;
       const job = deepReadingJobs.get(jobId);
       if (!job) {
         return sendJson(res, 404, { ok: false, message: 'Deep reading job not found', code: 'JOB_NOT_FOUND' });
       }
-      const status = normalizeText(body.status || 'success');
+      if (callbackSessionKey) {
+        job.remote = { ...(job.remote || {}), sessionKey: callbackSessionKey };
+      }
+      const status = normalizeText(body.status || body.action || 'success').toLowerCase();
+      if (job.timeoutHandle) {
+        clearTimeout(job.timeoutHandle);
+        job.timeoutHandle = null;
+      }
       if (['failed', 'error'].includes(status)) {
         job.status = 'failed';
+        job.result = null;
         job.error = normalizeText(body.error || body.message || 'OpenClaw deep reading failed');
       } else {
-        const result = normalizeDeepResultPayload(body);
-        const hasContent = result.summary;
-        if (!hasContent) {
+        let result = normalizeDeepResultPayload(body);
+        if (!hasDeepResultContent(result) && callbackSessionKey) {
+          try {
+            const fallback = await fetchDeepResultFromSession(callbackSessionKey, job.payload?.lang);
+            if (hasDeepResultContent(fallback?.result)) {
+              result = fallback.result;
+            }
+          } catch (err) {
+            console.warn('[deep-interpret] callback session fallback failed', err.message || err);
+          }
+        }
+        if (!hasDeepResultContent(result) && status !== 'finished') {
           return sendJson(res, 400, { ok: false, message: 'Callback result is empty', code: 'EMPTY_RESULT' });
         }
-        job.status = 'success';
-        job.source = 'openclaw-callback';
-        job.result = result;
-        job.error = '';
+        if (hasDeepResultContent(result)) {
+          job.status = 'success';
+          job.source = 'openclaw-callback';
+          job.result = result;
+          job.error = '';
+        } else {
+          job.status = 'running';
+          job.source = 'openclaw-callback-pending';
+          scheduleDeepFallback(jobId, 12000);
+        }
       }
       job.updatedAt = new Date().toISOString();
-      job.finishedAt = job.updatedAt;
+      job.finishedAt = job.status === 'running' ? '' : job.updatedAt;
       console.log('[deep-interpret] callback', { jobId, status: job.status, source: job.source });
       return sendJson(res, 200, serializeDeepJob(job));
     } catch (err) {

@@ -65,7 +65,19 @@ const I18N = {
     retryAi: '重试 AI 解牌',
     aiGenerate: '生成 AI 解读',
     aiDeepGenerate: '深度解读',
-    aiDeepLoading: '正在请求 OpenClaw 做深度解读…这可能需要几十秒。',
+    aiDeepLoading: '正在请求 OpenClaw 做深度解读。',
+    aiDeepStages: {
+      requesting: '请求中',
+      analyzing: '分析中',
+      generating: '生成中',
+      delayed: '稍慢但正常'
+    },
+    aiDeepMessages: {
+      requesting: '正在提交深度解读请求…',
+      analyzing: 'OpenClaw 已接收，正在整理牌面关系…',
+      generating: '正在生成完整深度解读…',
+      delayed: '这次比平时稍慢一些，但仍在处理中…'
+    },
     saveImage: '保存为图片',
     saveImagePreparing: '正在生成图片…',
     saveImageDone: '图片已生成，请在浏览器下载、系统分享面板，或长按预览图保存。',
@@ -122,6 +134,10 @@ const I18N = {
     aiEmpty: 'AI 已返回，但当前没有可展示的结构化内容。',
     aiTitleReading: 'AI 综合解牌',
     aiTitleDeepReading: '深度解读报告',
+    aiDeepEta: '通常需要 20～60 秒，完成后会自动显示结果。',
+    aiDeepEtaDelayed: '这次比平时稍慢一些，但仍在处理中，完成后会自动显示。',
+    aiDeepElapsed: (seconds) => `已等待 ${seconds} 秒`,
+    aiDeepNoRepeat: '结果生成后会自动显示，无需重复点击。',
     aiTitleClarify: '先补充问题，再正式解牌',
     aiClarifyTitle: '补充一点信息，我再继续解',
     aiClarifySub: '可以补充对象、现状、你最想看什么，以及时间范围。',
@@ -231,7 +247,19 @@ const I18N = {
     retryAi: 'Retry AI reading',
     aiGenerate: 'Generate AI reading',
     aiDeepGenerate: 'Deep reading',
-    aiDeepLoading: 'Asking OpenClaw for a deep reading… this may take tens of seconds.',
+    aiDeepLoading: 'Asking OpenClaw for a deep reading.',
+    aiDeepStages: {
+      requesting: 'Requesting',
+      analyzing: 'Analyzing',
+      generating: 'Generating',
+      delayed: 'Still working'
+    },
+    aiDeepMessages: {
+      requesting: 'Submitting your deep-reading request…',
+      analyzing: 'OpenClaw has accepted it and is reading the spread…',
+      generating: 'Generating the full deep reading…',
+      delayed: 'This run is taking a bit longer than usual, but it is still processing…'
+    },
     saveImage: 'Save as image',
     saveImagePreparing: 'Generating image…',
     saveImageDone: 'Image generated. Save it from your browser download, system share sheet, or by long-pressing the preview image.',
@@ -288,6 +316,10 @@ const I18N = {
     aiEmpty: 'AI returned successfully, but there is no structured content to show yet.',
     aiTitleReading: 'AI full reading',
     aiTitleDeepReading: 'Deep Reading Report',
+    aiDeepEta: 'This usually takes 20–60 seconds, and the result will appear automatically.',
+    aiDeepEtaDelayed: 'This run is a bit slower than usual, but it is still in progress and will appear automatically when ready.',
+    aiDeepElapsed: (seconds) => `Waiting ${seconds}s`,
+    aiDeepNoRepeat: 'No need to click again — the result will appear automatically.',
     aiTitleClarify: 'Add context before the full reading',
     aiClarifyTitle: 'Add a bit more context and I’ll continue',
     aiClarifySub: 'You can add the person or topic, the current situation, what you most want to know, and the time frame.',
@@ -813,9 +845,11 @@ const state = {
   readingMode: 'reading',
   readingResult: null,
   readingErrorCode: '',
+  deepReadingMeta: null,
   sessionId: '',
   drawId: '',
   _ac: null,
+  _deepLoadingTick: null,
 };
 
 function setupStars() {
@@ -1759,6 +1793,56 @@ function renderReadingSection(label, text, extraClass = '') {
   return `<section class="aiPanel__block ${extraClass}"><div class="aiPanel__label">${escapeHtml(label)}</div><div class="aiPanel__text">${body}</div></section>`;
 }
 
+function getDeepLoadingMeta() {
+  const startedAt = Number(state.deepReadingMeta?.startedAt || 0);
+  const seconds = startedAt ? Math.max(0, Math.floor((Date.now() - startedAt) / 1000)) : 0;
+  let stage = 'requesting';
+  if (seconds >= 45) stage = 'delayed';
+  else if (seconds >= 20) stage = 'generating';
+  else if (seconds >= 8) stage = 'analyzing';
+  const serverStatus = state.deepReadingMeta?.serverStatus || '';
+  if (serverStatus === 'openclaw-callback-pending') stage = seconds >= 45 ? 'delayed' : 'generating';
+  return {
+    seconds,
+    stage,
+    stageLabel: t('aiDeepStages')[stage],
+    message: t('aiDeepMessages')[stage],
+    eta: stage === 'delayed' ? t('aiDeepEtaDelayed') : t('aiDeepEta'),
+    elapsed: t('aiDeepElapsed', seconds),
+    noRepeat: t('aiDeepNoRepeat'),
+  };
+}
+
+function renderDeepLoadingCard() {
+  const meta = getDeepLoadingMeta();
+  return `
+    <div class="deepLoadingCard">
+      <div class="deepLoadingCard__statusRow">
+        <span class="deepLoadingCard__badge">${escapeHtml(meta.stageLabel)}</span>
+        <span class="deepLoadingCard__elapsed">${escapeHtml(meta.elapsed)}</span>
+      </div>
+      <p class="deepLoadingCard__message">${escapeHtml(meta.message)}</p>
+      <p class="deepLoadingCard__meta">${escapeHtml(meta.eta)}</p>
+      <p class="deepLoadingCard__meta deepLoadingCard__meta--subtle">${escapeHtml(meta.noRepeat)}</p>
+    </div>
+  `;
+}
+
+function syncDeepLoadingTicker() {
+  if (state.readingStatus === 'loading' && state.readingMode === 'deep') {
+    if (!state._deepLoadingTick) {
+      state._deepLoadingTick = setInterval(() => {
+        if (state.readingStatus === 'loading' && state.readingMode === 'deep') renderAiReading();
+      }, 1000);
+    }
+    return;
+  }
+  if (state._deepLoadingTick) {
+    clearInterval(state._deepLoadingTick);
+    state._deepLoadingTick = null;
+  }
+}
+
 function renderAiReading() {
   const panelEl = $('#llmPanel');
   const statusEl = $('#llmStatusText');
@@ -1766,6 +1850,7 @@ function renderAiReading() {
   const titleEl = $('#llmPanelTitle');
   if (!panelEl || !statusEl || !bodyEl) return;
 
+  syncDeepLoadingTicker();
   panelEl.hidden = !state.drawn.length;
   const statusMap = t('aiStatusMap');
   statusEl.textContent = statusMap[state.readingStatus] || state.readingStatus;
@@ -1793,7 +1878,9 @@ function renderAiReading() {
     return;
   }
   if (state.readingStatus === 'loading') {
-    bodyEl.innerHTML = `<p class="muted">${state.readingMode === 'deep' ? t('aiDeepLoading') : t('aiLoading')}</p>`;
+    bodyEl.innerHTML = state.readingMode === 'deep'
+      ? renderDeepLoadingCard()
+      : `<p class="muted">${t('aiLoading')}</p>`;
     return;
   }
   if (state.readingStatus === 'error') {
@@ -2006,6 +2093,7 @@ async function requestDeepReading() {
   state.readingMode = 'deep';
   state.readingResult = null;
   state.readingErrorCode = '';
+  state.deepReadingMeta = { startedAt: Date.now(), serverStatus: 'requesting', jobId: '' };
   renderAiReading();
 
   const payload = { ...buildInterpretPayload(), depth: 'deep' };
@@ -2016,11 +2104,16 @@ async function requestDeepReading() {
     const jobId = created?.jobId;
     if (!jobId) throw new Error('深度解读任务创建失败：缺少 jobId');
 
+    state.deepReadingMeta = { ...(state.deepReadingMeta || {}), jobId, serverStatus: created?.status || 'created' };
+    renderAiReading();
+
     let latest = created;
     for (let i = 0; i < 60; i += 1) {
       if (latest?.status === 'success' || latest?.status === 'failed') break;
       await sleep(i < 6 ? 1500 : 3000);
       latest = await api.getDeepReadingJob(jobId);
+      state.deepReadingMeta = { ...(state.deepReadingMeta || {}), jobId, serverStatus: latest?.source || latest?.status || 'running' };
+      renderAiReading();
       logDebug('deep-interpret-poll', { jobId, status: latest?.status, i });
     }
 
@@ -2037,6 +2130,7 @@ async function requestDeepReading() {
     state.readingMode = 'deep';
     state.readingResult = normalized;
     state.readingErrorCode = '';
+    state.deepReadingMeta = null;
     renderAiReading();
   } catch (error) {
     console.error('[ui] deep interpret request failed', {
@@ -2048,6 +2142,7 @@ async function requestDeepReading() {
     state.readingMode = 'deep';
     state.readingResult = null;
     state.readingErrorCode = error?.status === 503 || /timeout|timed out|cold|upstream/i.test(error?.message || '') ? 'cold-start' : 'request-failed';
+    state.deepReadingMeta = null;
     renderAiReading();
   }
 }
@@ -2162,6 +2257,7 @@ function onMatch() {
   state.readingMode = 'reading';
   state.readingResult = null;
   state.readingErrorCode = '';
+  state.deepReadingMeta = null;
   state.sessionId = `sess_${Date.now()}`;
   state.drawId = `draw_${Date.now()}`;
   renderGrid();
@@ -2225,6 +2321,7 @@ function onReset() {
   state.readingMode = 'reading';
   state.readingResult = null;
   state.readingErrorCode = '';
+  state.deepReadingMeta = null;
   state.sessionId = '';
   state.drawId = '';
   $('#questionInput').value = '';
