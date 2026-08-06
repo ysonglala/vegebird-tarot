@@ -1491,6 +1491,38 @@ function openDonateModal() {
   safeShowDialog('#donateModal');
 }
 
+function getAnnouncement() {
+  return window.VEGE_TAROT_ANNOUNCEMENT || {
+    title: '菜鸟塔罗已迁移',
+    message: '最新版菜鸟塔罗已迁移至新站点。',
+    cta: '前往新站',
+    url: 'https://vegebird-tarot-web.netlify.app/',
+  };
+}
+
+function openAnnouncement() {
+  const a = getAnnouncement();
+  const title = $('#announcementTitle');
+  const sub = $('#announcementSub');
+  const text = $('#announcementText');
+  const cta = $('#announcementCta');
+  if (title) title.textContent = a.title;
+  if (sub) sub.textContent = a.message;
+  if (text) text.textContent = `${a.message} ${a.url}`;
+  if (cta) {
+    const top = cta.querySelector('.primaryAction__top');
+    const bottom = cta.querySelector('.primaryAction__sub');
+    cta.href = a.url;
+    if (top) top.textContent = a.cta;
+    if (bottom) bottom.textContent = a.url;
+  }
+  safeShowDialog('#announcementModal');
+}
+
+function closeAnnouncementModal() {
+  safeCloseDialog('#announcementModal');
+}
+
 function closeDonateModal() {
   safeCloseDialog('#donateModal');
 }
@@ -2538,6 +2570,13 @@ function bindActions() {
   if (saveImageBtn) saveImageBtn.addEventListener('click', saveAiReadingAsImage);
   const donateBtn = $('#btnDonate');
   if (donateBtn) donateBtn.addEventListener('click', openDonateModal);
+  const announcementBtn = $('#btnAnnouncement');
+  if (announcementBtn) announcementBtn.addEventListener('click', openAnnouncement);
+  const closeAnnouncementBtn = $('#btnCloseAnnouncement');
+  if (closeAnnouncementBtn) closeAnnouncementBtn.addEventListener('click', closeAnnouncementModal);
+  const announcementModal = $('#announcementModal');
+  if (announcementModal) announcementModal.addEventListener('click', (e) => { if (e.target === announcementModal) closeAnnouncementModal(); });
+  setTimeout(() => openAnnouncement(), 220);
   const closeDonateBtn = $('#btnCloseDonate');
   if (closeDonateBtn) closeDonateBtn.addEventListener('click', closeDonateModal);
   const donateModal = $('#donateModal');
